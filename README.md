@@ -1,0 +1,1 @@
+A common core for most of my new Java programs.
