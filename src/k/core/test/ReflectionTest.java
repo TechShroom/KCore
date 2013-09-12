@@ -47,7 +47,14 @@ public class ReflectionTest {
 	}
 
 	private static String reflect_testm(String input) {
-		return input.concat(" and this meant it worked");
+		try {
+			return Reflect.invokeMethodStatic(String.class, String.class,
+					"format", input + " and this meant it worked - %s!",
+					new Object[] { "twice" });
+		} catch (Exception e) {
+			return input + " and this meant it failed! "
+					+ e.getClass().getName() + ": " + e.getMessage();
+		}
 	}
 
 }

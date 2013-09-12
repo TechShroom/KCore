@@ -20,7 +20,7 @@ public class TranslationTest {
 				.addTranslation("das_java", langKeys);
 		System.out.println(ts.translate(Language.ENGLISH_US));
 		System.out.println(ts2.translate(Language.ENGLISH_US));
-		System.out.println(Translate.translate("dis_java", Language.JAVA));
+		System.out.println(Translate.translate("das_java", Language.JAVA));
 	}
 
 }
