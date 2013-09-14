@@ -30,6 +30,8 @@ public class SideConsole extends JFrame {
 
 	public static final String OPTION_MENU = "options",
 			DEBUG_JMIKEY = "debug_checkbox";
+
+	public static final DJMIActionListener DEBUG_LISTENER = new DJMIActionListener();
 	private static OutputStream earlyPOS = new OutputStream() {
 
 		@Override
@@ -58,6 +60,7 @@ public class SideConsole extends JFrame {
 			log.println(b);
 		}
 	};
+	public static SideConsole console;
 
 	public static void setOut(PrintStream temp) {
 		oldO = temp;
@@ -68,6 +71,7 @@ public class SideConsole extends JFrame {
 	}
 
 	public SideConsole(boolean debug) {
+		console = this;
 		error = debug;
 		JPanel jp = new JPanel();
 		JTextArea jta = new JTextArea("Loading console...\n", 25, 65);
