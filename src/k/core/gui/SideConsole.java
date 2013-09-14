@@ -3,6 +3,8 @@ package k.core.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -43,7 +45,7 @@ public class SideConsole extends JFrame {
 				earlyBufferE = "";
 			}
 			earlyBufferE += new String(new byte[] { (byte) b });
-			log.println(b);
+			// log.println(b); //DEBUG
 		}
 	};
 	private static OutputStream earlyPOS_ = new OutputStream() {
@@ -57,7 +59,7 @@ public class SideConsole extends JFrame {
 				earlyBufferO = "";
 			}
 			earlyBufferO += new String(new byte[] { (byte) b });
-			log.println(b);
+			// log.println(b); //DEBUG
 		}
 	};
 	public static SideConsole console;
@@ -86,6 +88,12 @@ public class SideConsole extends JFrame {
 		this.add(jp);
 		addMenu();
 		pack();
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
 		setVisible(true);
 		int state = -1;
 		try {
@@ -115,10 +123,12 @@ public class SideConsole extends JFrame {
 				e.printStackTrace();
 			}
 		}
-		if (earlyBufferO != null && !earlyBufferO.equalsIgnoreCase("null")) {
+		if (earlyBufferO != null && !earlyBufferO.equalsIgnoreCase("null")
+				&& !earlyBufferO.equalsIgnoreCase("")) {
 			System.out.println(earlyBufferO);
 		}
-		if (earlyBufferE != null && !earlyBufferE.equalsIgnoreCase("null")) {
+		if (earlyBufferE != null && !earlyBufferE.equalsIgnoreCase("null")
+				&& !earlyBufferE.equalsIgnoreCase("")) {
 			System.err.println(earlyBufferE);
 		}
 	}
