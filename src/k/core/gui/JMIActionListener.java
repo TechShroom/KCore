@@ -53,11 +53,15 @@ public abstract class JMIActionListener implements ActionListener {
 					+ translatedKey);
 			return;
 		} else if (listener instanceof NonAbstractJMIActionListener) {
+			System.err.println("Invoking class "
+					+ listener.getClass().getName() + " with action "
+					+ e.toString());
 			System.err.println("Null entry for title " + e.getActionCommand()
 					+ " (ref is " + translatedKey
 					+ "[retrived via cmenu.translateJMITitleToRef("
-					+ reg_refs.get(e.getActionCommand()) + ", "
-					+ e.getActionCommand() + ")!");
+					+ reg_refs.get(e.getActionCommand())
+					+ "(call to reg_refs with '" + e.getActionCommand()
+					+ "'), " + e.getActionCommand() + ")!");
 			return;
 		}
 		System.err.println("Invoking class " + listener.getClass().getName()

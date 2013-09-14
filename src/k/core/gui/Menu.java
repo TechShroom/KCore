@@ -139,4 +139,8 @@ public class Menu {
 		}
 	}
 
+	public static String unbreakableKey() {
+		return mjmiakey;
+	}
+
 }
