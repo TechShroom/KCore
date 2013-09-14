@@ -28,7 +28,7 @@ public class Reflect {
 		if (!f.getType().isAssignableFrom(type)
 				&& !ClassHelp.castable(f.getType(), type)) {
 			throw new ClassCastException(f.getType() + " cannot be cast to "
-					+ type);
+					+ type + " (if you think this is wrong, please report it!)");
 		}
 		return (T) f.get(null);
 	}
@@ -43,7 +43,7 @@ public class Reflect {
 		if (!f.getType().isAssignableFrom(type)
 				&& !ClassHelp.castable(f.getType(), type)) {
 			throw new ClassCastException(f.getType() + " cannot be cast to "
-					+ type);
+					+ type + " (if you think this is wrong, please report it!)");
 		}
 		return (T) f.get(inst);
 	}
@@ -56,13 +56,14 @@ public class Reflect {
 
 		if ((fieldFieldModifiers & Modifier.FINAL) != 0) {
 			fieldModifiers.setInt(f, fieldFieldModifiers & ~Modifier.FINAL);
-			System.err.println("Removed FINAL");
+			System.err
+					.println("Removed FINAL, but is static anyways so might not work.");
 		}
 		f.setAccessible(true);
 		if (!f.getType().isAssignableFrom(type)
 				&& !ClassHelp.castable(f.getType(), type)) {
 			throw new ClassCastException(f.getType() + " cannot be cast to "
-					+ type);
+					+ type + " (if you think this is wrong, please report it!)");
 		}
 		value = type.cast(value);
 		f.set(null, value);
@@ -77,7 +78,7 @@ public class Reflect {
 		if (!f.getType().isAssignableFrom(type)
 				&& !ClassHelp.castable(f.getType(), type)) {
 			throw new ClassCastException(f.getType() + " cannot be cast to "
-					+ type);
+					+ type + " (if you think this is wrong, please report it!)");
 		}
 		value = type.cast(value);
 		f.set(inst, value);
@@ -94,7 +95,8 @@ public class Reflect {
 		if (!m.getReturnType().isAssignableFrom(retType)
 				&& !ClassHelp.castable(m.getReturnType(), retType)) {
 			throw new ClassCastException(m.getReturnType()
-					+ " cannot be cast to " + retType);
+					+ " cannot be cast to " + retType
+					+ " (if you think this is wrong, please report it!)");
 		}
 		return (T) m.invoke(null, objects);
 	}
@@ -111,7 +113,8 @@ public class Reflect {
 		if (!m.getReturnType().isAssignableFrom(retType)
 				&& !ClassHelp.castable(m.getReturnType(), retType)) {
 			throw new ClassCastException(m.getReturnType()
-					+ " cannot be cast to " + retType);
+					+ " cannot be cast to " + retType
+					+ " (if you think this is wrong, please report it!)");
 		}
 		return (T) m.invoke(inst, objects);
 	}
