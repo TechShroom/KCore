@@ -1,12 +1,17 @@
 package k.core.translate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+
+import sun.security.x509.AVA;
 
 public class Translate {
 
 	static HashMap<String, TranslatableString> keyToObj = new HashMap<String, TranslatableString>();
 
 	public static class Language {
+		public static final ArrayList<String> avaliableLanguages = new ArrayList<String>();
 		public static final String ENGLISH_US = "en_us", JAVA = "java";
 	}
 
@@ -14,8 +19,7 @@ public class Translate {
 	static {
 		e_no_t_map.put(Language.ENGLISH_US,
 				"There is no translation for key %s!");
-		e_no_t_map.put(Language.JAVA,
-				"// There is no translation for key %s!");
+		e_no_t_map.put(Language.JAVA, "// There is no translation for key %s!");
 	}
 	public static final TranslatableString E_NOTRANS = new TranslatableString(
 			"errors.notavaliable.translation", e_no_t_map);
@@ -44,10 +48,25 @@ public class Translate {
 					objects)
 					: "No translation for this, and it might be an ERROR_MESSAGE string. Sorry!";
 		}
+
+		public void addAll(HashMap<String, String> langKeys) {
+			for (Entry<String, String> e : langKeys.entrySet()) {
+				add(e);
+			}
+		}
+
+		public void add(Entry<String, String> langToVal) {
+			lang_k.put(langToVal.getKey(), langToVal.getValue());
+		}
 	}
 
 	public static TranslatableString addTranslation(String translatable,
 			HashMap<String, String> langKeys) {
+		if (keyToObj.containsKey(translatable)) {
+			TranslatableString old = keyToObj.get(translatable);
+			old.addAll(langKeys);
+			return old;
+		}
 		return new TranslatableString(translatable, langKeys);
 	}
 
@@ -56,6 +75,18 @@ public class Translate {
 			return keyToObj.get(key).translate(lang, objects);
 		} else {
 			return E_NOTRANS.translate(lang, key);
+		}
+	}
+
+	public static void registerNewLanguage(String language,
+			HashMap<String, String> languageErrorMessages) {
+		Language.avaliableLanguages.add(language);
+	}
+
+	public static void registerNewLanguages(
+			HashMap<String, HashMap<String, String>> errorMap) {
+		for (Entry<String, HashMap<String, String>> e : errorMap.entrySet()) {
+			registerNewLanguage(e.getKey(), e.getValue());
 		}
 	}
 }
