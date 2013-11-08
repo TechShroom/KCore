@@ -38,6 +38,7 @@ public class Helper {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static class Arrays {
 		public static void print(Object[] array) {
 			print(array, System.err);
@@ -168,6 +169,15 @@ public class Helper {
 		public static byte[] intToByteArray(int value) {
 			return new byte[]{(byte) (value >>> 24), (byte) (value >>> 16),
 					(byte) (value >>> 8), (byte) value};
+		}
+
+		public static <T> T[] reverse(T[] stuff) {
+			T[] out = (T[]) Array.newInstance(stuff.getClass()
+					.getComponentType(), stuff.length);
+			for (int i = 0, j = stuff.length - 1; i < stuff.length && j >= 0; i++, j++) {
+				out[j] = stuff[i];
+			}
+			return out;
 		}
 	}
 
