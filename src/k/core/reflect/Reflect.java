@@ -75,7 +75,14 @@ public class Reflect {
 		Class<?> from = inst.getClass();
 		Field f = from.getDeclaredField(name);
 		f.setAccessible(true);
-		if (!f.getType().isAssignableFrom(type)
+		int fieldFieldModifiers = fieldModifiers.getInt(f);
+
+		if ((fieldFieldModifiers & Modifier.FINAL) != 0) {
+			fieldModifiers.setInt(f, fieldFieldModifiers & ~Modifier.FINAL);
+			System.err
+					.println("Removed FINAL");
+		}
+		if (!type.isAssignableFrom(f.getType())
 				&& !ClassHelp.castable(f.getType(), type)) {
 			throw new ClassCastException(f.getType() + " cannot be cast to "
 					+ type + " (if you think this is wrong, please report it!)");
