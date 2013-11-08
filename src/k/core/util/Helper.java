@@ -174,8 +174,8 @@ public class Helper {
 		public static <T> T[] reverse(T[] stuff) {
 			T[] out = (T[]) Array.newInstance(stuff.getClass()
 					.getComponentType(), stuff.length);
-			for (int i = 0, j = stuff.length - 1; i < stuff.length && j >= 0; i++, j++) {
-				out[j] = stuff[i];
+			for (int i = 0; i < stuff.length; i++) {
+				out[stuff.length - i - 1] = stuff[i];
 			}
 			return out;
 		}
