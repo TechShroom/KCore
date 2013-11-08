@@ -230,10 +230,7 @@ public class EnhancedJarFile {
         File oldJarFile = new File(getName());
         this.jar.close();
         oldJarFile.delete();
-        if (newJarFile.renameTo(oldJarFile)) {
-            this.jar = new JarFile(oldJarFile);
-        } else {
-            throw new IOException();
-        }
+        while(!newJarFile.renameTo(oldJarFile));
+        this.jar = new JarFile(oldJarFile);
     }
 }
