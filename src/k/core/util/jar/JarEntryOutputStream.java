@@ -22,18 +22,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-
-import sun.rmi.runtime.Log;
 
 /**
  * An output stream that is used by EnhancedJarFile to write entries to a jar.

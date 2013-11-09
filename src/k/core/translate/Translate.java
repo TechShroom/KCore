@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import sun.security.x509.AVA;
-
 public class Translate {
 
 	static HashMap<String, TranslatableString> keyToObj = new HashMap<String, TranslatableString>();
