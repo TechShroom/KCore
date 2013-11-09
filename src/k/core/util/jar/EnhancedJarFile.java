@@ -102,9 +102,9 @@ public class EnhancedJarFile {
      * immediately below the entry named by entryName in the jar's directory
      * structure.
      */
-    public List listSubEntries(String entryName) {
-        Enumeration entries = jar.entries();
-        List subEntries = new ArrayList();
+    public List<JarEntry> listSubEntries(String entryName) {
+        Enumeration<JarEntry> entries = jar.entries();
+        List<JarEntry> subEntries = new ArrayList<JarEntry>();
 
         while(entries.hasMoreElements()) {
             JarEntry nextEntry = (JarEntry) entries.nextElement();
@@ -162,7 +162,7 @@ public class EnhancedJarFile {
     /**
      * @see java.util.jar.JarFile#entries()
      */
-    public Enumeration entries() {
+    public Enumeration<JarEntry> entries() {
         return this.jar.entries();
     }
 
