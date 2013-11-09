@@ -83,7 +83,7 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
             new JarOutputStream(new FileOutputStream(newJarFile));
 
         try {
-            Enumeration entries = this.jar.entries();
+            Enumeration<JarEntry> entries = this.jar.entries();
 
             // copy all current entries into the new jar
             while (entries.hasMoreElements()) {
