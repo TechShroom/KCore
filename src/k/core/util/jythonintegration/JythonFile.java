@@ -2,6 +2,7 @@ package k.core.util.jythonintegration;
 
 import java.io.File;
 
+import org.python.core.PyMethod;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
@@ -32,7 +33,7 @@ public class JythonFile {
 	public PyObject invokeMethod(String mName, PyObject... args) {
 		PyObject invokeres = null;
 		PyObject method = interpreter.get(mName);
-		System.err.println(method);
+		invokeres = method.__call__();
 		return invokeres;
 	}
 }
