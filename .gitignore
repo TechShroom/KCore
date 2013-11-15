@@ -26,3 +26,14 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+
+# Jython
+*.idx
+*.pkc
+
+# Dropbox
+.dropbox
+
+# Other stuff
+*.ini
