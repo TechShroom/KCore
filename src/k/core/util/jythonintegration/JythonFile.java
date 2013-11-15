@@ -14,7 +14,7 @@ public class JythonFile {
 	/**
 	 * Holds the private interpreter, if one is needed
 	 */
-	private PythonInterpreter interpreter = null;
+	PythonInterpreter interpreter = null;
 
 	public JythonFile(File pyfile, boolean newInterpreter) {
 		f = pyfile.getAbsoluteFile();
@@ -30,7 +30,7 @@ public class JythonFile {
 	 * Invokes the given method
 	 * 
 	 * @param mName
-	 *            - the name of the moethod to invoke
+	 *            - the name of the method to invoke
 	 * @param args
 	 *            -
 	 * @return
