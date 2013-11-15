@@ -24,6 +24,7 @@ public class JythonFile {
 			interpreter = JythonIntergration.mainInterpreter;
 		}
 		interpreter.execfile(f.getAbsolutePath());
+		System.err.println(interpreter.getLocals());
 	}
 
 	/**
