@@ -44,4 +44,8 @@ public class JythonClass {
 	public PyObject getPyClass() {
 		return us;
 	}
+
+	public PyObject newInstance(PyObject... args) {
+		return getPyClass().__call__(args);
+	}
 }

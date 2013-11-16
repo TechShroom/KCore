@@ -16,7 +16,7 @@ public class JythonIntegrateTest {
 		file.invokeMethod("main");
 		JythonClass cls = new JythonClass(file, "TestClass");
 		System.err.println("Loaded class as obj");
-		PyObject instance = cls.getPyClass().__call__();
+		PyObject instance = cls.newInstance();
 		cls.invokeMethod("notInstMethod", instance);
 		System.err.println("Proccessed test file successfully");
 	}
