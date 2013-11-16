@@ -1,16 +1,22 @@
 package k.core.util.jythonintegration;
 
-import java.rmi.UnexpectedException;
-
+import org.python.core.PyClass;
+import org.python.core.PyMethod;
 import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyType;
 
 public class JythonClass {
 	private JythonFile parent = null;
 	private PyObject us = null;
+	private String us_str;
 
 	public JythonClass(JythonFile jfile, String className) {
 		parent = jfile;
+
+		// Prevents errors later
 		us = parent.interpreter.get(className);
+		us_str = className;
 	}
 
 	/**
@@ -24,13 +30,21 @@ public class JythonClass {
 	 */
 	public PyObject invokeMethod(String mName, PyObject... args) {
 		PyObject invokeres = null;
-		PyObject method = parent.interpreter.get(mName);
-		if (method.getType().getName().equals("function")) {
-			invokeres = method.__call__();
+		PyObject method = us.__getattr__(new PyString(mName));
+		if (method != null
+				&& (method.getType().getName().equals("function") || (args != null
+						&& args.length > 0 && method.getType().getName()
+						.equals("instancemethod")))) {
+			invokeres = method.__call__(args);
 		} else {
-			throw new RuntimeException(new UnexpectedException(
-					"Expected function, got " + method.getType().getName()));
+			throw new RuntimeException("Expected function, got "
+					+ (method == null ? "null" : method.getType().getName())
+					+ " for " + us_str + "." + mName);
 		}
 		return invokeres;
+	}
+
+	public PyObject getPyClass() {
+		return us;
 	}
 }

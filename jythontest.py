@@ -7,4 +7,6 @@ def main() :
     
 class TestClass() :
     def __init__(self):
-        print("Init.")
+        print("Init")
+    def notInstMethod(self):
+        print("ipromiseisnotinst")
