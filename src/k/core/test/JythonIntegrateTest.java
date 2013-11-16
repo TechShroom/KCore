@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import k.core.util.Helper;
 import k.core.util.jythonintegration.JythonClass;
 import k.core.util.jythonintegration.JythonFile;
+import k.core.util.jythonintegration.JythonObject;
 
 import org.python.core.PyObject;
 
@@ -17,7 +18,8 @@ public class JythonIntegrateTest {
 		JythonClass cls = new JythonClass(file, "TestClass");
 		System.err.println("Loaded class as obj");
 		PyObject instance = cls.newInstance();
-		cls.invokeMethod("notInstMethod", instance);
+		JythonObject inst_j = new JythonObject(instance);
+		inst_j.invokeMethod("notInstMethod");
 		System.err.println("Proccessed test file successfully");
 	}
 }

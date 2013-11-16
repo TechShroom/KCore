@@ -152,6 +152,9 @@ public class Helper {
 			if (array == null) {
 				return "<null array>";
 			}
+			if(array.length == 0) {
+				return "[]";
+			}
 			String ret = "[";
 			for (Object o : array) {
 				ret += o + ", ";
