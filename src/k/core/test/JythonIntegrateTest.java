@@ -11,8 +11,6 @@ import org.python.core.PyObject;
 
 public class JythonIntegrateTest {
 	public static void main(String[] args) throws URISyntaxException {
-		System.err.println("rel-path="
-				+ Helper.Files.getFileRelativeToTopLevel(""));
 		File jython = Helper.Files.getFileRelativeToTopLevel("jythontest.py");
 		JythonFile file = new JythonFile(jython, false);
 		file.invokeMethod("main");
