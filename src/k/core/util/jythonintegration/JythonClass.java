@@ -1,10 +1,7 @@
 package k.core.util.jythonintegration;
 
-import org.python.core.PyClass;
-import org.python.core.PyMethod;
 import org.python.core.PyObject;
 import org.python.core.PyString;
-import org.python.core.PyType;
 
 public class JythonClass {
 	private JythonFile parent = null;

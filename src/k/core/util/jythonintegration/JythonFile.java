@@ -3,9 +3,7 @@ package k.core.util.jythonintegration;
 import java.io.File;
 import java.rmi.UnexpectedException;
 
-import org.python.core.PyMethod;
 import org.python.core.PyObject;
-import org.python.core.PyType;
 import org.python.util.PythonInterpreter;
 
 public class JythonFile {

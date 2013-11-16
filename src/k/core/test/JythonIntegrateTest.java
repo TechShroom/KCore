@@ -3,17 +3,17 @@ package k.core.test;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import org.python.core.PyObject;
-
+import k.core.util.Helper;
 import k.core.util.jythonintegration.JythonClass;
 import k.core.util.jythonintegration.JythonFile;
 
+import org.python.core.PyObject;
+
 public class JythonIntegrateTest {
 	public static void main(String[] args) throws URISyntaxException {
-		File jython = new File(new File(JythonIntegrateTest.class
-				.getResource("JythonIntegrateTest.class").toURI().getPath())
-				.getParentFile().getParentFile().getParentFile()
-				.getParentFile().getParentFile(), "jythontest.py");
+		System.err.println("rel-path="
+				+ Helper.Files.getFileRelativeToTopLevel(""));
+		File jython = Helper.Files.getFileRelativeToTopLevel("jythontest.py");
 		JythonFile file = new JythonFile(jython, false);
 		file.invokeMethod("main");
 		JythonClass cls = new JythonClass(file, "TestClass");

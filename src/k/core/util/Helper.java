@@ -5,8 +5,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
@@ -14,6 +16,23 @@ import java.util.Random;
 import javax.swing.JFrame;
 
 public class Helper {
+	public static class Files {
+		private static File topLevel_priv;
+
+		public static File getFileRelativeToTopLevel(String file) {
+			if (topLevel_priv == null) {
+				try {
+					topLevel_priv = new File(Helper.class
+							.getResource("Helper.class").toURI().getPath())
+							.getParentFile().getParentFile().getParentFile()
+							.getParentFile().getParentFile();
+				} catch (URISyntaxException e) {
+					throw new RuntimeException("Invalid URL", e);
+				}
+			}
+			return new File(topLevel_priv, file);
+		}
+	}
 	public static class Window {
 
 		public static void drop(JFrame frame) {
