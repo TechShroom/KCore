@@ -45,4 +45,8 @@ public class JythonFile {
 		}
 		return invokeres;
 	}
+
+	public JythonClass getJClass(String className) {
+		return new JythonClass(this, className);
+	}
 }
