@@ -152,7 +152,7 @@ public class Helper {
 			if (array == null) {
 				return "<null array>";
 			}
-			if(array.length == 0) {
+			if (array.length == 0) {
 				return "[]";
 			}
 			String ret = "[";
@@ -284,6 +284,37 @@ public class Helper {
 
 		public static String getProperty(String key, String def) {
 			return clprops.getProperty(key, def);
+		}
+		public static boolean getPropertyB(String key) {
+			return getPropertyB(key, false);
+		}
+
+		public static boolean getPropertyB(String key, boolean def) {
+			return Boolean.valueOf(clprops.getProperty(key,
+					Boolean.toString(def)));
+		}
+		public static int getPropertyI(String key) {
+			return getPropertyI(key, 0);
+		}
+
+		public static int getPropertyI(String key, int def) {
+			return Integer.valueOf(clprops.getProperty(key,
+					Integer.toString(def)));
+		}
+		public static float getPropertyF(String key) {
+			return getPropertyF(key, 0f);
+		}
+
+		public static float getPropertyF(String key, float def) {
+			return Float.valueOf(clprops.getProperty(key, Float.toString(def)));
+		}
+		public static double getPropertyD(String key) {
+			return getPropertyD(key, 0d);
+		}
+
+		public static double getPropertyD(String key, double def) {
+			return Double
+					.valueOf(clprops.getProperty(key, Double.toString(def)));
 		}
 
 		public static boolean hasKey(String key) {
