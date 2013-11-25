@@ -16,6 +16,7 @@ public class XMLHandler {
 	}
 
 	public static void printXMLNode(Node node, int level) {
+		// Indent for pretty print
 		String tab = "   ";
 		for (int i = 0; i < level; i++) {
 			tab += tab;
@@ -35,13 +36,38 @@ public class XMLHandler {
 			for (int i = 0; i < node.getChildNodes().getLength(); i++) {
 				String nodeVal = node.getChildNodes().item(i).getNodeValue();
 				if (nodeVal != null) {
+					// Removes extra #text whitespace
 					nodeVal = nodeVal.replaceFirst("\\s+$", "");
 				}
-				System.err.println(String.format(tab
-						+ "Node #%s: name: '%s'; value: '%s'; childNodes:", i,
-						node.getChildNodes().item(i).getNodeName(), nodeVal));
+				System.err
+						.println(String
+								.format(tab
+										+ "Node #%s: name: '%s'; value: '%s'; childNodes: [",
+										i, node.getChildNodes().item(i)
+												.getNodeName(), nodeVal));
 				printXMLNode(node.getChildNodes().item(i), level + 1);
+				System.err.println(tab + "]");
 			}
 		}
+	}
+
+	public static String getAttr(Node n, String s) {
+		return n.getAttributes().getNamedItem(s).getNodeValue();
+	}
+
+	public static int getAttrInt(Node n, String s) {
+		return Integer.parseInt(getAttr(n, s));
+	}
+
+	public static boolean getAttrBool(Node n, String s) {
+		return Boolean.parseBoolean(getAttr(n, s));
+	}
+
+	public static float getAttrFloat(Node n, String s) {
+		return Float.parseFloat(getAttr(n, s));
+	}
+
+	public static double getAttrDouble(Node n, String s) {
+		return Double.parseDouble(getAttr(n, s));
 	}
 }
