@@ -122,7 +122,7 @@ public class Translate {
 	}
 
 	/**
-	 * Add a new translation, or add on the new languages if it already exsists
+	 * Add a new translation, or add on the new languages if it already exists
 	 * 
 	 * @param translatable
 	 *            - the string that will act as the translatable key
