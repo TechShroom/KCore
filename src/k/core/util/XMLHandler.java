@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 public class XMLHandler {
@@ -51,6 +52,11 @@ public class XMLHandler {
 				System.err.println(tab + "]");
 			}
 		}
+	}
+
+	public static boolean hasAttr(Node n, String s) {
+		NamedNodeMap attrs = n.getAttributes();
+		return attrs.getNamedItem(s) != null;
 	}
 
 	public static String getAttr(Node n, String s) {
