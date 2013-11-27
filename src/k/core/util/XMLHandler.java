@@ -1,6 +1,8 @@
 package k.core.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -78,6 +80,17 @@ public class XMLHandler {
 			if (t.getNodeName().equals(s)) {
 				out = t;
 				break;
+			}
+		}
+		return out;
+	}
+
+	public static List<Node> getNodesByName(Node n, String s) {
+		List<Node> out = new ArrayList<Node>();
+		for (int i = 0; i < n.getChildNodes().getLength(); i++) {
+			Node t = n.getChildNodes().item(i);
+			if (t.getNodeName().equals(s)) {
+				out.add(t);
 			}
 		}
 		return out;
