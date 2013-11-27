@@ -79,6 +79,10 @@ public class XMLHandler {
 		return Double.parseDouble(getAttr(n, s));
 	}
 
+	public static boolean hasNode(Node tn, String string) {
+		return getNodeByName(tn, string) != null;
+	}
+
 	public static Node getNodeByName(Node n, String s) {
 		Node out = null;
 		for (int i = 0; i < n.getChildNodes().getLength(); i++) {
