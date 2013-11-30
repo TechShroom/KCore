@@ -9,6 +9,7 @@ import k.core.translate.Translate.Language;
 
 public class ReflectionTest {
 
+	@SuppressWarnings("unused")
 	private final BigInteger testing_field = new BigInteger("SUCCESS", 36);
 
 	/**
@@ -46,6 +47,7 @@ public class ReflectionTest {
 
 	}
 
+	@SuppressWarnings("unused")
 	private static String reflect_testm(String input) {
 		try {
 			return Reflect.invokeMethodStatic(String.class, String.class,
