@@ -1,1 +1,1 @@
-A common core for most of my new Java programs.
+A common core for most of TechShroom's programs.
