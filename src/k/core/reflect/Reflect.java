@@ -79,8 +79,7 @@ public class Reflect {
 
 		if ((fieldFieldModifiers & Modifier.FINAL) != 0) {
 			fieldModifiers.setInt(f, fieldFieldModifiers & ~Modifier.FINAL);
-			System.err
-					.println("Removed FINAL");
+			System.err.println("Removed FINAL");
 		}
 		if (!type.isAssignableFrom(f.getType())
 				&& !ClassHelp.castable(f.getType(), type)) {

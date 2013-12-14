@@ -19,8 +19,8 @@ public class SideConsole extends JFrame {
 	private boolean error;
 	public JScrollPane scroller;
 	private static PrintStream oldO, oldE, newO, newE;
-	private static String[] exceptions = { "Error creating the OutputStreams",
-			"Error setting System.out", "Error setting System.out" };
+	private static String[] exceptions = {"Error creating the OutputStreams",
+			"Error setting System.out", "Error setting System.out"};
 	protected static PrintStream log;
 	static {
 		log = new PrintStream(System.err);
@@ -42,7 +42,7 @@ public class SideConsole extends JFrame {
 			if (earlyBufferE == null) {
 				earlyBufferE = "";
 			}
-			earlyBufferE += new String(new byte[] { (byte) b });
+			earlyBufferE += new String(new byte[]{(byte) b});
 			// log.println(b); //DEBUG
 		}
 	};
@@ -56,7 +56,7 @@ public class SideConsole extends JFrame {
 			if (earlyBufferO == null) {
 				earlyBufferO = "";
 			}
-			earlyBufferO += new String(new byte[] { (byte) b });
+			earlyBufferO += new String(new byte[]{(byte) b});
 			// log.println(b); //DEBUG
 		}
 	};

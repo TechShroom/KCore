@@ -19,7 +19,7 @@ public class Translate {
 		 * All properly registered languages
 		 */
 		public static final ArrayList<String> avaliableLanguages = new ArrayList<String>();
-		
+
 		/**
 		 * A supported language
 		 */
@@ -32,7 +32,7 @@ public class Translate {
 				"There is no translation for key %s!");
 		e_no_t_map.put(Language.JAVA, "// There is no translation for key %s!");
 	}
-	
+
 	/**
 	 * The error thrown when no translation was found
 	 */

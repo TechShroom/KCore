@@ -30,7 +30,7 @@ public class ReflectionTest {
 					"i tested reflection on methods"));
 			System.out.println(Reflect.invokeMethodStatic(String.class,
 					Translate.class, "translate", "fakeKey", Language.JAVA,
-					new Object[] {}));
+					new Object[]{}));
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
@@ -52,7 +52,7 @@ public class ReflectionTest {
 		try {
 			return Reflect.invokeMethodStatic(String.class, String.class,
 					"format", input + " and this meant it worked - %s!",
-					new Object[] { "twice" });
+					new Object[]{"twice"});
 		} catch (Exception e) {
 			return input + " and this meant it failed! "
 					+ e.getClass().getName() + ": " + e.getMessage();

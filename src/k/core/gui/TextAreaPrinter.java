@@ -7,8 +7,9 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class TextAreaPrinter extends ByteArrayOutputStream implements
-		DocumentListener {
+public class TextAreaPrinter extends ByteArrayOutputStream
+		implements
+			DocumentListener {
 	JTextArea out = null;
 	String pre = ">";
 	String buffer = "";
@@ -20,6 +21,7 @@ public class TextAreaPrinter extends ByteArrayOutputStream implements
 		pre = prefix;
 	}
 
+	@Override
 	public void flush() throws IOException {
 		synchronized (this) {
 			super.flush();
