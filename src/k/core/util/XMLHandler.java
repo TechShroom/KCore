@@ -1,6 +1,7 @@
 package k.core.util;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,13 @@ import org.w3c.dom.Node;
 
 public class XMLHandler {
 	public static Document loadDocument(File dom) throws Exception {
+		Document doc = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(dom);
+		doc.normalizeDocument();
+		return doc;
+	}
+
+	public static Document loadDocument(InputStream dom) throws Exception {
 		Document doc = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder().parse(dom);
 		doc.normalizeDocument();
