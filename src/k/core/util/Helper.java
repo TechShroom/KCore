@@ -159,7 +159,7 @@ public class Helper {
 			for (Object o : array) {
 				ret += o + ", ";
 			}
-			ret = ret.substring(0, ret.length() - 1) + "]";
+			ret = ret.substring(0, ret.length() - 2) + "]";
 			return ret;
 		}
 
