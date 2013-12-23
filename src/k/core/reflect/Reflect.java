@@ -125,4 +125,11 @@ public class Reflect {
 	return (T) m.invoke(inst, objects);
     }
 
+    public static <T> T construct(Class<T> from, Object... args)
+	    throws InstantiationException, IllegalAccessException,
+	    IllegalArgumentException, InvocationTargetException,
+	    NoSuchMethodException, SecurityException {
+	return from.getDeclaredConstructor(ClassHelp.classesFromObjects(args))
+		.newInstance(args);
+    }
 }
