@@ -1,5 +1,6 @@
 package k.core.reflect;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -129,7 +130,9 @@ public class Reflect {
 	    throws InstantiationException, IllegalAccessException,
 	    IllegalArgumentException, InvocationTargetException,
 	    NoSuchMethodException, SecurityException {
-	return from.getDeclaredConstructor(ClassHelp.classesFromObjects(args))
-		.newInstance(args);
+	Constructor<T> constr = from.getDeclaredConstructor(ClassHelp
+		.classesFromObjects(args));
+	constr.setAccessible(true);
+	return constr.newInstance(args);
     }
 }
