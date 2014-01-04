@@ -24,8 +24,7 @@ public class UnlimitedDouble {
     /* Private methods */
 
     private void parse0(String value) {
-	
-	String withoutDec = value.replace(".", "");
+        String withoutDec = value.replace(".", "");
     }
 
     /* Public methods */
