@@ -9,11 +9,11 @@ public class JythonClass {
     private String us_str;
 
     public JythonClass(JythonFile jfile, String className) {
-	parent = jfile;
+        parent = jfile;
 
-	// Prevents errors later
-	us = parent.interpreter.get(className);
-	us_str = className;
+        // Prevents errors later
+        us = parent.interpreter.get(className);
+        us_str = className;
     }
 
     /**
@@ -26,26 +26,26 @@ public class JythonClass {
      * @return
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
-	PyObject invokeres = null;
-	PyObject method = us.__getattr__(new PyString(mName));
-	if (method != null
-		&& (method.getType().getName().equals("function") || (args != null
-			&& args.length > 0 && method.getType().getName()
-			.equals("instancemethod")))) {
-	    invokeres = method.__call__(args);
-	} else {
-	    throw new RuntimeException("Expected function, got "
-		    + (method == null ? "null" : method.getType().getName())
-		    + " for " + us_str + "." + mName);
-	}
-	return invokeres;
+        PyObject invokeres = null;
+        PyObject method = us.__getattr__(new PyString(mName));
+        if (method != null
+                && (method.getType().getName().equals("function") || (args != null
+                        && args.length > 0 && method.getType().getName()
+                        .equals("instancemethod")))) {
+            invokeres = method.__call__(args);
+        } else {
+            throw new RuntimeException("Expected function, got "
+                    + (method == null ? "null" : method.getType().getName())
+                    + " for " + us_str + "." + mName);
+        }
+        return invokeres;
     }
 
     public PyObject getPyClass() {
-	return us;
+        return us;
     }
 
     public PyObject newInstance(PyObject... args) {
-	return getPyClass().__call__(args);
+        return getPyClass().__call__(args);
     }
 }

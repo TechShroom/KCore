@@ -52,10 +52,10 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
      *            the name of the entry to be written
      */
     public JarEntryOutputStream(EnhancedJarFile jar, String jarEntryName) {
-	super();
+        super();
 
-	this.jarEntryName = jarEntryName;
-	this.jar = jar;
+        this.jarEntryName = jarEntryName;
+        this.jar = jar;
     }
 
     /**
@@ -63,8 +63,8 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
      */
     @Override
     public void close() throws IOException {
-	writeToJar();
-	super.close();
+        writeToJar();
+        super.close();
     }
 
     /**
@@ -77,59 +77,59 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
      */
     private void writeToJar() throws IOException {
 
-	File jarDir = new File(this.jar.getName()).getParentFile();
-	// create new jar
-	File newJarFile = File.createTempFile(
-		"temp-jar-for-copy--deleteiffound", ".jar", jarDir);
-	newJarFile.deleteOnExit();
-	JarOutputStream jarOutputStream = new JarOutputStream(
-		new FileOutputStream(newJarFile));
+        File jarDir = new File(this.jar.getName()).getParentFile();
+        // create new jar
+        File newJarFile = File.createTempFile(
+                "temp-jar-for-copy--deleteiffound", ".jar", jarDir);
+        newJarFile.deleteOnExit();
+        JarOutputStream jarOutputStream = new JarOutputStream(
+                new FileOutputStream(newJarFile));
 
-	try {
-	    Enumeration<JarEntry> entries = this.jar.entries();
+        try {
+            Enumeration<JarEntry> entries = this.jar.entries();
 
-	    // copy all current entries into the new jar
-	    while (entries.hasMoreElements()) {
-		JarEntry nextEntry = (JarEntry) entries.nextElement();
-		// skip the entry named jarEntryName
-		if (!this.jarEntryName.equals(nextEntry.getName())) {
-		    // the next 3 lines of code are a work around for
-		    // bug 4682202 in the java.sun.com bug parade, see:
-		    // http://developer.java.sun.com/developer/bugParade/bugs/4682202.html
-		    JarEntry entryCopy = new JarEntry(nextEntry);
-		    entryCopy.setCompressedSize(-1);
-		    jarOutputStream.putNextEntry(entryCopy);
+            // copy all current entries into the new jar
+            while (entries.hasMoreElements()) {
+                JarEntry nextEntry = (JarEntry) entries.nextElement();
+                // skip the entry named jarEntryName
+                if (!this.jarEntryName.equals(nextEntry.getName())) {
+                    // the next 3 lines of code are a work around for
+                    // bug 4682202 in the java.sun.com bug parade, see:
+                    // http://developer.java.sun.com/developer/bugParade/bugs/4682202.html
+                    JarEntry entryCopy = new JarEntry(nextEntry);
+                    entryCopy.setCompressedSize(-1);
+                    jarOutputStream.putNextEntry(entryCopy);
 
-		    InputStream intputStream = this.jar
-			    .getInputStream(nextEntry);
-		    // write the data
-		    for (int data = intputStream.read(); data != -1; data = intputStream
-			    .read()) {
+                    InputStream intputStream = this.jar
+                            .getInputStream(nextEntry);
+                    // write the data
+                    for (int data = intputStream.read(); data != -1; data = intputStream
+                            .read()) {
 
-			jarOutputStream.write(data);
-		    }
-		}
-	    }
+                        jarOutputStream.write(data);
+                    }
+                }
+            }
 
-	    // write the new or modified entry to the jar
-	    if (size() > 0) {
-		jarOutputStream.putNextEntry(new JarEntry(this.jarEntryName));
-		jarOutputStream.write(super.buf, 0, size());
-		jarOutputStream.closeEntry();
-	    }
-	} finally {
-	    // close close everything up
-	    try {
-		if (jarOutputStream != null) {
-		    jarOutputStream.close();
-		}
-	    } catch (IOException ioe) {
-		// eat it, just wanted to close stream
-	    }
-	}
+            // write the new or modified entry to the jar
+            if (size() > 0) {
+                jarOutputStream.putNextEntry(new JarEntry(this.jarEntryName));
+                jarOutputStream.write(super.buf, 0, size());
+                jarOutputStream.closeEntry();
+            }
+        } finally {
+            // close close everything up
+            try {
+                if (jarOutputStream != null) {
+                    jarOutputStream.close();
+                }
+            } catch (IOException ioe) {
+                // eat it, just wanted to close stream
+            }
+        }
 
-	// swap the jar
-	this.jar.swapJars(newJarFile);
+        // swap the jar
+        this.jar.swapJars(newJarFile);
     }
 
 }

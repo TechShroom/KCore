@@ -52,7 +52,7 @@ public class EnhancedJarFile {
      */
     public EnhancedJarFile(String name) throws IOException {
 
-	this.jar = new JarFile(name);
+        this.jar = new JarFile(name);
     }
 
     /**
@@ -60,7 +60,7 @@ public class EnhancedJarFile {
      */
     public EnhancedJarFile(String name, boolean verify) throws IOException {
 
-	this.jar = new JarFile(name, verify);
+        this.jar = new JarFile(name, verify);
     }
 
     /**
@@ -68,7 +68,7 @@ public class EnhancedJarFile {
      */
     public EnhancedJarFile(File file) throws IOException {
 
-	this.jar = new JarFile(file);
+        this.jar = new JarFile(file);
     }
 
     /**
@@ -76,16 +76,16 @@ public class EnhancedJarFile {
      */
     public EnhancedJarFile(File file, boolean verify) throws IOException {
 
-	this.jar = new JarFile(file, verify);
+        this.jar = new JarFile(file, verify);
     }
 
     /**
      * @see java.util.jar.JarFile#JarFile(java.io.File, boolean, int)
      */
     public EnhancedJarFile(File file, boolean verify, int mode)
-	    throws IOException {
+            throws IOException {
 
-	this.jar = new JarFile(file, verify, mode);
+        this.jar = new JarFile(file, verify, mode);
     }
 
     /**
@@ -99,30 +99,30 @@ public class EnhancedJarFile {
      *         directory structure.
      */
     public List<JarEntry> listSubEntries(String entryName) {
-	Enumeration<JarEntry> entries = jar.entries();
-	List<JarEntry> subEntries = new ArrayList<JarEntry>();
+        Enumeration<JarEntry> entries = jar.entries();
+        List<JarEntry> subEntries = new ArrayList<JarEntry>();
 
-	while (entries.hasMoreElements()) {
-	    JarEntry nextEntry = (JarEntry) entries.nextElement();
+        while (entries.hasMoreElements()) {
+            JarEntry nextEntry = (JarEntry) entries.nextElement();
 
-	    if (nextEntry.getName().startsWith(entryName)) {
-		// the next entry name starts with the entryName so it
-		// is a potential sub entry
+            if (nextEntry.getName().startsWith(entryName)) {
+                // the next entry name starts with the entryName so it
+                // is a potential sub entry
 
-		// tokenize the rest of the next entry name to see how
-		// many tokens exist
-		StringTokenizer tokenizer = new StringTokenizer(nextEntry
-			.getName().substring(entryName.length()),
-			EnhancedJarFile.JAR_DELIMETER);
+                // tokenize the rest of the next entry name to see how
+                // many tokens exist
+                StringTokenizer tokenizer = new StringTokenizer(nextEntry
+                        .getName().substring(entryName.length()),
+                        EnhancedJarFile.JAR_DELIMETER);
 
-		if (tokenizer.countTokens() == 1) {
-		    // only 1 token exists, so it is a sub-entry
-		    subEntries.add(nextEntry);
-		}
-	    }
-	}
+                if (tokenizer.countTokens() == 1) {
+                    // only 1 token exists, so it is a sub-entry
+                    subEntries.add(nextEntry);
+                }
+            }
+        }
 
-	return subEntries;
+        return subEntries;
     }
 
     /**
@@ -134,7 +134,7 @@ public class EnhancedJarFile {
      * @return JarEntryOutputStream
      */
     public JarEntryOutputStream getEntryOutputStream(String entryName) {
-	return new JarEntryOutputStream(this, entryName);
+        return new JarEntryOutputStream(this, entryName);
     }
 
     /**
@@ -147,48 +147,48 @@ public class EnhancedJarFile {
      *             if there is a problem writing the changes to the jar
      */
     public void removeEntry(JarEntry entry) throws IOException {
-	// opens an output stream and closes it without writing anything to it
-	if (entry != null && getEntry(entry.getName()) != null) {
-	    JarEntryOutputStream outputStream = new JarEntryOutputStream(this,
-		    entry.getName());
+        // opens an output stream and closes it without writing anything to it
+        if (entry != null && getEntry(entry.getName()) != null) {
+            JarEntryOutputStream outputStream = new JarEntryOutputStream(this,
+                    entry.getName());
 
-	    outputStream.close();
-	}
+            outputStream.close();
+        }
     }
 
     /**
      * @see java.util.jar.JarFile#entries()
      */
     public Enumeration<JarEntry> entries() {
-	return this.jar.entries();
+        return this.jar.entries();
     }
 
     /**
      * @see java.util.jar.JarFile#getEntry(java.lang.String)
      */
     public ZipEntry getEntry(String arg0) {
-	return this.jar.getEntry(arg0);
+        return this.jar.getEntry(arg0);
     }
 
     /**
      * @see java.util.jar.JarFile#getInputStream(java.util.zip.ZipEntry)
      */
     public InputStream getInputStream(ZipEntry arg0) throws IOException {
-	return this.jar.getInputStream(arg0);
+        return this.jar.getInputStream(arg0);
     }
 
     /**
      * @see java.util.jar.JarFile#getJarEntry(java.lang.String)
      */
     public JarEntry getJarEntry(String arg0) {
-	return this.jar.getJarEntry(arg0);
+        return this.jar.getJarEntry(arg0);
     }
 
     /**
      * @see java.util.jar.JarFile#getManifest()
      */
     public Manifest getManifest() throws IOException {
-	return this.jar.getManifest();
+        return this.jar.getManifest();
     }
 
     /**
@@ -196,21 +196,21 @@ public class EnhancedJarFile {
      */
     public void close() throws IOException {
 
-	this.jar.close();
+        this.jar.close();
     }
 
     /**
      * @see java.util.zip.ZipFile#getName()
      */
     public String getName() {
-	return this.jar.getName();
+        return this.jar.getName();
     }
 
     /**
      * @see java.util.zip.ZipFile#size()
      */
     public int size() {
-	return this.jar.size();
+        return this.jar.size();
     }
 
     /**
@@ -225,11 +225,11 @@ public class EnhancedJarFile {
      *            the file object pointing to the new jar file
      */
     void swapJars(File newJarFile) throws IOException {
-	File oldJarFile = new File(getName());
-	this.jar.close();
-	oldJarFile.delete();
-	while (!newJarFile.renameTo(oldJarFile))
-	    ;
-	this.jar = new JarFile(oldJarFile);
+        File oldJarFile = new File(getName());
+        this.jar.close();
+        oldJarFile.delete();
+        while (!newJarFile.renameTo(oldJarFile))
+            ;
+        this.jar = new JarFile(oldJarFile);
     }
 }

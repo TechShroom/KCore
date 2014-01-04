@@ -7,7 +7,7 @@ public class JythonObject {
     private PyObject us = null;
 
     public JythonObject(PyObject inst) {
-	us = inst;
+        us = inst;
     }
 
     /**
@@ -20,17 +20,17 @@ public class JythonObject {
      * @return
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
-	PyObject invokeres = null;
-	PyObject method = us.__getattr__(new PyString(mName));
-	if (method != null
-		&& (method.getType().getName().equals("function") || method
-			.getType().getName().equals("instancemethod"))) {
-	    invokeres = method.__call__(args);
-	} else {
-	    throw new RuntimeException("Expected function, got "
-		    + (method == null ? "null" : method.getType().getName())
-		    + " for " + mName);
-	}
-	return invokeres;
+        PyObject invokeres = null;
+        PyObject method = us.__getattr__(new PyString(mName));
+        if (method != null
+                && (method.getType().getName().equals("function") || method
+                        .getType().getName().equals("instancemethod"))) {
+            invokeres = method.__call__(args);
+        } else {
+            throw new RuntimeException("Expected function, got "
+                    + (method == null ? "null" : method.getType().getName())
+                    + " for " + mName);
+        }
+        return invokeres;
     }
 }

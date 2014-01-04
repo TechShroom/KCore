@@ -15,14 +15,14 @@ public class JythonFile {
     PythonInterpreter interpreter = null;
 
     public JythonFile(File pyfile, boolean newInterpreter) {
-	f = pyfile.getAbsoluteFile();
-	if (newInterpreter) {
-	    interpreter = new PythonInterpreter();
-	} else {
-	    interpreter = JythonIntergration.mainInterpreter;
-	}
-	interpreter.execfile(f.getAbsolutePath());
-	System.err.println(interpreter.getLocals());
+        f = pyfile.getAbsoluteFile();
+        if (newInterpreter) {
+            interpreter = new PythonInterpreter();
+        } else {
+            interpreter = JythonIntergration.mainInterpreter;
+        }
+        interpreter.execfile(f.getAbsolutePath());
+        System.err.println(interpreter.getLocals());
     }
 
     /**
@@ -35,18 +35,18 @@ public class JythonFile {
      * @return
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
-	PyObject invokeres = null;
-	PyObject method = interpreter.get(mName);
-	if (method.getType().getName().equals("function")) {
-	    invokeres = method.__call__();
-	} else {
-	    throw new RuntimeException(new UnexpectedException(
-		    "Expected function, got " + method.getType().getName()));
-	}
-	return invokeres;
+        PyObject invokeres = null;
+        PyObject method = interpreter.get(mName);
+        if (method.getType().getName().equals("function")) {
+            invokeres = method.__call__();
+        } else {
+            throw new RuntimeException(new UnexpectedException(
+                    "Expected function, got " + method.getType().getName()));
+        }
+        return invokeres;
     }
 
     public JythonClass getJClass(String className) {
-	return new JythonClass(this, className);
+        return new JythonClass(this, className);
     }
 }
