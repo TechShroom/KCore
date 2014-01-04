@@ -200,7 +200,7 @@ public class Helper {
         }
     }
 
-    public static class CommandLine {
+    public static class ProgramProps {
 
         public static String[] normalizeCommandArgs(String[] args) {
             ArrayList<String> joined = new ArrayList<String>();
