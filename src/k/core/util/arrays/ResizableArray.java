@@ -1,10 +1,8 @@
 package k.core.util.arrays;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -17,7 +15,8 @@ import java.util.RandomAccess;
 import k.core.util.reflect.Reflect;
 
 /**
- * An array that resizes when needed. Can be forced down as well.
+ * An array that resizes when needed. Can be forced down as well. Is like an
+ * {@link ArrayList}, but allows the use of primitive values as the array type.
  * 
  * @author kenzietogami
  * 
@@ -27,13 +26,14 @@ public class ResizableArray extends AbstractList<Object> implements
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
-     * The array buffer into which the elements of the ArrayList are stored. The
-     * capacity of the ArrayList is the length of this array buffer.
+     * The array buffer into which the elements of the ResizableArray are
+     * stored. The capacity of the ResizableArray is the length of this array
+     * buffer.
      */
     private transient Object elementData;
 
     /**
-     * The size of the ArrayList (the number of elements it contains).
+     * The size of the ResizableArray (the number of elements it contains).
      * 
      * @serial
      */
@@ -85,9 +85,28 @@ public class ResizableArray extends AbstractList<Object> implements
     }
 
     /**
-     * Trims the capacity of this <tt>ArrayList</tt> instance to be the list's
-     * current size. An application can use this operation to minimize the
-     * storage of an <tt>ArrayList</tt> instance.
+     * Uses the fact that we use an array internally to allow creation via array
+     * 
+     * @param array
+     *            - the array to create from
+     * @throws IllegalArgumentException
+     *             if <tt>array</tt> is not an array (
+     *             <tt>array.getClass().getComponentType()</tt> is <tt>null</tt>
+     *             )
+     */
+    public ResizableArray(Object array) {
+        arrayType = array.getClass().getComponentType();
+        if (arrayType == null) {
+            throw new IllegalArgumentException(String.valueOf(array));
+        }
+        elementData = array;
+        size = length();
+    }
+
+    /**
+     * Trims the capacity of this <tt>ResizableArray</tt> instance to be the
+     * list's current size. An application can use this operation to minimize
+     * the storage of an <tt>ResizableArray</tt> instance.
      */
     public void trimToSize() {
         modCount++;
@@ -98,9 +117,9 @@ public class ResizableArray extends AbstractList<Object> implements
     }
 
     /**
-     * Increases the capacity of this <tt>ArrayList</tt> instance, if necessary,
-     * to ensure that it can hold at least the number of elements specified by
-     * the minimum capacity argument.
+     * Increases the capacity of this <tt>ResizableArray</tt> instance, if
+     * necessary, to ensure that it can hold at least the number of elements
+     * specified by the minimum capacity argument.
      * 
      * @param minCapacity
      *            the desired minimum capacity
@@ -242,15 +261,14 @@ public class ResizableArray extends AbstractList<Object> implements
     }
 
     /**
-     * Returns a shallow copy of this <tt>ArrayList</tt> instance. (The elements
-     * themselves are not copied.)
+     * Returns a shallow copy of this <tt>ResizableArray</tt> instance. (The
+     * elements themselves are not copied.)
      * 
-     * @return a clone of this <tt>ArrayList</tt> instance
+     * @return a clone of this <tt>ResizableArray</tt> instance
      */
     @Override
-    public Object clone() {
+    public ResizableArray clone() {
         try {
-            @SuppressWarnings("unchecked")
             ResizableArray v = (ResizableArray) super.clone();
             v.elementData = copyOf(size);
             v.modCount = 0;
@@ -325,7 +343,6 @@ public class ResizableArray extends AbstractList<Object> implements
 
     // Positional Access Operations
 
-    @SuppressWarnings("unchecked")
     Object elementData(int index) {
         return Array.get(elementData, index);
     }
@@ -363,14 +380,14 @@ public class ResizableArray extends AbstractList<Object> implements
         rangeCheck(index);
 
         Object oldValue = elementData(index);
-        set0(index, element);
+        fastSet(index, element);
         return oldValue;
     }
 
     /**
      * A quick set that ignores range checking
      */
-    private void set0(int index, Object o) {
+    private void fastSet(int index, Object o) {
         Array.set(elementData, index, o);
     }
 
@@ -384,7 +401,7 @@ public class ResizableArray extends AbstractList<Object> implements
     @Override
     public boolean add(Object e) {
         ensureCapacityInternal(size + 1); // Increments modCount!!
-        set0(size++, e);
+        fastSet(size++, e);
         return true;
     }
 
@@ -407,7 +424,7 @@ public class ResizableArray extends AbstractList<Object> implements
         ensureCapacityInternal(size + 1); // Increments modCount!!
         System.arraycopy(elementData, index, elementData, index + 1, size
                 - index);
-        set0(index, element);
+        fastSet(index, element);
         size++;
     }
 
@@ -432,7 +449,7 @@ public class ResizableArray extends AbstractList<Object> implements
         if (numMoved > 0)
             System.arraycopy(elementData, index + 1, elementData, index,
                     numMoved);
-        set0(size--, null); // Let gc do its work
+        fastSet(size--, null); // Let gc do its work
 
         return oldValue;
     }
@@ -479,7 +496,7 @@ public class ResizableArray extends AbstractList<Object> implements
         if (numMoved > 0)
             System.arraycopy(elementData, index + 1, elementData, index,
                     numMoved);
-        set0(size--, null); // Let gc do its work
+        fastSet(size--, null); // Let gc do its work
     }
 
     /**
@@ -492,7 +509,7 @@ public class ResizableArray extends AbstractList<Object> implements
 
         // Let gc do its work
         for (int i = 0; i < size; i++)
-            set0(i, null);
+            fastSet(i, null);
 
         size = 0;
     }
@@ -515,6 +532,14 @@ public class ResizableArray extends AbstractList<Object> implements
     public boolean addAll(Collection<?> c) {
         Object[] a = c.toArray();
         int numNew = a.length;
+        ensureCapacityInternal(size + numNew); // Increments modCount
+        System.arraycopy(a, 0, elementData, size, numNew);
+        size += numNew;
+        return numNew != 0;
+    }
+
+    public boolean addAll(Object a) {
+        int numNew = Array.getLength(a);
         ensureCapacityInternal(size + numNew); // Increments modCount
         System.arraycopy(a, 0, elementData, size, numNew);
         size += numNew;
@@ -557,6 +582,22 @@ public class ResizableArray extends AbstractList<Object> implements
         return numNew != 0;
     }
 
+    public boolean addAll(int index, Object a) {
+        rangeCheckForAdd(index);
+
+        int numNew = Array.getLength(a);
+        ensureCapacityInternal(size + numNew); // Increments modCount
+
+        int numMoved = size - index;
+        if (numMoved > 0)
+            System.arraycopy(elementData, index, elementData, index + numNew,
+                    numMoved);
+
+        System.arraycopy(a, 0, elementData, index, numNew);
+        size += numNew;
+        return numNew != 0;
+    }
+
     /**
      * Removes from this list all of the elements whose index is between
      * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive. Shifts any
@@ -580,7 +621,7 @@ public class ResizableArray extends AbstractList<Object> implements
         // Let gc do its work
         int newSize = size - (toIndex - fromIndex);
         while (size != newSize)
-            set0(--size, null);
+            fastSet(--size, null);
     }
 
     /**
@@ -685,10 +726,10 @@ public class ResizableArray extends AbstractList<Object> implements
     }
 
     /**
-     * Save the state of the <tt>ArrayList</tt> instance to a stream (that is,
-     * serialize it).
+     * Save the state of the <tt>ResizableArray</tt> instance to a stream (that
+     * is, serialize it).
      * 
-     * @serialData The length of the array backing the <tt>ArrayList</tt>
+     * @serialData The length of the array backing the <tt>ResizableArray</tt>
      *             instance is emitted (int), followed by all of its elements
      *             (each an <tt>Object</tt>) in the proper order.
      */
@@ -712,7 +753,7 @@ public class ResizableArray extends AbstractList<Object> implements
     }
 
     /**
-     * Reconstitute the <tt>ArrayList</tt> instance from a stream (that is,
+     * Reconstitute the <tt>ResizableArray</tt> instance from a stream (that is,
      * deserialize it).
      */
     private void readObject(java.io.ObjectInputStream s)
@@ -791,7 +832,6 @@ public class ResizableArray extends AbstractList<Object> implements
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public Object next() {
             checkForComodification();
             int i = cursor;
@@ -851,7 +891,6 @@ public class ResizableArray extends AbstractList<Object> implements
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public Object previous() {
             checkForComodification();
             int i = cursor - 1;
@@ -964,7 +1003,7 @@ public class ResizableArray extends AbstractList<Object> implements
             rangeCheck(index);
             checkForComodification();
             Object oldValue = ResizableArray.this.elementData(offset + index);
-            ResizableArray.this.set0(offset + index, e);
+            ResizableArray.this.fastSet(offset + index, e);
             return oldValue;
         }
 
