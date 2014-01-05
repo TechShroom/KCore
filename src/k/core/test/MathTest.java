@@ -3,10 +3,6 @@ package k.core.test;
 import k.core.util.math.UnlimitedDouble;
 
 public class MathTest {
-
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         UnlimitedDouble a = new UnlimitedDouble("4");
         System.err.println(a);
