@@ -285,8 +285,16 @@ public class ResizableArray extends AbstractList<Object> implements
     public boolean equals(Object o) {
         if (o instanceof ResizableArray) {
             ResizableArray r = (ResizableArray) o;
-            return Arrays.deepEquals((Object[]) elementData,
-                    (Object[]) r.elementData);
+            Object data = elementData, data2 = r.elementData;
+            if (data instanceof Object[] && data2 instanceof Object[]) {
+                return Arrays.deepEquals((Object[]) data, (Object[]) data2);
+            }
+            try {
+                return Reflect.invokeMethodStatic(boolean.class, Arrays.class,
+                        "equals", data, data2);
+            } catch (Exception e) {
+                throw new RuntimeException("problem during equals", e);
+            }
         }
         return super.equals(o);
     }
