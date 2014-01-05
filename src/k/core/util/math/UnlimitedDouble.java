@@ -57,7 +57,7 @@ public class UnlimitedDouble implements Cloneable {
         // check for negatives, but do not include them
         String withoutDec = value.replace(".", "")
                 .substring(((negative = value.charAt(0) == '-') ? 1 : 0))
-                .replaceAll("0+(?![^0])(\\d+)", "$1");
+                .replaceAll("0+(?!0)(\\d+(\\.\\d+)?)", "$1");
         // only digits
         if (!withoutDec.matches("^\\d+$")) {
             throw new NumberFormatException(value);
