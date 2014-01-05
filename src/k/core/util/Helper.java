@@ -198,6 +198,18 @@ public class Helper {
             }
             return out;
         }
+
+        public static void fillArray(Object array, Object value) {
+            for (int i = 0; i < Array.getLength(array); i++) {
+                Array.set(array, i, value);
+            }
+        }
+
+        public static Object createAndFill(Class<?> type, int size, Object value) {
+            Object array = Array.newInstance(type, size);
+            fillArray(array, value);
+            return array;
+        }
     }
 
     public static class ProgramProps {
