@@ -179,7 +179,8 @@ public class UnlimitedDouble implements Cloneable {
             shallow.negative = negative;
             return shallow;
         } catch (CloneNotSupportedException e) {
-            System.err.println("not cloneable?");
+            // this shouldn't happen, since we are Cloneable
+            throw new InternalError();
         }
         return null;
     }
