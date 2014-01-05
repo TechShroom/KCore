@@ -182,7 +182,6 @@ public class UnlimitedDouble implements Cloneable {
             // this shouldn't happen, since we are Cloneable
             throw new InternalError();
         }
-        return null;
     }
 
     /**
