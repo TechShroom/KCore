@@ -185,6 +185,18 @@ public class UnlimitedDouble implements Cloneable {
         return null;
     }
 
+    /**
+     * The compare speed for this method depends on the state of the objects:<br>
+     * If <tt>this.negative != obj.negative</tt>, then it is a quick boolean
+     * compare.<br>
+     * Otherwise, if <tt>this.decimal != obj.decimal</tt>, then it is a quick
+     * boolean and int compare.<br>
+     * Otherwise, if <tt>this.digits.size() != obj.digits.size()</tt>, then it
+     * is a bool-int-int compare.<br>
+     * Otherwise, it takes more time depending on the size of <tt>digits</tt>
+     * due to the nature of {@link ResizableArray#equals(Object)}<br>
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof UnlimitedDouble) {
