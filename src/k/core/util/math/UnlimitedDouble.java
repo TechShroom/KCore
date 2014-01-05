@@ -107,14 +107,13 @@ public class UnlimitedDouble implements Cloneable {
     /* Public methods */
 
     public UnlimitedDouble add(UnlimitedDouble b) {
-        UnlimitedDouble a = this;
-        // we pad the originals so that if they are added again, the pad will
-        // skip. May not help with printing, but printing is not our concern.
+        UnlimitedDouble a = this.clone();
+        b = b.clone();
+        // don't use originals, we align the char arrays ourselves in pad()
         pad(a, b);
-        System.err.println("adding " + String.format("%s and %s", a, b));
-        UnlimitedDouble result = EMPTY.clone();
+        UnlimitedDouble result = empty();
         UnlimitedDouble abs_a = a.abs(), abs_b = b.abs();
-        return new UnlimitedDouble("0");
+        return result;
     }
 
     public UnlimitedDouble subtract(UnlimitedDouble b) {
@@ -126,8 +125,8 @@ public class UnlimitedDouble implements Cloneable {
 
     public UnlimitedDouble multiply(UnlimitedDouble b) {
         UnlimitedDouble a = this;
-        pad(a, b); // temporary
-        return new UnlimitedDouble("0");
+        UnlimitedDouble result = empty();
+        return result;
     }
 
     public UnlimitedDouble abs() {
@@ -207,6 +206,9 @@ public class UnlimitedDouble implements Cloneable {
 
     @Override
     public String toString() {
+        if (equals(EMPTY)) {
+            return "undefined";
+        }
         ResizableArray copy = digits.clone();
         if (digits.size() > decimal) {
             copy.add(decimal - (negative ? 1 : 0), '.');
