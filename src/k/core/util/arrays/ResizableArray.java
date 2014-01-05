@@ -3,6 +3,7 @@ package k.core.util.arrays;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -278,6 +279,16 @@ public class ResizableArray extends AbstractList<Object> implements
             // this shouldn't happen, since we are Cloneable
             throw new InternalError();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ResizableArray) {
+            ResizableArray r = (ResizableArray) o;
+            return Arrays.deepEquals((Object[]) elementData,
+                    (Object[]) r.elementData);
+        }
+        return super.equals(o);
     }
 
     /**
