@@ -4,7 +4,7 @@ import k.core.util.Helper.Arrays;
 import k.core.util.arrays.ResizableArray;
 import k.core.util.strings.Strings;
 
-public class UnlimitedDouble implements Cloneable {
+public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
      * 'null')
@@ -182,6 +182,11 @@ public class UnlimitedDouble implements Cloneable {
             // this shouldn't happen, since we are Cloneable
             throw new InternalError();
         }
+    }
+    
+    @Override
+    public int compareTo(UnlimitedDouble ud) {
+        return 0;
     }
 
     /**
