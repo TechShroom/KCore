@@ -7,7 +7,13 @@ import k.core.util.strings.Strings;
 public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
-     * 'null')
+     * 'null') <br>
+     * <br>
+     * A special use for this is the identity property. In all operations, this
+     * acts as the identity number for that operation. <br>
+     * <br>
+     * The methods that implement the comparison operators (>, <, >=, <=) are
+     * undefined for this value.
      */
     private static final UnlimitedDouble EMPTY = new UnlimitedDouble("0");
     static {
@@ -107,6 +113,12 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     /* Public methods */
 
     public UnlimitedDouble add(UnlimitedDouble b) {
+        if (b.equals(EMPTY)) {
+            return this;
+        }
+        if (equals(EMPTY)) {
+            return b;
+        }
         UnlimitedDouble a = this.clone();
         b = b.clone();
         // don't use originals, we align the char arrays ourselves in pad()
@@ -117,6 +129,12 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     }
 
     public UnlimitedDouble subtract(UnlimitedDouble b) {
+        if (b.equals(EMPTY)) {
+            return this;
+        }
+        if (equals(EMPTY)) {
+            return b;
+        }
         // flip the negative value on b and add
         b = b.clone();
         b.negative = !b.negative;
@@ -124,6 +142,12 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     }
 
     public UnlimitedDouble multiply(UnlimitedDouble b) {
+        if (b.equals(EMPTY)) {
+            return this;
+        }
+        if (equals(EMPTY)) {
+            return b;
+        }
         UnlimitedDouble a = this;
         UnlimitedDouble result = empty();
         return result;
