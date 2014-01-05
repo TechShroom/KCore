@@ -192,6 +192,7 @@ public class UnlimitedDouble implements Cloneable {
             // compare faster than arrays, so fall-through ensures that it is
             // efficient
             return ud.negative == negative && ud.decimal == ud.decimal
+                    && ud.digits.size() == digits.size()
                     && ud.digits.equals(digits);
         }
         return super.equals(obj);
