@@ -175,7 +175,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     @SuppressWarnings("unchecked")
     private T copyOf(int size) {
         T temp = (T) Array.newInstance(arrayType.getComponentType(), size);
-        System.arraycopy(elementData, 0, temp, 0, length());
+        System.arraycopy(elementData, 0, temp, 0, Math.min(size, length()));
         return temp;
     }
 
