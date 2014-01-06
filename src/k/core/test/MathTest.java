@@ -8,8 +8,14 @@ public class MathTest {
                 "60.0"), c = UnlimitedDouble.empty();
         System.err.println(a);
         System.err.println(b);
-        System.err.println(a.compareTo(b));
-        System.err.println(b.compareTo(a));
+        System.err
+                .println(String.format("%s > %s = ", a, b) + a.greaterThan(b));
+        System.err.println(String.format("%s >= %s = ", a, b)
+                + a.greaterThanOrEqual(b));
+        System.err
+                .println(String.format("%s > %s = ", b, a) + b.greaterThan(a));
+        System.err.println(String.format("%s >= %s = ", b, a)
+                + b.greaterThanOrEqual(a));
         add(a, b);
         multiply(a, b);
 

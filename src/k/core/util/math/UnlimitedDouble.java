@@ -1,6 +1,8 @@
 package k.core.util.math;
 
-import k.core.util.Helper.Arrays;
+import java.util.Arrays;
+
+import k.core.util.Helper.BetterArrays;
 import k.core.util.arrays.ResizableArray;
 import k.core.util.strings.Strings;
 
@@ -98,7 +100,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             // no work needed, they are equal
             return;
         }
-        char[] chars = (char[]) Arrays.createAndFill(char.class, diff, '0');
+        char[] chars = (char[]) BetterArrays.createAndFill(char.class, diff,
+                '0');
         if (a.rtlDecimal() < newDecimal) {
             a.digits.addAll(chars);
         } else if (b.rtlDecimal() < newDecimal) {
@@ -159,37 +162,70 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         return clone;
     }
 
+    /**
+     * Returns <tt>this > b</tt>
+     * 
+     * @param b
+     *            - the other value to compare against
+     * @return <tt>this > b</tt>
+     */
     public boolean greaterThan(UnlimitedDouble b) {
-        if (decimal > b.decimal) {
-            // b is smaller via decimal, so we MUST be greater
-            return true;
-        }
-        if (!hasDecimal() && !b.hasDecimal()) {
-            // no decimals to fiddle with, and we have more digits, we are
-            // greater
-            return digits.size() > b.digits.size();
-        }
-        return false;
+        // greater than
+        return compareTo(b) == 1;
     }
 
+    /**
+     * Returns <tt>this >= b</tt>
+     * 
+     * @param b
+     *            - the other value to compare against
+     * @return <tt>this >= b</tt>
+     */
     public boolean greaterThanOrEqual(UnlimitedDouble b) {
-        // assuming equals faster than greaterThan
-        return equals(b) || greaterThan(b);
+        // not less than
+        return compareTo(b) != -1;
     }
 
+    /**
+     * Returns <tt>this < b</tt>
+     * 
+     * @param b
+     *            - the other value to compare against
+     * @return <tt>this < b</tt>
+     */
     public boolean lessThan(UnlimitedDouble b) {
-        // reuse old method...not most efficient way to do this. Consider
-        // rewriting greaterThan()
-        return !greaterThanOrEqual(b);
+        // less than
+        return compareTo(b) == -1;
     }
 
+    /**
+     * Returns <tt>this <= b</tt>
+     * 
+     * @param b
+     *            - the other value to compare against
+     * @return <tt>this <= b</tt>
+     */
     public boolean lessThanOrEqual(UnlimitedDouble b) {
-        // probably more efficient than using equals and lessThan
-        return !greaterThan(b);
+        // not greater than
+        return compareTo(b) != 1;
     }
 
+    /**
+     * Returns when this number is a float
+     * 
+     * @return if this number has a decimal point
+     */
     public boolean hasDecimal() {
         return decimal != digits.size();
+    }
+
+    /**
+     * The number of digits
+     * 
+     * @return the amount of digits in this number
+     */
+    public int length() {
+        return digits.size();
     }
 
     /* Overridden defaults */
@@ -207,10 +243,94 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             throw new InternalError();
         }
     }
-    
+
+    /**
+     * This is used by greaterThan and lessThan because it returns 1 for
+     * <tt>y</tt> > <tt>this</tt>, 0 for equal, and -1 for <tt>y</tt> <
+     * <tt>this</tt>
+     */
     @Override
-    public int compareTo(UnlimitedDouble ud) {
-        return 0;
+    public int compareTo(UnlimitedDouble y) {
+        UnlimitedDouble x = this;
+        char[] bdx = new char[x.length()], bdy = new char[y.length()], adx = new char[0], ady = new char[0];
+        // read decimal
+        if (x.hasDecimal()) {
+            bdx = new char[x.decimal];
+            adx = new char[x.rtlDecimal()];
+            for (int i = 0; i < bdx.length; i++) {
+                bdx[i] = (Character) x.digits.get(i);
+            }
+            for (int i = 0; i < adx.length; i++) {
+                adx[i] = (Character) x.digits.get(decimal + i);
+            }
+        }
+        if (y.hasDecimal()) {
+            bdy = new char[y.decimal];
+            ady = new char[y.rtlDecimal()];
+            for (int i = 0; i < bdy.length; i++) {
+                bdy[i] = (Character) y.digits.get(i);
+            }
+            for (int i = 0; i < ady.length; i++) {
+                ady[i] = (Character) y.digits.get(decimal + i);
+            }
+        }
+        // test non-decimal bits
+        if (bdx.length > bdy.length) {
+            return 1;
+        } else if (bdx.length < bdy.length) {
+            return -1;
+        }
+        int solved = 2; // 2 because 0 means equal
+        int index = 0;
+        while (solved == 2 && index < bdx.length) {
+            if (bdx[index] != bdy[index]) {
+                // read the char as a number, byte is the smallest way to do
+                // this
+                byte bx = Byte.parseByte(String.valueOf(bdx[index])), by = Byte
+                        .parseByte(String.valueOf(bdy[index]));
+                if (bx > by) {
+                    solved = 1;
+                } else if (bx == by) {
+                    solved = 2;
+                } else if (bx < by) {
+                    solved = -1;
+                }
+            } else {
+                solved = 2;
+            }
+        }
+        // we just ran out of digits, the numbers are equal integers
+        if (solved == 2) {
+            // test decimal bits
+            if (adx.length > ady.length) {
+                return 1;
+            } else if (adx.length < ady.length) {
+                return -1;
+            }
+            index = 0;
+            while (solved == 2 && index < adx.length) {
+                if (adx[index] != ady[index]) {
+                    // read the char as a number, byte is the smallest way to do
+                    // this
+                    byte bx = Byte.parseByte(String.valueOf(adx[index])), by = Byte
+                            .parseByte(String.valueOf(ady[index]));
+                    if (bx > by) {
+                        solved = 1;
+                    } else if (bx == by) {
+                        solved = 2;
+                    } else if (bx < by) {
+                        solved = -1;
+                    }
+                } else {
+                    solved = 2;
+                }
+            }
+        }
+        // equal!!!
+        if (solved == 2) {
+            solved = 0;
+        }
+        return solved;
     }
 
     /**
