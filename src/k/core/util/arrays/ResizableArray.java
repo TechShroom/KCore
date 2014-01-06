@@ -368,6 +368,16 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         return copyOf(size);
     }
 
+    /**
+     * Gets the array that backs this <tt>ResizableArray</tt>. Only use this if
+     * you know what you are doing!
+     * 
+     * @return the array that backs this instance.
+     */
+    public T getUnderlyingArray() {
+        return elementData;
+    }
+
     // Positional Access Operations
 
     Object elementData(int index) {
