@@ -199,6 +199,19 @@ public class Helper {
             return out;
         }
 
+        /*
+         * This is a cool trick which allows us to return the requested array
+         * even with primitives as the component type.
+         */
+        public static <T> T reverseNonGeneric(T t) {
+            T out = (T) Array.newInstance(t.getClass().getComponentType(),
+                    Array.getLength(t));
+            for (int i = 0; i < Array.getLength(out); i++) {
+                Array.set(out, Array.getLength(t) - i - 1, Array.get(t, i));
+            }
+            return out;
+        }
+
         public static void fillArray(Object array, Object value) {
             for (int i = 0; i < Array.getLength(array); i++) {
                 Array.set(array, i, value);
