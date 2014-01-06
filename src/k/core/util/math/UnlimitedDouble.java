@@ -139,12 +139,45 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         if (equals(EMPTY)) {
             return b;
         }
+        // don't use originals, we align the char arrays ourselves in pad()
         UnlimitedDouble a = this.clone();
         b = b.clone();
-        // don't use originals, we align the char arrays ourselves in pad()
         pad(a, b);
-        UnlimitedDouble result = empty();
-        UnlimitedDouble abs_a = a.abs(), abs_b = b.abs();
+        UnlimitedDouble result = empty(), larger = max(a, b);
+        // get the matching array for the numbers. uses getUnderlying due to
+        // increased speed. We don't mod the original number arrays, they are
+        // reversed into a new array.
+        char[] caa = (char[]) a.digits.getUnderlyingArray(), cab = (char[]) b.digits
+                .getUnderlyingArray();
+        // create the array used to carry numbers
+        byte[] carry = new byte[larger.length() + 1];
+        ResizableArray<char[]> res = result.digits;
+        caa = BetterArrays.reverseNonGeneric(caa);
+        cab = BetterArrays.reverseNonGeneric(cab);
+        int length = larger.length();
+        for (int i = 0; i < length; i++) {
+            byte ai = 0, bi = 0, over = carry[i];
+            if (i < caa.length) {
+                ai = Strings.getNumForChar(caa[i]);
+            }
+            if (i < cab.length) {
+                bi = Strings.getNumForChar(cab[i]);
+            }
+            int ires = ai + bi + over;
+            char[] cres = String.valueOf(ires).toCharArray();
+            if (cres.length > 1) {
+                carry[i + 1] = Strings.getNumForChar(cres[0]);
+                res.setResize(i, cres[1]);
+            } else {
+                res.setResize(i, cres[0]);
+            }
+        }
+        if (carry[carry.length - 1] != 0) {
+            res.setResize(carry.length - 1,
+                    Strings.getCharForNum(carry[carry.length - 1]));
+        }
+        res.reverse();
+        result.decimal = result.length() - a.rtlDecimal();
         return result;
     }
 
