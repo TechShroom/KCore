@@ -329,6 +329,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             } else {
                 solved = 2;
             }
+            index++;
         }
         // we just ran out of digits, the numbers are equal integers
         if (solved == 2) {
@@ -359,6 +360,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
                 } else {
                     solved = 2;
                 }
+                index++;
             }
         }
         // equal!!!
