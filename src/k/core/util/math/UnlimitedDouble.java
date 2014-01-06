@@ -78,10 +78,11 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         if (Strings.count(value, '.') > 1) {
             throw new NumberFormatException(value);
         }
-        // check for negatives, but do not include them
-        String withoutDec = value.replace(".", "")
-                .substring(((negative = value.charAt(0) == '-') ? 1 : 0))
+        // do this BEFORE decimal place check, otherwise it screws up.
+        value = value.substring(((negative = value.charAt(0) == '-') ? 1 : 0))
                 .replaceAll("0+(?!0)(\\d+(\\.\\d+)?)", "$1");
+        // check for negatives, but do not include them
+        String withoutDec = value.replace(".", "");
         // only digits
         if (!withoutDec.matches("^\\d+$")) {
             throw new NumberFormatException(value);
@@ -155,9 +156,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             return b;
         }
         // flip the negative value on b and add
-        b = b.clone();
-        b.negative = !b.negative;
-        return add(b);
+        return add(b.negate());
     }
 
     public UnlimitedDouble multiply(UnlimitedDouble b) {
@@ -252,6 +251,17 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      */
     public int length() {
         return digits.size();
+    }
+
+    /**
+     * Negates this UD (<tt>this</tt> * -1)
+     * 
+     * @return <tt>this</tt> * -1
+     */
+    public UnlimitedDouble negate() {
+        UnlimitedDouble copy = clone();
+        copy.negative = !negative;
+        return copy;
     }
 
     /* Overridden defaults */
@@ -410,7 +420,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         }
         ResizableArray<char[]> copy = digits.clone();
         if (digits.size() > decimal) {
-            copy.add(decimal - (negative ? 1 : 0), '.');
+            copy.add(decimal, '.');
         }
         if (negative) {
             copy.add(0, '-');
