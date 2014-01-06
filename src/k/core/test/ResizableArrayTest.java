@@ -21,6 +21,8 @@ public class ResizableArrayTest {
             array.add(Math.random());
         }
         print(array);
+        double d = array.get(0);
+        System.err.println(d);
         long end = System.currentTimeMillis() - start;
         System.err.println("Took " + end);
     }
@@ -33,6 +35,8 @@ public class ResizableArrayTest {
             array.add(Math.random());
         }
         print(array);
+        double d = (Double) array.get(0);
+        System.err.println(d);
         long end = System.currentTimeMillis() - start;
         System.err.println("Took " + end);
     }
