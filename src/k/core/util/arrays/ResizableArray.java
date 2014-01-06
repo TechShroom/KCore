@@ -429,13 +429,14 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      * @param element
      */
     public void setResize(int index, Object element) {
-        ensureCapacityInternal(index + 1);
-
         try {
             elementData(index);
         } catch (ArrayIndexOutOfBoundsException out) {
             size++;
         }
+
+        ensureCapacityInternal(index + 1);
+
         fastSet(index, element);
     }
 
