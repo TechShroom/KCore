@@ -300,14 +300,19 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             if (bdx[index] != bdy[index]) {
                 // read the char as a number, byte is the smallest way to do
                 // this
-                byte bx = Byte.parseByte(String.valueOf(bdx[index])), by = Byte
-                        .parseByte(String.valueOf(bdy[index]));
-                if (bx > by) {
-                    solved = 1;
-                } else if (bx == by) {
-                    solved = 2;
-                } else if (bx < by) {
-                    solved = -1;
+                try {
+                    byte bx = Byte.parseByte(String.valueOf(bdx[index])), by = Byte
+                            .parseByte(String.valueOf(bdy[index]));
+
+                    if (bx > by) {
+                        solved = 1;
+                    } else if (bx == by) {
+                        solved = 2;
+                    } else if (bx < by) {
+                        solved = -1;
+                    }
+                } catch (NumberFormatException nfe) {
+                    return nfe.hashCode();
                 }
             } else {
                 solved = 2;
@@ -326,14 +331,18 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
                 if (adx[index] != ady[index]) {
                     // read the char as a number, byte is the smallest way to do
                     // this
-                    byte bx = Byte.parseByte(String.valueOf(adx[index])), by = Byte
-                            .parseByte(String.valueOf(ady[index]));
-                    if (bx > by) {
-                        solved = 1;
-                    } else if (bx == by) {
-                        solved = 2;
-                    } else if (bx < by) {
-                        solved = -1;
+                    try {
+                        byte bx = Byte.parseByte(String.valueOf(adx[index])), by = Byte
+                                .parseByte(String.valueOf(ady[index]));
+                        if (bx > by) {
+                            solved = 1;
+                        } else if (bx == by) {
+                            solved = 2;
+                        } else if (bx < by) {
+                            solved = -1;
+                        }
+                    } catch (NumberFormatException nfe) {
+                        return nfe.hashCode();
                     }
                 } else {
                     solved = 2;
