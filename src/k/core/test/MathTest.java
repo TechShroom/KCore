@@ -17,6 +17,7 @@ public class MathTest {
         System.err.println(String.format("%s >= %s = ", b, a)
                 + b.greaterThanOrEqual(a));
         add(a, b);
+        subtract(a, new UnlimitedDouble("-" + b));
         multiply(a, b);
 
         invalid();
@@ -33,6 +34,11 @@ public class MathTest {
 
     public static void add(UnlimitedDouble a, UnlimitedDouble b) {
         UnlimitedDouble c = a.add(b); // a + b test
+        System.err.println("UD c = " + c);
+    }
+
+    public static void subtract(UnlimitedDouble a, UnlimitedDouble b) {
+        UnlimitedDouble c = a.subtract(b); // a - b test
         System.err.println("UD c = " + c);
     }
 
