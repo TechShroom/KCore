@@ -422,6 +422,23 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     /**
+     * Does a set with a resize to the index if required.
+     * 
+     * @param index
+     * @param element
+     */
+    public void setResize(int index, Object element) {
+        ensureCapacityInternal(index + 1);
+
+        try {
+            elementData(index);
+        } catch (ArrayIndexOutOfBoundsException out) {
+            size++;
+        }
+        fastSet(index, element);
+    }
+
+    /**
      * A quick set that ignores range checking
      */
     private void fastSet(int index, Object o) {
