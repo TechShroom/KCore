@@ -52,7 +52,7 @@ public class Helper {
     }
 
     @SuppressWarnings("unchecked")
-    public static class Arrays {
+    public static class BetterArrays {
         public static void print(Object[] array) {
             print(array, System.err);
         }
@@ -137,7 +137,7 @@ public class Helper {
                     .getComponentType(), in.length);
             System.arraycopy(in, 0, array, 0, in.length);
             while (count > -1) {
-                array = Arrays.randomArray(array);
+                array = BetterArrays.randomArray(array);
                 count--;
             }
             return array;
