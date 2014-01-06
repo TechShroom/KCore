@@ -22,7 +22,7 @@ import k.core.util.reflect.Reflect;
  * @author kenzietogami
  * 
  */
-public class ResizableArray extends AbstractList<Object> implements
+public class ResizableArray<T> extends AbstractList<Object> implements
         List<Object>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
 
@@ -31,7 +31,7 @@ public class ResizableArray extends AbstractList<Object> implements
      * stored. The capacity of the ResizableArray is the length of this array
      * buffer.
      */
-    private transient Object elementData;
+    private transient T elementData;
 
     /**
      * The size of the ResizableArray (the number of elements it contains).
@@ -40,7 +40,7 @@ public class ResizableArray extends AbstractList<Object> implements
      */
     private int size;
 
-    private Class<?> arrayType;
+    private Class<T> arrayType;
 
     /**
      * Constructs an empty list with the specified initial capacity.
@@ -50,19 +50,21 @@ public class ResizableArray extends AbstractList<Object> implements
      * @throws IllegalArgumentException
      *             if the specified initial capacity is negative
      */
-    public ResizableArray(Class<?> type, int initialCapacity) {
+    @SuppressWarnings("unchecked")
+    public ResizableArray(Class<T> type, int initialCapacity) {
         super();
         if (initialCapacity < 0)
             throw new IllegalArgumentException("Illegal Capacity: "
                     + initialCapacity);
-        this.elementData = Array.newInstance(type, initialCapacity);
+        this.elementData = (T) Array.newInstance(type.getComponentType(),
+                initialCapacity);
         arrayType = type;
     }
 
     /**
      * Constructs an empty list with an initial capacity of ten.
      */
-    public ResizableArray(Class<?> type) {
+    public ResizableArray(Class<T> type) {
         this(type, 10);
     }
 
@@ -75,8 +77,9 @@ public class ResizableArray extends AbstractList<Object> implements
      * @throws NullPointerException
      *             if the specified collection is null
      */
-    public ResizableArray(Class<?> type, Collection<?> c) {
-        elementData = c.toArray();
+    @SuppressWarnings("unchecked")
+    public ResizableArray(Class<T> type, Collection<?> c) {
+        elementData = (T) c.toArray();
         size = length();
         // c.toArray might (incorrectly) not return Object[] (see 6260652)
         if (elementData.getClass() != type) {
@@ -95,8 +98,9 @@ public class ResizableArray extends AbstractList<Object> implements
      *             <tt>array.getClass().getComponentType()</tt> is <tt>null</tt>
      *             )
      */
-    public ResizableArray(Object array) {
-        arrayType = array.getClass().getComponentType();
+    @SuppressWarnings("unchecked")
+    public ResizableArray(T array) {
+        arrayType = (Class<T>) array.getClass();
         if (arrayType == null) {
             throw new IllegalArgumentException(String.valueOf(array));
         }
@@ -167,8 +171,9 @@ public class ResizableArray extends AbstractList<Object> implements
         elementData = copyOf(size);
     }
 
-    private Object copyOf(int size) {
-        Object temp = Array.newInstance(arrayType, size);
+    @SuppressWarnings("unchecked")
+    private T copyOf(int size) {
+        T temp = (T) Array.newInstance(arrayType.getComponentType(), size);
         System.arraycopy(elementData, 0, temp, 0, length());
         return temp;
     }
@@ -267,10 +272,11 @@ public class ResizableArray extends AbstractList<Object> implements
      * 
      * @return a clone of this <tt>ResizableArray</tt> instance
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public ResizableArray clone() {
+    public ResizableArray<T> clone() {
         try {
-            ResizableArray v = (ResizableArray) super.clone();
+            ResizableArray<T> v = (ResizableArray<T>) super.clone();
             v.elementData = copyOf(size);
             v.modCount = 0;
             v.arrayType = arrayType;
@@ -281,10 +287,12 @@ public class ResizableArray extends AbstractList<Object> implements
         }
     }
 
+    @SuppressWarnings({ "unchecked" })
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ResizableArray) {
-            ResizableArray r = (ResizableArray) o;
+        if (o instanceof ResizableArray
+                && (((ResizableArray<?>) o).arrayType == arrayType)) {
+            ResizableArray<T> r = (ResizableArray<T>) o;
             Object data = elementData, data2 = r.elementData;
             if (data instanceof Object[] && data2 instanceof Object[]) {
                 return Arrays.deepEquals((Object[]) data, (Object[]) data2);
@@ -346,17 +354,17 @@ public class ResizableArray extends AbstractList<Object> implements
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T[] toArray(T[] a) {
+    public <E> E[] toArray(E[] a) {
         if (a.length < size)
             // Make a new array of a's runtime type, but my contents:
-            return (T[]) copyOf(size);
+            return (E[]) copyOf(size);
         System.arraycopy(elementData, 0, a, 0, size);
         if (a.length > size)
             a[size] = null;
         return a;
     }
 
-    public Object getArray() {
+    public T getArray() {
         return copyOf(size);
     }
 
@@ -760,6 +768,7 @@ public class ResizableArray extends AbstractList<Object> implements
 
         // Write out array length
         s.writeInt(length());
+        s.writeObject(arrayType);
 
         // Write out all elements in the proper order.
         for (int i = 0; i < size; i++)
@@ -775,6 +784,7 @@ public class ResizableArray extends AbstractList<Object> implements
      * Reconstitute the <tt>ResizableArray</tt> instance from a stream (that is,
      * deserialize it).
      */
+    @SuppressWarnings("unchecked")
     private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {
         // Read in size, and any hidden stuff
@@ -782,7 +792,9 @@ public class ResizableArray extends AbstractList<Object> implements
 
         // Read in array length and allocate array
         int arrayLength = s.readInt();
-        Object a = elementData = Array.newInstance(arrayType, arrayLength);
+        arrayType = (Class<T>) s.readObject();
+        T a = elementData = (T) Array.newInstance(arrayType.getComponentType(),
+                arrayLength);
 
         // Read in all elements in the proper order.
         for (int i = 0; i < size; i++)
