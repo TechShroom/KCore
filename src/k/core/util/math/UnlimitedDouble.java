@@ -21,6 +21,8 @@ import k.core.util.strings.Strings;
  * 
  */
 public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
+    private static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
+            ZERO = new UnlimitedDouble("0");
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
      * 'null') <br>
@@ -31,7 +33,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      * The methods that implement the comparison operators (>, <, >=, <=) are
      * undefined for this value.
      */
-    private static final UnlimitedDouble EMPTY = new UnlimitedDouble("0");
+    private static final UnlimitedDouble EMPTY = ZERO.clone();
     static {
         EMPTY.digits = new ResizableArray(new char[0]);
         EMPTY.decimal = EMPTY.digits.size();
@@ -166,8 +168,18 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             return b;
         }
         UnlimitedDouble a = this;
-        UnlimitedDouble result = empty();
-        return result;
+        UnlimitedDouble result = zero();
+        boolean sign = a.negative == b.negative; // true = (+); false = (-)
+        a = a.abs();
+        b = b.abs();
+        // extremely inefficient way to multiply...multiplying is repeated
+        // addition, right?
+        UnlimitedDouble counter = zero();
+        while (counter.lessThan(b)) {
+            result = result.add(a);
+            counter = counter.add(one());
+        }
+        return new UnlimitedDouble(!sign ? "-" : "" + result);
     }
 
     public UnlimitedDouble abs() {
@@ -436,6 +448,14 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      */
     public static UnlimitedDouble empty() {
         return EMPTY.clone();
+    }
+
+    public static UnlimitedDouble one() {
+        return ONE.clone();
+    }
+
+    public static UnlimitedDouble zero() {
+        return ZERO.clone();
     }
 
     /**
