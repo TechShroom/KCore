@@ -13,6 +13,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
+import k.core.util.Helper.BetterArrays;
 import k.core.util.reflect.Reflect;
 
 /**
@@ -777,6 +778,13 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             }
         }
         return modified;
+    }
+
+    /**
+     * Reverses this list.
+     */
+    public void reverse() {
+        elementData = BetterArrays.reverseNonGeneric(elementData);
     }
 
     /**
