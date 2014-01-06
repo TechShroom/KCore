@@ -30,4 +30,21 @@ public class Strings {
         // the ascii offset for numbers is 48, adding 48 gets the right char
         return (char) (number + 48);
     }
+
+    /**
+     * Returns the matching <tt>number</tt> for <tt>c</tt>. Only works with
+     * chars '0'-'9'.
+     * 
+     * @param c
+     *            - a char from '0'-'9'
+     * @return the char that matches
+     */
+    public static byte getNumForChar(char c) {
+        if (c < 48 || c > 57) {
+            throw new IndexOutOfBoundsException("not 0-9");
+        }
+        // the ascii offset for numbers is 48, subtracting 48 gets the right
+        // byte
+        return (byte) (c - 48);
+    }
 }
