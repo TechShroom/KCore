@@ -4,6 +4,22 @@ import k.core.util.Helper.BetterArrays;
 import k.core.util.arrays.ResizableArray;
 import k.core.util.strings.Strings;
 
+/**
+ * A class that provides a virtually unlimited double, with the limitation being
+ * the value of {@link ResizableArray#MAX_ARRAY_SIZE MAX_ARRAY_SIZE}, due to
+ * array size limits.
+ * 
+ * (Note that this is a digit count limit, you can have up to that many
+ * <b>digits</b>)<br>
+ * <br>
+ * 
+ * TODO: <br>
+ * Add divide(), optimize so that we can do operations quickly. Current
+ * optimization ~80%.
+ * 
+ * @author Kenzie Togami
+ * 
+ */
 public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
