@@ -35,7 +35,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      */
     private static final UnlimitedDouble EMPTY = ZERO.clone();
     static {
-        EMPTY.digits = new ResizableArray(new char[0]);
+        EMPTY.digits = new ResizableArray<char[]>(new char[0]);
         EMPTY.decimal = EMPTY.digits.size();
         EMPTY.negative = false;
     }
@@ -43,7 +43,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     /**
      * The digits, not including the decimal or negative.
      */
-    private ResizableArray digits = null;
+    private ResizableArray<char[]> digits = null;
     /**
      * The decimal place, inserted between <tt>decimal</tt> and
      * <tt>decimal+1</tt>
@@ -88,7 +88,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         }
         decimal = value.indexOf('.');
         // convert string
-        digits = new ResizableArray(withoutDec.toCharArray());
+        digits = new ResizableArray<char[]>(withoutDec.toCharArray());
         // decimal place = length of digits when there is none
         if (decimal < 0) {
             decimal = digits.size();
@@ -406,7 +406,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         if (equals(EMPTY)) {
             return "undefined";
         }
-        ResizableArray copy = digits.clone();
+        ResizableArray<char[]> copy = digits.clone();
         if (digits.size() > decimal) {
             copy.add(decimal - (negative ? 1 : 0), '.');
         }
