@@ -320,6 +320,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     public UnlimitedDouble clone() {
         try {
             UnlimitedDouble shallow = (UnlimitedDouble) super.clone();
+            digits.trimToSize();
+            digits.permitUndefined(false);
             shallow.digits = digits.clone();
             shallow.decimal = decimal;
             shallow.negative = negative;
