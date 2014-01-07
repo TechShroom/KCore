@@ -177,32 +177,28 @@ public class ResizableArray<T> extends AbstractList<Object> implements
 
     private boolean primitveInvalids(Object o) {
         Class<?> primCheck = o.getClass();
-        boolean prim = primCheck.isPrimitive();
-        if (!prim) {
-            return false;
-        }
-        if (primCheck == int.class) {
+        if (primCheck == Integer.class) {
             return ((Integer) o) == 0;
         }
-        if (primCheck == byte.class) {
+        if (primCheck == Byte.class) {
             return ((Byte) o) == 0;
         }
-        if (primCheck == char.class) {
+        if (primCheck == Character.class) {
             return ((Character) o) == 0;
         }
-        if (primCheck == float.class) {
+        if (primCheck == Float.class) {
             return ((Float) o) == 0.0f;
         }
-        if (primCheck == double.class) {
+        if (primCheck == Double.class) {
             return ((Double) o) == 0.0d;
         }
-        if (primCheck == short.class) {
+        if (primCheck == Short.class) {
             return ((Short) o) == 0;
         }
-        if (primCheck == long.class) {
+        if (primCheck == Long.class) {
             return ((Long) o) == 0;
         }
-        if (primCheck == boolean.class) {
+        if (primCheck == Boolean.class) {
             return ((Boolean) o) == false;
         }
         return false;
