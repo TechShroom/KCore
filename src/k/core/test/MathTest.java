@@ -17,7 +17,7 @@ public class MathTest {
         System.err.println(String.format("%s >= %s = ", b, a)
                 + b.greaterThanOrEqual(a));
         add(a, b);
-        subtract(a, b.negate());
+        subtract(a, b);
         multiply(a, b);
 
         invalid();
