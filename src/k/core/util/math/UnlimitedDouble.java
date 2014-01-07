@@ -79,8 +79,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             throw new NumberFormatException(value);
         }
         // do this BEFORE decimal place check, otherwise it screws up.
-        value = value.substring(((negative = value.charAt(0) == '-') ? 1 : 0))
-                .replaceAll("0+(?!0)(\\d+(\\.\\d+)?)", "$1");
+        value = trimZeros(value);
+        value = value.substring(((negative = value.charAt(0) == '-') ? 1 : 0));
         // check for negatives, but do not include them
         String withoutDec = value.replace(".", "");
         // only digits
@@ -98,6 +98,11 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
 
     private int rtlDecimal() {
         return digits.size() - decimal;
+    }
+
+    private String trimZeros(String value) {
+        return value.replaceFirst("\\.0+$", "").replaceFirst(
+                "^0+(?!0)(\\d+(\\.\\d+)?)$", "$1");
     }
 
     /* (private) Static methods */
