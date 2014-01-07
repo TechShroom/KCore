@@ -356,7 +356,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
                 bdx[i] = (Character) x.digits.get(i);
             }
             for (int i = 0; i < adx.length; i++) {
-                adx[i] = (Character) x.digits.get(decimal + i);
+                adx[i] = (Character) x.digits.get(decimal - 1 + i);
             }
         } else {
             for (int i = 0; i < bdx.length; i++) {
@@ -370,7 +370,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
                 bdy[i] = (Character) y.digits.get(i);
             }
             for (int i = 0; i < ady.length; i++) {
-                ady[i] = (Character) y.digits.get(decimal + i);
+                ady[i] = (Character) y.digits.get(decimal - 1 + i);
             }
         } else {
             for (int i = 0; i < bdy.length; i++) {
