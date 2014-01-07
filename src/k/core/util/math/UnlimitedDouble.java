@@ -23,6 +23,8 @@ import k.core.util.strings.Strings;
 public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     private static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
             ZERO = new UnlimitedDouble("0");
+    private static final boolean debugmode = Boolean.parseBoolean(System
+            .getProperty("k.core.util.math.ud_debug"));
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
      * 'null') <br>
@@ -333,7 +335,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         // must trim zeros before compare, or it breaks SEVERLEY
         String before = x.toString();
         x.parse0(before);
-        if (!before.equals(x.toString())) {
+        if (!before.equals(x.toString()) && debugmode) {
             System.err
                     .println("If you are getting bad results, compareTo is broken here. DEBUG: "
                             + before + " changed to " + x);
@@ -341,7 +343,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         }
         before = y.toString();
         y.parse0(before);
-        if (!before.equals(y.toString())) {
+        if (!before.equals(y.toString()) && debugmode) {
             System.err
                     .println("If you are getting bad results, compareTo is broken here. DEBUG: "
                             + before + " changed to " + y);
