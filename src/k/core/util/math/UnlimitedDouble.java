@@ -164,6 +164,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         // reversed into a new array. trimToSize is required here.
         a.digits.trimToSize();
         b.digits.trimToSize();
+        a.digits.permitUndefined(false);
+        b.digits.permitUndefined(false);
         char[] caa = (char[]) a.digits.getUnderlyingArray(), cab = (char[]) b.digits
                 .getUnderlyingArray();
         // create the array used to carry numbers
