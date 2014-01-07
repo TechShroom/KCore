@@ -833,7 +833,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     private boolean batchRemove(Collection<?> c, boolean complement) {
-        final Object elementData = this.elementData;
+        final T elementData = this.elementData;
         int r = 0, w = 0;
         boolean modified = false;
         try {
@@ -849,7 +849,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             }
             if (w != size) {
                 for (int i = w; i < size; i++)
-                    Array.set(elementData, i, null);
+                    fastSet(i, null);
                 modCount += size - w;
                 size = w;
                 modified = true;
