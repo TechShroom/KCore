@@ -332,6 +332,10 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             for (int i = 0; i < adx.length; i++) {
                 adx[i] = (Character) x.digits.get(decimal + i);
             }
+        } else {
+            for (int i = 0; i < bdx.length; i++) {
+                bdx[i] = (Character) x.digits.get(i);
+            }
         }
         if (y.hasDecimal()) {
             bdy = new char[y.decimal];
@@ -341,6 +345,10 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             }
             for (int i = 0; i < ady.length; i++) {
                 ady[i] = (Character) y.digits.get(decimal + i);
+            }
+        } else {
+            for (int i = 0; i < bdy.length; i++) {
+                bdy[i] = (Character) y.digits.get(i);
             }
         }
         // test non-decimal bits
