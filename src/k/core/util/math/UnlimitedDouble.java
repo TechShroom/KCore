@@ -63,6 +63,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
 
     public UnlimitedDouble(UnlimitedDouble value) {
         // clone digits so that we don't overwrite
+        value.digits.permitUndefined(false);
         digits = value.digits.clone();
         decimal = value.decimal;
         negative = value.negative;
@@ -80,6 +81,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         if (Strings.count(value, '.') > 1) {
             throw new NumberFormatException(value);
         }
+        // remove the invalids
+        value = value.replace(new String(new char[] { 0 }), "");
         // do this BEFORE decimal place check, otherwise it screws up.
         value = trimZeros(value);
         value = value.substring(((negative = value.charAt(0) == '-') ? 1 : 0));
@@ -92,6 +95,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         decimal = value.indexOf('.');
         // convert string
         digits = new ResizableArray<char[]>(withoutDec.toCharArray());
+        digits.permitUndefined(false);
         // decimal place = length of digits when there is none
         if (decimal < 0) {
             decimal = digits.size();
