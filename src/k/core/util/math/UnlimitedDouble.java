@@ -339,8 +339,10 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      */
     @Override
     public int compareTo(UnlimitedDouble y) {
-        UnlimitedDouble x = this;
+        UnlimitedDouble x = this.clone();
+        y = y.clone();
         // must trim zeros before compare, or it breaks SEVERLEY
+        // but don't mod the originals, that can cause repercussions
         String before = x.toString();
         x.parse0(before);
         if (!before.equals(x.toString()) && debugmode) {
