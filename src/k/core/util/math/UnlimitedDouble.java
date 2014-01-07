@@ -101,8 +101,12 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     }
 
     private String trimZeros(String value) {
-        return value.replaceFirst("\\.0+$", "").replaceFirst(
-                "^0+(?!0)(\\d+(\\.\\d+)?)$", "$1");
+        if (value.matches(".+?\\.0+$")) {
+            value = value.replaceFirst("\\.0+$", "");
+        } else if (value.matches(".+?\\.\\d+0+$")) {
+            value = value.replaceFirst("(\\.\\d+)0+$", "$1");
+        }
+        return value.replaceFirst("^0+(?!0)(\\d+(\\.\\d+)?)$", "$1");
     }
 
     /* (private) Static methods */
