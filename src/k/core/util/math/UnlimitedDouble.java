@@ -157,7 +157,9 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         UnlimitedDouble result = empty(), larger = max(a, b);
         // get the matching array for the numbers. uses getUnderlying due to
         // increased speed. We don't mod the original number arrays, they are
-        // reversed into a new array.
+        // reversed into a new array. trimToSize is required here.
+        a.digits.trimToSize();
+        b.digits.trimToSize();
         char[] caa = (char[]) a.digits.getUnderlyingArray(), cab = (char[]) b.digits
                 .getUnderlyingArray();
         // create the array used to carry numbers
