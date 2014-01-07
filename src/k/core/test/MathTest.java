@@ -50,21 +50,21 @@ public class MathTest {
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this should happen!)");
-            nfe.printStackTrace();
+            // nfe.printStackTrace();
         }
         try {
             c = new UnlimitedDouble("-1");
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this shouldn't happen!)");
-            nfe.printStackTrace();
+            // nfe.printStackTrace();
         }
         try {
             c = new UnlimitedDouble("1.00.02");
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this should happen!)");
-            nfe.printStackTrace();
+            // nfe.printStackTrace();
         }
     }
 
