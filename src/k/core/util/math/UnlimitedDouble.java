@@ -108,7 +108,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         } else if (value.matches(".+?\\.\\d+0+$")) {
             value = value.replaceFirst("(\\.\\d+)0+$", "$1");
         }
-        return value.replaceFirst("^0+(?!0)(\\d+(\\.\\d+)?)$", "$1");
+        return value.replaceFirst("^(\\-)?0+(?!0)(\\d+(\\.\\d+)?)$", "$1$2");
     }
 
     /* (private) Static methods */
