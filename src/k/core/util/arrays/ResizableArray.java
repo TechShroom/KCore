@@ -41,7 +41,15 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     private int size;
 
+    /**
+     * The type of the internal array. This is NOT the component type.
+     */
     private Class<T> arrayType;
+
+    /**
+     * If this <tt>ResiableArray</tt> permits undefined values, eg. null, 0.
+     */
+    private boolean permitUndef = true;
 
     /**
      * Constructs an empty list with the specified initial capacity.
@@ -133,6 +141,71 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     public void ensureCapacity(int minCapacity) {
         if (minCapacity > 0)
             ensureCapacityInternal(minCapacity);
+    }
+
+    /**
+     * Changes the <tt>permitUndef</tt> boolean to <tt>value</tt>. If
+     * <tt>true</tt>, prevents all default initialization values like 0 and
+     * <tt>null</tt>
+     * 
+     * @param value
+     *            - true to allow undefined values, false to not allow
+     */
+    public void permitUndefined(boolean value) {
+        permitUndef = value;
+        if (!permitUndef)
+            invalidCheck();
+    }
+
+    private void invalidCheck() {
+        // create with size() so that it doesn't create a huge array from
+        // doubling size.
+        ArrayList<Object> rem = new ArrayList<Object>(size());
+        for (Object o : this) {
+            if (o == null || primitveInvalids(o)) {
+                rem.add(o);
+            }
+        }
+        removeAll(rem);
+    }
+
+    private void invalidCheck(Object o) {
+        if (o == null || primitveInvalids(o)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean primitveInvalids(Object o) {
+        Class<?> primCheck = o.getClass();
+        boolean prim = primCheck.isPrimitive();
+        if (!prim) {
+            return false;
+        }
+        if (primCheck == int.class) {
+            return ((Integer) o) == 0;
+        }
+        if (primCheck == byte.class) {
+            return ((Byte) o) == 0;
+        }
+        if (primCheck == char.class) {
+            return ((Character) o) == 0;
+        }
+        if (primCheck == float.class) {
+            return ((Float) o) == 0.0f;
+        }
+        if (primCheck == double.class) {
+            return ((Double) o) == 0.0d;
+        }
+        if (primCheck == short.class) {
+            return ((Short) o) == 0;
+        }
+        if (primCheck == long.class) {
+            return ((Long) o) == 0;
+        }
+        if (primCheck == boolean.class) {
+            return ((Boolean) o) == false;
+        }
+        return false;
     }
 
     private void ensureCapacityInternal(int minCapacity) {
@@ -441,9 +514,17 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     /**
-     * A quick set that ignores range checking
+     * A quick set that ignores range checking. Checks against invalid adding,
+     * but does not throw exceptions
      */
     private void fastSet(int index, Object o) {
+        if (!permitUndef) {
+            try {
+                invalidCheck(o);
+            } catch (IllegalArgumentException iae) {
+                return;
+            }
+        }
         Array.set(elementData, index, o);
     }
 
@@ -810,6 +891,9 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         for (int i = 0; i < size; i++)
             s.writeObject(elementData(i));
 
+        s.writeBoolean(permitUndef);
+        ;
+
         if (modCount != expectedModCount) {
             throw new ConcurrentModificationException();
         }
@@ -835,6 +919,8 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         // Read in all elements in the proper order.
         for (int i = 0; i < size; i++)
             Array.set(a, i, s.readObject());
+
+        permitUndef = s.readBoolean();
     }
 
     /**
