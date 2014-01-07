@@ -326,6 +326,23 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     @Override
     public int compareTo(UnlimitedDouble y) {
         UnlimitedDouble x = this;
+        // must trim zeros before compare, or it breaks SEVERLEY
+        String before = x.toString();
+        x.parse0(before);
+        if (!before.equals(x.toString())) {
+            System.err
+                    .println("If you are getting bad results, compareTo is broken here. DEBUG: "
+                            + before + " changed to " + x);
+            Thread.dumpStack();
+        }
+        before = y.toString();
+        y.parse0(before);
+        if (!before.equals(y.toString())) {
+            System.err
+                    .println("If you are getting bad results, compareTo is broken here. DEBUG: "
+                            + before + " changed to " + y);
+            Thread.dumpStack();
+        }
         char[] bdx = new char[x.length()], bdy = new char[y.length()], adx = new char[0], ady = new char[0];
         // read decimal
         if (x.hasDecimal()) {
