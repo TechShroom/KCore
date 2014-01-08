@@ -12,10 +12,14 @@ import k.core.util.strings.Strings;
  * (Note that this is a digit count limit, you can have up to that many
  * <b>digits</b>)<br>
  * <br>
+ * Please note that add() does not support negatives, and therefore subtract
+ * only supports negative values for b. Multiply supports only positive values
+ * for a and only positive integers for b. <br>
+ * <br>
  * 
  * TODO: <br>
  * Add divide(), optimize so that we can do operations quickly. Current
- * optimization ~80%.
+ * optimization ~80%. Add negative support and implement full multiplication.
  * 
  * @author Kenzie Togami
  * 
