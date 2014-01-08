@@ -350,6 +350,8 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             v.elementData = copyOf(size);
             v.modCount = 0;
             v.arrayType = arrayType;
+            // remove any invalids if possible
+            v.permitUndefined(permitUndef);
             return v;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable
