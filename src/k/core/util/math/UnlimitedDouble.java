@@ -164,8 +164,6 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         // reversed into a new array. trimToSize is required here.
         a.digits.trimToSize();
         b.digits.trimToSize();
-        a.digits.permitUndefined(false);
-        b.digits.permitUndefined(false);
         char[] caa = (char[]) a.digits.getUnderlyingArray(), cab = (char[]) b.digits
                 .getUnderlyingArray();
         // create the array used to carry numbers
@@ -186,14 +184,13 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
             char[] cres = String.valueOf(ires).toCharArray();
             if (cres.length > 1) {
                 carry[i + 1] = Strings.getNumForChar(cres[0]);
-                res.setResize(i, cres[1]);
+                res.add(cres[1]);
             } else {
-                res.setResize(i, cres[0]);
+                res.add(cres[0]);
             }
         }
         if (carry[carry.length - 1] != 0) {
-            res.setResize(carry.length - 1,
-                    Strings.getCharForNum(carry[carry.length - 1]));
+            res.add(Strings.getCharForNum(carry[carry.length - 1]));
         }
         res.reverse();
         result.decimal = result.length() - a.rtlDecimal();
