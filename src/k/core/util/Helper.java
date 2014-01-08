@@ -204,10 +204,11 @@ public class Helper {
          * even with primitives as the component type.
          */
         public static <T> T reverseNonGeneric(T t) {
-            T out = (T) Array.newInstance(t.getClass().getComponentType(),
-                    Array.getLength(t));
-            for (int i = 0; i < Array.getLength(out); i++) {
-                Array.set(out, Array.getLength(t) - i - 1, Array.get(t, i));
+            int tlen = Array.getLength(t);
+            T out = (T) Array
+                    .newInstance(t.getClass().getComponentType(), tlen);
+            for (int i = 0; i < tlen; i++) {
+                Array.set(out, tlen - i - 1, Array.get(t, i));
             }
             return out;
         }
