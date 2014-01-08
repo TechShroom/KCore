@@ -864,7 +864,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      * Reverses this list.
      */
     public void reverse() {
-        elementData = BetterArrays.reverseNonGeneric(elementData);
+        elementData = BetterArrays.reverseNonGeneric(copyOf(size));
     }
 
     /**
