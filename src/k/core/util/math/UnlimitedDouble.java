@@ -10,7 +10,7 @@ import k.core.util.strings.Strings;
  * array size limits.
  * 
  * (Note that this is a digit count limit, you can have up to that many
- * <b>digits</b>)<br>
+ * <b>digits</b>). This class is defined as immutable.<br>
  * <br>
  * Please note that add() does not support negatives, and therefore subtract
  * only supports negative values for b. Multiply supports only positive values
