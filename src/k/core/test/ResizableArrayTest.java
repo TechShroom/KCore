@@ -29,7 +29,7 @@ public class ResizableArrayTest {
 
     private static void testRA() {
         long start = System.currentTimeMillis();
-        ResizableArray array = new ResizableArray(double.class);
+        ResizableArray<double[]> array = new ResizableArray<double[]>(double[].class);
         printLength(array);
         for (int i = 0; i < 10000; i++) {
             array.add(Math.random());
