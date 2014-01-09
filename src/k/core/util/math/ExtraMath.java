@@ -18,6 +18,9 @@ public class ExtraMath {
     }
 
     public static String solveExpression(String expr) {
+        // replace known values (pi, E)
+        expr = expr.replace("pi", Double.toString(Math.PI));
+        expr = expr.replace("e", Double.toString(Math.E));
         // solve for lazy with two first, then for strong.
         Matcher m = Pattern.compile("\\((.+)\\)" + OPERATIONS_REGEX + "?")
                 .matcher(expr), dualM = Pattern.compile(

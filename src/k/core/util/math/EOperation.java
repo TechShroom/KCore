@@ -37,7 +37,7 @@ public enum EOperation {
          * words.
          */
         String newline = line.replaceFirst(String.format(
-                "^(%s|%s|\\(|\\)|\\.)+$", Operation.OPT_NEG_NUM_REGEX,
+                "^(%s|%s|\\(|\\)|\\.|pi|e)+$", Operation.OPT_NEG_NUM_REGEX,
                 Operation.OPERATIONS_REGEX), "");
         return !newline.equals(line);
     }
