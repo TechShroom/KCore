@@ -14,7 +14,7 @@ public class ConsoleTest {
         PrintStream err = SideConsole.earlyChainE(System.err);
         System.setOut(out);
         System.setErr(err);
-        System.out.println("early_error_test");
+        System.err.println("early_error_test");
         System.out.println("early_stdout_test");
         SideConsole c = new SideConsole(false);
         c.error(true);
