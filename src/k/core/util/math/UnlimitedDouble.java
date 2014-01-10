@@ -240,6 +240,19 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         return new UnlimitedDouble(!sign ? "-" : "" + result);
     }
 
+    public UnlimitedDouble pow(UnlimitedDouble b) {
+        if (this.equals(ONE) || b.equals(ZERO)) {
+            return one();
+        }
+        if (this.equals(ZERO)) {
+            return zero();
+        }
+        if (b.equals(ONE)) {
+            return clone();
+        }
+        return empty();
+    }
+
     public UnlimitedDouble abs() {
         UnlimitedDouble clone = clone();
         clone.negative = false;
