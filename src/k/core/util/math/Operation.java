@@ -1,11 +1,9 @@
 package k.core.util.math;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 
 public class Operation {
-    private BigDecimal num1, num2;
+    private UnlimitedDouble num1, num2;
     private EOperation op;
     private String original;
 
@@ -14,10 +12,10 @@ public class Operation {
                     + NUM_REGEX, OPT_NNEG_NUM_REGEX = "n?" + NUM_REGEX,
             OPT_ALL_NEG_NUM_REGEX = "[n\\-]?" + NUM_REGEX;
 
-    public Operation(double first, double second, EOperation operation,
-            String orig) {
-        num1 = BigDecimal.valueOf(first);
-        num2 = BigDecimal.valueOf(second);
+    public Operation(UnlimitedDouble first, UnlimitedDouble second,
+            EOperation operation, String orig) {
+        num1 = first;
+        num2 = second;
         op = operation;
         original = orig;
         if (op == null) {
@@ -39,32 +37,41 @@ public class Operation {
     /**
      * 
      * @return the number created by this operation, or
-     *         {@link java.lang.Double#NaN } if not valid.
+     *         {@link UnlimitedDouble#empty() } if not valid.
      */
-    public double doOperation() {
-        double ret = Double.NaN;
+    public UnlimitedDouble doOperation() {
+        UnlimitedDouble ret = UnlimitedDouble.empty();
         // System.out.println("{Operation} Computing " + this.original);
         switch (op) {
         case DIVIDE:
-            ret = num1.divide(num2, MathContext.DECIMAL128).doubleValue();
+            System.err
+                    .println("UD does not support divison, falling back to doubles");
+            ret = UnlimitedDouble.parseUD(Double.toString(Double
+                    .parseDouble(num1.toString())
+                    / Double.parseDouble(num2.toString())));
             break;
         case FACT:
-            ret = ExtraMath.factorial(num1.doubleValue());
+            ret = ExtraMath.factorial(num1);
             break;
         case MULTIPLY:
-            ret = num1.multiply(num2).doubleValue();
+            System.err
+                    .println("UD does not support FULL multiplication, falling back to doubles");
+            ret = UnlimitedDouble.parseUD(Double.toString(Double
+                    .parseDouble(num1.toString())
+                    * Double.parseDouble(num2.toString())));
             break;
         case PLUS:
-            ret = num1.add(num2).doubleValue();
+            ret = num1.add(num2);
             break;
         case POW:
-            ret = Math.pow(num1.doubleValue(), num2.doubleValue());
+            ret = num1.pow(num2);
             break;
         case SROOT:
-            ret = Math.sqrt(num1.doubleValue());
+            ret = UnlimitedDouble.parseUD(Double.toString(Math.sqrt(Double
+                    .parseDouble(num1.toString()))));
             break;
         case SUBTRACT:
-            ret = num1.subtract(num2).doubleValue();
+            ret = num1.subtract(num2);
             break;
         default:
             break;

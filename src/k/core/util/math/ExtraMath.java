@@ -8,11 +8,11 @@ import static k.core.util.math.Operation.*;
 
 public class ExtraMath {
 
-    public static double factorial(double num1) {
-        double fact = 1.0;
-        num1 = Math.rint(num1);
-        for (int i = 2; i < num1; i++) {
-            fact *= i;
+    public static UnlimitedDouble factorial(UnlimitedDouble num1) {
+        UnlimitedDouble one = UnlimitedDouble.one(), fact = one.clone();
+        for (UnlimitedDouble i = new UnlimitedDouble("2"); i.lessThan(num1); i
+                .add(one)) {
+            fact = fact.multiply(i);
         }
         return fact;
     }
@@ -69,9 +69,10 @@ public class ExtraMath {
                 String mt = op.group();
                 String[] match = mt.split(OPERATIONS_REGEX);
                 try {
-                    Operation o = new Operation(Double.parseDouble(match[0]
-                            .replace('n', '-')), Double.parseDouble(match[1]
-                            .replace('n', '-')), EOperation.getOp(mt), mt);
+                    Operation o = new Operation(
+                            UnlimitedDouble.parseUD(match[0].replace('n', '-')),
+                            UnlimitedDouble.parseUD(match[1].replace('n', '-')),
+                            EOperation.getOp(mt), mt);
                     opsE.add(o);
                     // System.out.println(o + "match:" + mt); *DEBUG*
                 } catch (NumberFormatException nfe) {
@@ -94,9 +95,10 @@ public class ExtraMath {
                 String mt = op.group();
                 String[] match = mt.split(OPERATIONS_REGEX);
                 try {
-                    Operation o = new Operation(Double.parseDouble(match[0]
-                            .replace('n', '-')), Double.parseDouble(match[1]
-                            .replace('n', '-')), EOperation.getOp(mt), mt);
+                    Operation o = new Operation(
+                            UnlimitedDouble.parseUD(match[0].replace('n', '-')),
+                            UnlimitedDouble.parseUD(match[1].replace('n', '-')),
+                            EOperation.getOp(mt), mt);
                     opsMD.add(o);
                     // System.out.println(o + "match:" + mt); *DEBUG*
                 } catch (NumberFormatException nfe) {
@@ -119,9 +121,10 @@ public class ExtraMath {
                 String mt = op.group();
                 String[] match = mt.split(OPERATIONS_REGEX);
                 try {
-                    Operation o = new Operation(Double.parseDouble(match[0]
-                            .replace('n', '-')), Double.parseDouble(match[1]
-                            .replace('n', '-')), EOperation.getOp(mt), mt);
+                    Operation o = new Operation(
+                            UnlimitedDouble.parseUD(match[0].replace('n', '-')),
+                            UnlimitedDouble.parseUD(match[1].replace('n', '-')),
+                            EOperation.getOp(mt), mt);
                     opsAS.add(o);
                     // System.out.println(o + "match:" + mt); *DEBUG*
                 } catch (NumberFormatException nfe) {
@@ -148,7 +151,7 @@ public class ExtraMath {
             last = expr;
         }
         try {
-            return Double.parseDouble(expr.replace('n', '-')) + "";
+            return UnlimitedDouble.parseUD(expr.replace('n', '-')).toString();
         } catch (Exception e) {
             throw new RuntimeException("Error returning value " + expr, e);
         }
