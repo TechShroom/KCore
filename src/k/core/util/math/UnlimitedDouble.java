@@ -28,7 +28,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     private static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
             ZERO = new UnlimitedDouble("0");
     private static final boolean debugmode = Boolean.parseBoolean(System
-            .getProperty("k.core.util.math.ud_debug"));
+            .getProperty("k.core.util.math.ud_debug")), negzeros = System
+            .getProperty("ud.negzero", null) != null;
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
      * 'null') <br>
@@ -103,6 +104,11 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         // decimal place = length of digits when there is none
         if (decimal < 0) {
             decimal = digits.size();
+        }
+        // if this == zero, then remove the negative (set property 'ud.negzero'
+        // for negative zeros :3)
+        if (!negzeros && negative && negate().equals(ZERO)) {
+            negative = false;
         }
     }
 
