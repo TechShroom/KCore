@@ -545,6 +545,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      * 
      * @return {@link UnlimitedDouble#EMPTY EMPTY}
      *         {@link UnlimitedDouble#clone() .clone()}
+     * @see UnlimitedDouble#EMPTY
      */
     public static UnlimitedDouble empty() {
         return EMPTY.clone();
