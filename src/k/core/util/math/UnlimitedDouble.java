@@ -28,8 +28,8 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     private static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
             ZERO = new UnlimitedDouble("0");
     private static final boolean debugmode = Boolean.parseBoolean(System
-            .getProperty("k.core.util.math.ud_debug")), negzeros = System
-            .getProperty("ud.negzero", null) != null;
+            .getProperty("ud.debug")), negzeros = System.getProperty(
+            "ud.negzero", null) != null;
     /**
      * An empty UD for use anywhere you need a pure empty value (think of it as
      * 'null') <br>
@@ -355,9 +355,14 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
     }
 
     /**
+     * 
      * This is used by greaterThan and lessThan because it returns 1 for
      * <tt>y</tt> > <tt>this</tt>, 0 for equal, and -1 for <tt>y</tt> <
-     * <tt>this</tt>
+     * <tt>this</tt> If you have a error regarding the function, please set the
+     * system property 'ud.debug' to <tt>true</tt>. <br>
+     * <br>
+     * From {@link Comparable#compareTo(Object)}: <br>
+     * {@inheritDoc}
      */
     @Override
     public int compareTo(UnlimitedDouble y) {
