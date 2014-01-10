@@ -17,14 +17,15 @@ public class ReflectionTest {
      */
     public static void main(String[] args) {
         try {
+            ReflectionTest testObj = new ReflectionTest();
             System.out.println("first it was "
                     + Reflect.getField(BigInteger.class, "testing_field",
-                            new ReflectionTest()));
-            Reflect.setField(BigInteger.class, "testing_field",
-                    new ReflectionTest(), BigInteger.ONE);
+                            testObj));
+            Reflect.setField(BigInteger.class, "testing_field", testObj,
+                    BigInteger.ONE);
             System.out.println("then it was "
                     + Reflect.getField(BigInteger.class, "testing_field",
-                            new ReflectionTest()));
+                            testObj));
             System.out.println(Reflect.invokeMethod(String.class,
                     "reflect_testm", new ReflectionTest(),
                     "i tested reflection on methods"));
