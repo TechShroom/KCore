@@ -61,6 +61,10 @@ public class SideConsole extends JFrame {
             // log.println(b); //DEBUG
         }
     };
+    /**
+     * The only console instance. Multiple consoles can be created, but only one
+     * will be held here.
+     */
     public static SideConsole console;
 
     public static void setOut(PrintStream temp) {
@@ -146,6 +150,15 @@ public class SideConsole extends JFrame {
         m.display(this);
     }
 
+    /**
+     * Writes a message out before a console is created and bound, it will be
+     * printed when a console is created.
+     * 
+     * @param s
+     *            - a message
+     * @param stdout
+     *            - if this should go to STDOUT or STDERR
+     */
     public static void earlyMessage(String s, boolean stdout) {
         if (stdout) {
             earlyBufferO += s;
@@ -154,19 +167,43 @@ public class SideConsole extends JFrame {
         }
     }
 
+    /**
+     * Returns a new {@link PrintStream} wrapping the early error stream. Write
+     * to this stream to write a message to the next console to be created on
+     * the error stream.
+     * 
+     * @param defE
+     *            - the original error stream
+     * @return a new stream wrapping the early error stream
+     */
     public static PrintStream earlyChainE(PrintStream defE) {
         setErr(defE);
         return new PrintStream(earlyPOS);
     }
 
+    /**
+     * Returns a new {@link PrintStream} wrapping the early output stream. Write
+     * to this stream to write a message to the next console to be created on
+     * the output stream.
+     * 
+     * @param defO
+     *            - the original output stream
+     * @return a new stream wrapping the early output stream
+     */
     public static PrintStream earlyChainO(PrintStream defO) {
         setOut(defO);
         return new PrintStream(earlyPOS_);
     }
 
+    /**
+     * Sets the error value, determining if this console prints the err stream
+     * or not.
+     * 
+     * @param value
+     *            - true for error on, false for error off
+     */
     public void error(boolean value) {
         error = value;
-        System.out.println("error changed to " + error);
         JMenuItem jmi = m.getItemInMenuByRef(OPTION_MENU, DEBUG_JMIKEY);
         jmi.setSelected(error);
         if (error) {
