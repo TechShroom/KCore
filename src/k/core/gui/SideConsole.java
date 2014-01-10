@@ -18,6 +18,7 @@ public class SideConsole extends JFrame {
     private static final long serialVersionUID = 3733784846766341735L;
     private boolean error;
     public JScrollPane scroller;
+    private Menu m;
     private static PrintStream oldO, oldE, newO, newE;
     private static String[] exceptions = { "Error creating the OutputStreams",
             "Error setting System.out", "Error setting System.out" };
@@ -127,7 +128,7 @@ public class SideConsole extends JFrame {
 
     private void addMenu() {
         // Create menu creator //
-        Menu m = Menu.create("console");
+        m = Menu.create("console");
 
         // Add menu items on bar //
         m.addMenuByName(OPTION_MENU, "Options");
@@ -166,6 +167,8 @@ public class SideConsole extends JFrame {
     public void error(boolean value) {
         error = value;
         System.out.println("error changed to " + error);
+        JMenuItem jmi = m.getItemInMenuByRef(OPTION_MENU, DEBUG_JMIKEY);
+        jmi.setSelected(error);
         if (error) {
             System.setErr(newE);
         } else {
