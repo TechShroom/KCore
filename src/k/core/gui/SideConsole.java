@@ -120,7 +120,7 @@ public class SideConsole extends JFrame {
             System.out.println(earlyBufferO);
         }
         if (earlyBufferE != null && !earlyBufferE.equalsIgnoreCase("null")
-                && !earlyBufferE.equalsIgnoreCase("")) {
+                && !earlyBufferE.equalsIgnoreCase("") && error) {
             System.err.println(earlyBufferE);
         }
     }
