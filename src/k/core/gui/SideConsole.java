@@ -96,8 +96,8 @@ public class SideConsole extends JFrame {
         if (!chained) {
             try {
                 state = 0;
-                OutputStream jtaOStream = new TextAreaPrinter(jta, "[Output] ");
-                OutputStream jtaEStream = new TextAreaPrinter(jta, "[Debug] ");
+                OutputStream jtaOStream = new TextAreaPrinter(jta, "[STDOUT] ");
+                OutputStream jtaEStream = new TextAreaPrinter(jta, "[STDERR] ");
                 state = 1;
                 oldO = oldO == null ? System.out : oldO;
                 oldE = oldE == null ? System.err : oldE;
