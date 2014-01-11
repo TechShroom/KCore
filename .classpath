@@ -7,5 +7,10 @@
 			<attribute name="javadoc_location" value="http://www.jython.org/javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libs/netty.jar" sourcepath="libs/netty-source.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/KCore/libs/netty-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
