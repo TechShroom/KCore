@@ -1,10 +1,11 @@
 package k.core.util.math;
 
+import static k.core.util.math.Operation.NUM_REGEX;
+import static k.core.util.math.Operation.OPERATIONS_REGEX;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static k.core.util.math.Operation.*;
 
 public class ExtraMath {
 
