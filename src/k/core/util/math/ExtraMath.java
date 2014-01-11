@@ -38,7 +38,7 @@ public class ExtraMath {
             expr = expr.replaceFirst("\\Q(" + one + ")\\E", solve1);
             m.reset(expr);
         }
-        // Apply regexes for user laziness
+        // Apply regexes for user laziness (.x -> 0.x)
         Matcher lazyDecimal = Pattern.compile("(?<!\\d)(\\.\\d+)")
                 .matcher(expr);
         expr = lazyDecimal.replaceAll("0$1");
