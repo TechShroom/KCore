@@ -12,6 +12,9 @@ public class ClassHelp {
      * @return if you can cast an object of class <tt>a</tt> to class <tt>b</tt>
      */
     public static boolean castable(Class<?> a, Class<?> b) {
+        if (a == null || b == null) {
+            return false;
+        }
         return a.isAssignableFrom(b) || (a == int.class && b == Integer.class) // int
                 || (a == Integer.class && b == int.class) // int
                 || (a == Short.class && b == short.class) // short
