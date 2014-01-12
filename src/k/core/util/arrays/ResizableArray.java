@@ -100,15 +100,19 @@ public class ResizableArray<T> extends AbstractList<Object> implements
                 Class<?> ptc = null;
                 try {
                     ptc = (Class<?>) pptype.getActualTypeArguments()[0];
+                    if (!ClassHelp.castable(type.getComponentType(), ptc)) {
+                        throw new ClassCastException(
+                                "Collection is not of type 'Collection<"
+                                        + type.getComponentType()
+                                                .getSimpleName() + ">'");
+                    }
                 } catch (ClassCastException cce) {
+                    if (cce.getMessage()
+                            .startsWith("Collection is not of type")) {
+                        throw cce;
+                    }
                     System.err.println("couldn't determine type of collection,"
                             + " errors may occur");
-                }
-                if (!ClassHelp.castable(type.getComponentType(), ptc)) {
-                    throw new ClassCastException(
-                            "Collection is not of type 'Collection<"
-                                    + type.getComponentType().getSimpleName()
-                                    + ">'");
                 }
             }
         }
