@@ -40,6 +40,8 @@ public class LowResFPS {
     private static long[] lastFrame = new long[LowResFPS.maxFPSCounters];
     /** frames per second */
     private static int[] fps = new int[LowResFPS.maxFPSCounters];
+    /** frames per second for get */
+    private static int[] getfps = new int[LowResFPS.maxFPSCounters];
     /** last fps time */
     private static long[] lastFPS = new long[LowResFPS.maxFPSCounters];
     private static boolean[] enabled = new boolean[LowResFPS.maxFPSCounters];
@@ -90,7 +92,7 @@ public class LowResFPS {
     }
 
     public static long getTime(long divis) {
-	return System.currentTimeMillis();
+	return System.currentTimeMillis() * divis / 1000;
     }
 
     /**
@@ -109,6 +111,7 @@ public class LowResFPS {
      */
     private static void updateFPS(int index) {
 	if (LowResFPS.getTime() - LowResFPS.lastFPS[index] > 1000) {
+	    LowResFPS.getfps[index] = LowResFPS.fps[index];
 	    LowResFPS.fps[index] = 0;
 	    LowResFPS.lastFPS[index] += 1000;
 	}
@@ -131,6 +134,6 @@ public class LowResFPS {
     }
 
     public static int getFPS(int index) {
-	return fps[index];
+	return getfps[index];
     }
 }
