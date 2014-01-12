@@ -15,6 +15,7 @@ public class LRFPSTest {
 	frame.setSize(200, 100);
 	frame.setLocation(400, 600);
 	frame.setVisible(true);
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	loop();
     }
 
