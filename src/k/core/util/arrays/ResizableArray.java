@@ -15,8 +15,6 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
-
 import k.core.util.Helper.BetterArrays;
 import k.core.util.classes.ClassHelp;
 import k.core.util.reflect.Reflect;
