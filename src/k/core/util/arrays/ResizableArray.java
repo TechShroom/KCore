@@ -1,6 +1,8 @@
 package k.core.util.arrays;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +15,10 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+
 import k.core.util.Helper.BetterArrays;
+import k.core.util.classes.ClassHelp;
 import k.core.util.reflect.Reflect;
 
 /**
@@ -88,6 +93,25 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @SuppressWarnings("unchecked")
     public ResizableArray(Class<T> type, Collection<?> c) {
+        if (c.size() == 0) {
+            Type ptype = c.getClass().getGenericSuperclass();
+            if (ptype instanceof ParameterizedType) {
+                ParameterizedType pptype = (ParameterizedType) ptype;
+                Class<?> ptc = null;
+                try {
+                    ptc = (Class<?>) pptype.getActualTypeArguments()[0];
+                } catch (ClassCastException cce) {
+                    System.err.println("couldn't determine type of collection,"
+                            + " errors may occur");
+                }
+                if (!ClassHelp.castable(type.getComponentType(), ptc)) {
+                    throw new ClassCastException(
+                            "Collection is not of type 'Collection<"
+                                    + type.getComponentType().getSimpleName()
+                                    + ">'");
+                }
+            }
+        }
         elementData = (T) Array.newInstance(type.getComponentType(), c.size());
         for (Object o : c) {
             add(o);
