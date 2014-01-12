@@ -88,11 +88,9 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @SuppressWarnings("unchecked")
     public ResizableArray(Class<T> type, Collection<?> c) {
-        elementData = (T) c.toArray();
-        size = length();
-        // c.toArray might (incorrectly) not return Object[] (see 6260652)
-        if (elementData.getClass() != type) {
-            refCopyOf(size);
+        elementData = (T) Array.newInstance(type.getComponentType(), c.size());
+        for (Object o : c) {
+            add(o);
         }
         arrayType = type;
     }
