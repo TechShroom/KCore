@@ -13,8 +13,8 @@ import k.core.util.strings.Strings;
  * <b>digits</b>). This class is defined as immutable.<br>
  * <br>
  * Please note that add() does not support negatives, and therefore subtract
- * only supports negative values for b. Multiply supports only positive values
- * for a and only positive integers for b. <br>
+ * only supports negative values for b. Multiply supports only positive integers
+ * for b. <br>
  * <br>
  * 
  * TODO: <br>
@@ -227,6 +227,11 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         }
         UnlimitedDouble a = this;
         UnlimitedDouble result = zero();
+        // unsupported as of now
+        if (b.hasDecimal()) {
+            return UnlimitedDouble.parseUD(Double.toString(Double.parseDouble(a
+                    .toString()) * Double.parseDouble(b.toString())));
+        }
         boolean sign = a.negative == b.negative; // true = (+); false = (-)
         a = a.abs();
         b = b.abs();
