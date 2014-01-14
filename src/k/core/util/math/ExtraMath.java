@@ -152,7 +152,8 @@ public class ExtraMath {
             last = expr;
         }
         try {
-            return UnlimitedDouble.parseUD(expr.replace('n', '-')).toString();
+            return UnlimitedDouble.parseUD(
+                    expr.replaceAll("n(" + NUM_REGEX + ")", "-$1")).toString();
         } catch (Exception e) {
             throw new RuntimeException("Error returning value " + expr, e);
         }
