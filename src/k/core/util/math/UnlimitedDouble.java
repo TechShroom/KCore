@@ -250,8 +250,9 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         if (b.equals(ONE)) {
             return clone();
         }
-        return UnlimitedDouble.parseUD(Double.toString(Double.parseDouble(this
-                .toString()) * Double.parseDouble(b.toString())));
+        return UnlimitedDouble.parseUD(Double.toString(Math.pow(
+                Double.parseDouble(this.toString()),
+                Double.parseDouble(b.toString()))));
     }
 
     public UnlimitedDouble abs() {
