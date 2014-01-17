@@ -1,9 +1,8 @@
-package k.core.test;
+package k.core.util.arrays;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import k.core.util.arrays.ResizableArray;
 import k.core.util.reflect.Reflect;
 
 public class ResizableArrayTest {

@@ -1,8 +1,7 @@
-package k.core.test;
+package k.core.util.gui;
 
 import java.io.PrintStream;
 
-import k.core.gui.SideConsole;
 
 public class ConsoleTest {
 

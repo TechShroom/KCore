@@ -1,11 +1,10 @@
-package k.core.test;
+package k.core.util.timing;
 
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import k.core.util.timing.LowResFPS;
 
 public class LRFPSTest {
     static JFrame frame = new JFrame("title");

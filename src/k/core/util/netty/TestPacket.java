@@ -1,10 +1,5 @@
-package k.core.test;
+package k.core.util.netty;
 
-import k.core.util.netty.DataStruct;
-import k.core.util.netty.IReceivePacket;
-import k.core.util.netty.ISendPacket;
-import k.core.util.netty.NetHandler;
-import k.core.util.netty.Packet;
 
 public class TestPacket extends Packet implements ISendPacket, IReceivePacket {
 

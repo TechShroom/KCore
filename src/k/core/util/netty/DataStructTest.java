@@ -1,7 +1,6 @@
-package k.core.test;
+package k.core.util.netty;
 
 import k.core.util.Helper;
-import k.core.util.netty.DataStruct;
 
 public class DataStructTest {
     String aVal = "'look, it worked, alright?' -" + getClass().getSimpleName();

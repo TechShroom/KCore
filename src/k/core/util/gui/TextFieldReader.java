@@ -1,4 +1,4 @@
-package k.core.test;
+package k.core.util.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

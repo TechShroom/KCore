@@ -1,10 +1,10 @@
-package k.core.test;
+package k.core.util.translate;
 
 import java.util.HashMap;
 
-import k.core.util.translate.Translate;
 import k.core.util.translate.Translate.Language;
 import k.core.util.translate.Translate.TranslatableString;
+
 
 public class TranslationTest {
 

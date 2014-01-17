@@ -1,4 +1,4 @@
-package k.core.test;
+package k.core.util.math;
 
 import static java.awt.GridBagConstraints.CENTER;
 
@@ -16,8 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import k.core.util.math.EOperation;
-import k.core.util.math.ExtraMath;
+import k.core.util.gui.SpecialReader;
+import k.core.util.gui.TextFieldReader;
 
 public class ExpressionTest {
     static JLabel errorLabel = new JLabel();

@@ -1,12 +1,9 @@
-package k.core.test;
+package k.core.util.jythonintegration;
 
 import java.io.File;
 import java.net.URISyntaxException;
 
 import k.core.util.Helper;
-import k.core.util.jythonintegration.JythonClass;
-import k.core.util.jythonintegration.JythonFile;
-import k.core.util.jythonintegration.JythonObject;
 
 import org.python.core.PyObject;
 

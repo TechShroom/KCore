@@ -1,4 +1,4 @@
-package k.core.gui;
+package k.core.util.gui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

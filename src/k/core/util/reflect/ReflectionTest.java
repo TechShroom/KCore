@@ -1,9 +1,8 @@
-package k.core.test;
+package k.core.util.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 
-import k.core.util.reflect.Reflect;
 import k.core.util.translate.Translate;
 import k.core.util.translate.Translate.Language;
 

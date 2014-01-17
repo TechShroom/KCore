@@ -1,12 +1,9 @@
-package k.core.test;
+package k.core.util.netty;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import k.core.util.netty.NetHandlerClient;
-import k.core.util.netty.NetHandlerServer;
-import k.core.util.netty.Packet;
 
 public class NettyTest {
 

@@ -1,6 +1,5 @@
-package k.core.test;
+package k.core.util.math;
 
-import k.core.util.math.UnlimitedDouble;
 
 public class MathTest {
     public static void main(String[] args) {
