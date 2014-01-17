@@ -1,5 +1,7 @@
 A common core for most of TechShroom's programs.
 
+Get distributed pre-compiled jars over at [TechShroom](http://techshroom.com)
+
 Parts of KCore (distributed):
 * Arduino
     * Interfacing with RXTX library
