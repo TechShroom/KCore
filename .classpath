@@ -17,5 +17,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/KCore/libs/gsonjavadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libs/RXTXcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
