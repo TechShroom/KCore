@@ -16,10 +16,10 @@ import javax.swing.JFrame;
 
 public class Helper {
     public static class Files {
-        public static File topLevel;
+        public static String topLevel;
         static {
             // uses the pwd as the top level
-            topLevel = new File("").getAbsoluteFile();
+            topLevel = new File("").getAbsolutePath();
         }
 
         public static File getFileRelativeToTopLevel(String file) {
