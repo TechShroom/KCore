@@ -3,7 +3,7 @@ package k.core.util.netty;
 public class PacketFinished extends Packet implements IReceivePacket,
         ISendPacket {
 
-    protected PacketFinished() {
+    protected PacketFinished(DataStruct ds) {
         super(new DataStruct(new Object[0]));
     }
 
