@@ -88,6 +88,10 @@ public abstract class Packet implements Comparable<Packet> {
         return null;
     }
 
+    public static int idFor(Packet p) {
+        return packetToId.get(p.getClass());
+    }
+
     protected DataStruct data = new DataStruct(new Object[0]);
 
     /**
