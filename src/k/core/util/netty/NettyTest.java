@@ -6,11 +6,13 @@ import java.net.UnknownHostException;
 
 public class NettyTest {
 
+    private NetHandlerServer nhs;
+    private NetHandlerClient nhc;
+
     public void init(String[] args) {
 
         // choose server port = 25566
-        NetHandlerServer nhs = new NetHandlerServer(25566);
-        NetHandlerClient nhc;
+        nhs = new NetHandlerServer(25566);
         try {
             nhc = new NetHandlerClient(new InetSocketAddress(0),
                     new InetSocketAddress(InetAddress.getLocalHost(), 25566));
@@ -21,7 +23,18 @@ public class NettyTest {
         }
         Packet.registerPacket(TestPacket.class, 1);
         nhc.addPacketToSendQueue(Packet.newPacket(1, new Object[] { "a msg" }));
-        for (int i = 0; i < 100; i++) {
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep((long) (Math.random() * 100000));
+                } catch (InterruptedException is) {
+                }
+                nhc.addPacketToSendQueue(Packet.newPacket(-1));
+            }
+        };
+        while (!nhc.isShutdown() && !nhs.isShutdown()) {
             nhc.processQueue();
             nhs.processQueue();
             try {
