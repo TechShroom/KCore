@@ -27,10 +27,12 @@ public class NettyTest {
 
             @Override
             public void run() {
+                System.err.println("sleeping....");
                 try {
-                    Thread.sleep((long) (Math.random() * 100000));
+                    Thread.sleep(10 * 1000);
                 } catch (InterruptedException is) {
                 }
+                System.err.println("Done");
                 nhc.addPacketToSendQueue(Packet
                         .newPacket(Packet.TERMINATION_PACKET_ID));
             }

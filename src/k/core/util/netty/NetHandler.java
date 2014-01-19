@@ -91,6 +91,9 @@ public abstract class NetHandler implements PacketSender {
      *            until {@link Long#MAX_VALUE}
      */
     public void processQueue(long timeout) {
+        if (stopped) {
+            return;
+        }
         LowResFPS.init(timerId, LowResFPS.millis);
         long count = 0;
         if (timeout <= 0) {
