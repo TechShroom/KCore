@@ -31,9 +31,11 @@ public class NettyTest {
                     Thread.sleep((long) (Math.random() * 100000));
                 } catch (InterruptedException is) {
                 }
-                nhc.addPacketToSendQueue(Packet.newPacket(-1));
+                nhc.addPacketToSendQueue(Packet
+                        .newPacket(Packet.TERMINATION_PACKET_ID));
             }
         };
+        new Thread(r, "Termination Thread").start();
         while (!nhc.isShutdown() && !nhs.isShutdown()) {
             nhc.processQueue();
             nhs.processQueue();
@@ -42,8 +44,6 @@ public class NettyTest {
             } catch (Exception e) {
             }
         }
-        nhc.shutdown();
-        nhs.shutdown();
         System.err.println(nhc.sentPackets + ":" + nhs.sentPackets);
     }
 

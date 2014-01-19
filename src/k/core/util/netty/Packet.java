@@ -15,6 +15,7 @@ import k.core.util.reflect.Reflect;
  */
 public abstract class Packet implements Comparable<Packet> {
 
+    public static final int TERMINATION_PACKET_ID = Integer.MIN_VALUE;
     private static HashMap<Class<? extends Packet>, Integer> packetToId = new HashMap<Class<? extends Packet>, Integer>();
     private static HashMap<Integer, Class<? extends Packet>> idToPacket = new HashMap<Integer, Class<? extends Packet>>();
 
@@ -35,7 +36,7 @@ public abstract class Packet implements Comparable<Packet> {
     }
 
     static {
-        registerPacket(PacketFinished.class, -1);
+        registerPacket(PacketFinished.class, TERMINATION_PACKET_ID);
     }
 
     /**
