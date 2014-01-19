@@ -8,6 +8,15 @@ package k.core.util.netty;
  */
 public interface ISendPacket {
 
+    /**
+     * Allows packets to make changes before sending over the NetHandler.
+     * Implementations should return {@link NetHandler#sendPacket(Packet)}'s
+     * result.
+     * 
+     * @param n
+     *            - a {@link NetHandler}
+     * @return {@link NetHandler#sendPacket(Packet)}
+     */
     public boolean send(NetHandler n);
 
 }
