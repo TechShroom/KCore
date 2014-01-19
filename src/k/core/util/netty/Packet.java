@@ -34,6 +34,10 @@ public abstract class Packet implements Comparable<Packet> {
         idToPacket.put(id, type);
     }
 
+    static {
+        registerPacket(PacketFinished.class, -1);
+    }
+
     /**
      * Uses an empty constructor for a packet.
      * 
