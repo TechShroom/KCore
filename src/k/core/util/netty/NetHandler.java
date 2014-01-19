@@ -123,6 +123,10 @@ public abstract class NetHandler implements PacketSender {
                 System.err.println("Couldn't send packet: " + before);
             } else {
                 sentPackets++;
+                if (before instanceof PacketFinished) {
+                    shutdown();
+                    return;
+                }
             }
             count += LowResFPS.getDelta(timerId);
         }
