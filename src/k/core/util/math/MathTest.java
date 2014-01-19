@@ -1,6 +1,5 @@
 package k.core.util.math;
 
-
 public class MathTest {
     public static void main(String[] args) {
         UnlimitedDouble a = new UnlimitedDouble("4.010"), b = new UnlimitedDouble(

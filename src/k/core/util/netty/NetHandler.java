@@ -31,7 +31,7 @@ public abstract class NetHandler implements PacketSender {
      *            - an {@link ISendPacket}
      */
     public void addPacketToSendQueue(Packet p) {
-	pq.add((ISendPacket) p);
+        pq.add((ISendPacket) p);
     }
 
     /**
@@ -42,7 +42,7 @@ public abstract class NetHandler implements PacketSender {
      *            - an {@link IReceivePacket}
      */
     public void addPacketToRecvQueue(Packet p) {
-	pqin.add((IReceivePacket) p);
+        pqin.add((IReceivePacket) p);
     }
 
     /**
@@ -52,12 +52,12 @@ public abstract class NetHandler implements PacketSender {
      *         packet, or false if there are no packets left
      */
     public boolean popOneSendQueueObject() {
-	synchronized (pq) {
-	    if (pq.isEmpty()) {
-		return false;
-	    }
-	    return pq.poll().send(this);
-	}
+        synchronized (pq) {
+            if (pq.isEmpty()) {
+                return false;
+            }
+            return pq.poll().send(this);
+        }
     }
 
     /**
@@ -67,19 +67,19 @@ public abstract class NetHandler implements PacketSender {
      *         on the packet, or null if there are no packets left
      */
     public ISendPacket popOneReceiveQueueObject() {
-	synchronized (pqin) {
-	    if (pqin.isEmpty()) {
-		return null;
-	    }
-	    return pqin.poll().receive(this);
-	}
+        synchronized (pqin) {
+            if (pqin.isEmpty()) {
+                return null;
+            }
+            return pqin.poll().receive(this);
+        }
     }
 
     /**
      * Processes the queue until empty.
      */
     public void processQueue() {
-	processQueue(0);
+        processQueue(0);
     }
 
     /**
@@ -90,40 +90,40 @@ public abstract class NetHandler implements PacketSender {
      *            until {@link Long#MAX_VALUE}
      */
     public void processQueue(long timeout) {
-	LowResFPS.init(timerId, LowResFPS.millis);
-	long count = 0;
-	if (timeout <= 0) {
-	    timeout = Long.MAX_VALUE;
-	}
-	while (!pqin.isEmpty() && count < timeout) {
-	    IReceivePacket before = pqin.peek();
-	    ISendPacket sp = popOneReceiveQueueObject();
-	    if (sp == null) {
-		System.err.println("Couldn't receive packet: " + before);
-	    } else {
-		pq.add(sp);
-	    }
-	    count += LowResFPS.getDelta(timerId);
-	}
-	if (count >= timeout) {
-	    System.err.println("Didn't get to process " + pqin.size()
-		    + " input packets! Timeout was " + count + "ms.");
-	}
-	count = 0;
-	LowResFPS.init(timerId);
-	while (!pq.isEmpty() && count < timeout) {
-	    ISendPacket before = pq.peek();
-	    if (!popOneSendQueueObject()) {
-		System.err.println("Couldn't send packet: " + before);
-	    } else {
-		sentPackets++;
-	    }
-	    count += LowResFPS.getDelta(timerId);
-	}
-	if (count >= timeout) {
-	    System.err.println("Didn't get to process " + pq.size()
-		    + " output packets! Timeout was " + count + "ms.");
-	}
+        LowResFPS.init(timerId, LowResFPS.millis);
+        long count = 0;
+        if (timeout <= 0) {
+            timeout = Long.MAX_VALUE;
+        }
+        while (!pqin.isEmpty() && count < timeout) {
+            IReceivePacket before = pqin.peek();
+            ISendPacket sp = popOneReceiveQueueObject();
+            if (sp == null) {
+                System.err.println("Couldn't receive packet: " + before);
+            } else {
+                pq.add(sp);
+            }
+            count += LowResFPS.getDelta(timerId);
+        }
+        if (count >= timeout) {
+            System.err.println("Didn't get to process " + pqin.size()
+                    + " input packets! Timeout was " + count + "ms.");
+        }
+        count = 0;
+        LowResFPS.init(timerId);
+        while (!pq.isEmpty() && count < timeout) {
+            ISendPacket before = pq.peek();
+            if (!popOneSendQueueObject()) {
+                System.err.println("Couldn't send packet: " + before);
+            } else {
+                sentPackets++;
+            }
+            count += LowResFPS.getDelta(timerId);
+        }
+        if (count >= timeout) {
+            System.err.println("Didn't get to process " + pq.size()
+                    + " output packets! Timeout was " + count + "ms.");
+        }
     }
 
     /**

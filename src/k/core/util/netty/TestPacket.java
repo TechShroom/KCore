@@ -1,6 +1,5 @@
 package k.core.util.netty;
 
-
 public class TestPacket extends Packet implements ISendPacket, IReceivePacket {
 
     public TestPacket(String msg) {

@@ -1,6 +1,5 @@
 package k.core.util.netty;
 
-
 public interface PacketSender {
 
     /**

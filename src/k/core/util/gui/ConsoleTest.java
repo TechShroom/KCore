@@ -2,7 +2,6 @@ package k.core.util.gui;
 
 import java.io.PrintStream;
 
-
 public class ConsoleTest {
 
     /**
