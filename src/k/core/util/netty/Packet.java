@@ -19,6 +19,17 @@ public abstract class Packet implements Comparable<Packet> {
     private static HashMap<Integer, Class<? extends Packet>> idToPacket = new HashMap<Integer, Class<? extends Packet>>();
 
     public static final void registerPacket(Class<? extends Packet> type, int id) {
+        if (type == null) {
+            throw new NullPointerException();
+        }
+        if (packetToId.get(type) != null) {
+            throw new IllegalArgumentException(type.getName()
+                    + " already registered under id " + packetToId.get(type));
+        }
+        if (idToPacket.get(id) != null) {
+            throw new IllegalArgumentException("id " + id
+                    + " already linked to " + idToPacket.get(id).getName());
+        }
         packetToId.put(type, id);
         idToPacket.put(id, type);
     }
