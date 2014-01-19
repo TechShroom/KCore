@@ -62,6 +62,7 @@ public class NetHandlerServer extends NetHandler {
         ch.close().syncUninterruptibly();
         boss.shutdownGracefully();
         worker.shutdownGracefully();
+        stopped = true;
     }
 
 }

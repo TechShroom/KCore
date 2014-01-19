@@ -15,6 +15,7 @@ public abstract class NetHandler implements PacketSender {
     private static int timerId = LowResFPS.genIndex();
     private PriorityQueue<ISendPacket> pq = new PriorityQueue<ISendPacket>();
     private PriorityQueue<IReceivePacket> pqin = new PriorityQueue<IReceivePacket>();
+    protected boolean stopped = false;
     public int sentPackets = 0;
 
     /**
@@ -97,6 +98,11 @@ public abstract class NetHandler implements PacketSender {
         }
         while (!pqin.isEmpty() && count < timeout) {
             IReceivePacket before = pqin.peek();
+            if (before instanceof PacketFinished) {
+                // This packet means terminate, so shutdown and return;
+                shutdown();
+                return;
+            }
             ISendPacket sp = popOneReceiveQueueObject();
             if (sp == null) {
                 System.err.println("Couldn't receive packet: " + before);
@@ -124,6 +130,10 @@ public abstract class NetHandler implements PacketSender {
             System.err.println("Didn't get to process " + pq.size()
                     + " output packets! Timeout was " + count + "ms.");
         }
+    }
+
+    public boolean isShutdown() {
+        return stopped;
     }
 
     /**

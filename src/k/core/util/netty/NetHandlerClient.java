@@ -63,6 +63,7 @@ public class NetHandlerClient extends NetHandler {
         sync();
         ch.close().syncUninterruptibly();
         group.shutdownGracefully();
+        stopped = true;
     }
 
 }
