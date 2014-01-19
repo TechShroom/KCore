@@ -82,8 +82,9 @@ public abstract class Packet implements Comparable<Packet> {
             try {
                 pClass.getDeclaredConstructor(new Class[] { DataStruct.class });
             } catch (Exception e) {
-                throw new RuntimeException(new IllegalClassFormatException(
-                        "Packet requires a DataStruct constructor"));
+                throw new RuntimeException(
+                        new IllegalClassFormatException(pClass.getName()
+                                + " requires a DataStruct constructor"));
             }
             try {
                 return Reflect.construct(pClass, constrObjects);
