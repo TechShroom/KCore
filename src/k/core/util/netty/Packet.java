@@ -4,6 +4,7 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
+import k.core.util.classes.StackTraceInfo;
 import k.core.util.reflect.Reflect;
 
 /**
@@ -117,6 +118,11 @@ public abstract class Packet implements Comparable<Packet> {
      * {@link Packet#newPacket(int, Class[], Object[])}
      */
     protected Packet(DataStruct ds) {
+        if (!StackTraceInfo.getInvokingClassName().equals(
+                Packet.class.getName())) {
+            throw new IllegalAccessError(
+                    "cannot create Packet class via constructor");
+        }
         data = ds;
     }
 
