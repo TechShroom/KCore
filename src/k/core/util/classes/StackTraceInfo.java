@@ -2,8 +2,6 @@ package k.core.util.classes;
 
 import java.lang.reflect.Method;
 
-import emergencylanding.k.library.util.LUtils;
-
 /* Utility class: Getting the name of the current executing method 
  * http://stackoverflow.com/questions/442747/getting-the-name-of-the-current-executing-method
  * 
@@ -70,8 +68,9 @@ public class StackTraceInfo {
             i++;
         }
         CLIENT_CODE_STACK_INDEX = i;
-        LUtils.print("Stack index is " + i);
-        LUtils.print("On JRE6/7, this should be 1, on JRE5 it should be 2.");
+        System.err.println("Stack index is " + i);
+        System.err
+                .println("On JRE6/7, this should be 1, on JRE5 it should be 2.");
     }
 
     public static String getCurrentMethodName() {
