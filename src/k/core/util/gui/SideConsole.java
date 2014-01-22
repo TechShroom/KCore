@@ -21,7 +21,7 @@ public class SideConsole extends JFrame {
     private Menu m;
     private static PrintStream oldO, oldE, newO, newE;
     private static String[] exceptions = { "Error creating the OutputStreams",
-            "Error setting System.out", "Error setting System.out" };
+            "Error setting System.out", "Error setting System.err" };
     protected static PrintStream log;
     static {
         log = new PrintStream(System.err);
@@ -104,11 +104,11 @@ public class SideConsole extends JFrame {
                 state = 0;
                 OutputStream jtaOStream = new TextAreaPrinter(jta, "[STDOUT] ");
                 OutputStream jtaEStream = new TextAreaPrinter(jta, "[STDERR] ");
-                state = 1;
                 oldO = oldO == null ? System.out : oldO;
                 oldE = oldE == null ? System.err : oldE;
                 newO = new ChainedStream(jtaOStream, oldO, true);
                 newE = new ChainedStream(jtaEStream, oldE, true);
+                state = 1;
                 System.setOut(newO);
                 System.out.println("Chain to stdout: success!");
                 if (error) {
