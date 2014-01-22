@@ -2,7 +2,6 @@ package k.core.util;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -30,10 +29,7 @@ public class Helper {
     public static class Window {
 
         public static void drop(JFrame frame) {
-            Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension frm = frame.getSize();
-            frame.setLocation((screen.width / 2) - frm.width / 2,
-                    (screen.height / 2) - frm.height / 2);
+        	frame.setLocationRelativeTo(null);
         }
 
         public static void setBackground(Color c, JFrame fr) {
