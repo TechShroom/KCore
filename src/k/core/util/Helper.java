@@ -230,20 +230,30 @@ public class Helper {
             String value = "";
             boolean incomplete = false;
             for (int i = 0; i < args.length; i++) {
+                // get the current argument
                 String curr = args[i];
                 if (curr.startsWith("-") && !incomplete) {
+                    // it is a key, but we don't already have a key.
+                    // set the "looking for value" mode, sets the key as the
+                    // current value, and removes whatever old value was there.
                     incomplete = true;
                     key = curr;
+                    value = "";
                 } else if (curr.startsWith("-")) {
-                    incomplete = false;
+                    // it is a key, and we have a key already.
+                    // sets the current key + value (value will be "") and the
+                    // next key to this one.
                     joined.add(key);
-                    joined.add("");
-                    joined.add(curr);
-                    joined.add("");
+                    joined.add(value);
+                    key = curr;
+                    value = "";
                 } else {
+                    // this is a value, handle concatenation.
                     if (incomplete) {
+                        // there is a key waiting for us
                         if (i + 1 < args.length && args[i + 1].startsWith("-")) {
-                            // Last part
+                            // Last part of this value, add the key+value pair
+                            // and unset the incomplete flag
                             incomplete = false;
                             if (value.equals("")) {
                                 value = curr;
@@ -255,7 +265,8 @@ public class Helper {
                             key = "";
                             value = "";
                         } else if (i + 1 >= args.length) {
-                            // Also last part, but last in array
+                            // Also last part, but last in array, break out of
+                            // the loop.
                             incomplete = false;
                             if (value.equals("")) {
                                 value = curr;
@@ -268,7 +279,8 @@ public class Helper {
                             value = "";
                             break;
                         } else {
-                            // Continue making value aditions
+                            // Continue making value additions, this is the
+                            // multi-space handler that is built-in.
                             incomplete = true;
                             if (value.equals("")) {
                                 value = curr;
@@ -277,15 +289,19 @@ public class Helper {
                             }
                         }
                     } else {
-                        throw new IllegalArgumentException(
-                                "Value missing key! This shouldn't be happening.");
+                        // there is no key for our value, so we throw an error
+                        // because this will only happen when a user inputs
+                        // something like "value"
+                        throw new IllegalArgumentException("Value missing key!");
                     }
                 }
             }
             if (incomplete) {
+                // cleanup
                 joined.add(key);
                 joined.add(value);
             }
+            // convert to array
             return joined.toArray(new String[joined.size()]);
         }
 
