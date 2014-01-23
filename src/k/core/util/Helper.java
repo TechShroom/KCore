@@ -292,9 +292,21 @@ public class Helper {
         private static Properties clprops = new Properties();
 
         public static void acceptPair(String key, String val) {
+            if (val == null) {
+                throw new NullPointerException("value");
+            }
+            if (key == null) {
+                throw new NullPointerException("key");
+            }
             key = key.replace("-", "");
             clprops.put(key, val);
             System.err.println("Added " + key + ":" + val);
+        }
+
+        public static void acceptAll(String[] args) {
+            for (int i = 0; i < args.length; i += 2) {
+                acceptPair(args[i], args[i + 1]);
+            }
         }
 
         public static String getProperty(String key) {
