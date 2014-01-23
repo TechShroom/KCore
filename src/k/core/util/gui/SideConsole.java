@@ -76,8 +76,8 @@ public class SideConsole extends JFrame {
     }
 
     public SideConsole(boolean debug) {
-    	super("Console");
-    	this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        super("Console");
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         console = this;
         error = debug;
         JPanel jp = new JPanel();

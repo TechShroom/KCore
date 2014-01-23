@@ -29,7 +29,7 @@ public class Helper {
     public static class Window {
 
         public static void drop(JFrame frame) {
-        	frame.setLocationRelativeTo(null);
+            frame.setLocationRelativeTo(null);
         }
 
         public static void setBackground(Color c, JFrame fr) {
