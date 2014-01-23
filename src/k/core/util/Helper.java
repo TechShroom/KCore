@@ -1,9 +1,5 @@
 package k.core.util;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -11,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 
-import javax.swing.JFrame;
 
 public class Helper {
     public static class Files {
@@ -24,27 +19,6 @@ public class Helper {
         public static File getFileRelativeToTopLevel(String file) {
             return new File(topLevel, file);
         }
-    }
-
-    public static class Window {
-
-        public static void drop(JFrame frame) {
-            frame.setLocationRelativeTo(null);
-        }
-
-        public static void setBackground(Color c, JFrame fr) {
-            Container frame = fr.getContentPane();
-            frame.setBackground(c);
-        }
-
-        public static void kill(JFrame win) {
-            if (win == null) {
-                return;
-            }
-            WindowEvent close = new WindowEvent(win, WindowEvent.WINDOW_CLOSING);
-            Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(close);
-        }
-
     }
 
     @SuppressWarnings("unchecked")
