@@ -27,7 +27,7 @@ public class SwingAWTUtils {
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(close);
     }
 
-    public void runOnDispatch(Runnable r) throws Exception {
+    public static void runOnDispatch(Runnable r) throws Exception {
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
         } else {
