@@ -52,8 +52,13 @@ public class JClickableText extends JLabel implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         pressed(false);
         if (act != null && getProperBounds(bounds_temp).contains(e.getPoint())) {
-            act.actionPerformed(new ActionEvent(this, 0, getText()));
+            act.actionPerformed(createEvent(e));
         }
+    }
+
+    private ActionEvent createEvent(MouseEvent e) {
+        return new ActionEvent(this, e.getID(), getText(), e.getWhen(),
+                e.getModifiers());
     }
 
     /**
