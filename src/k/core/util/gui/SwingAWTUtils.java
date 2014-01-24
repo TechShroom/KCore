@@ -3,6 +3,7 @@ package k.core.util.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
@@ -84,5 +85,20 @@ public class SwingAWTUtils {
     public static void validate(JPanel jp) {
         jp.validate();
         jp.repaint();
+    }
+
+    /**
+     * Returns the font used by the L&F on the given {@link Component} modded
+     * with the given attributes.
+     * 
+     * @param style
+     *            - the style, see {@link Font#Font(String, int, int)}
+     * @param size
+     *            - the size, see {@link Font#Font(String, int, int)}
+     * @return a new {@link Font}
+     */
+    public static Font getDefaultModdedFont(Component c, int style, int size) {
+        Font f = c.getFont();
+        return new Font(f.getFontName(), style, size);
     }
 }
