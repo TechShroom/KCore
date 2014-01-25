@@ -1,7 +1,6 @@
 package k.core.util.jythonintegration;
 
 import java.io.File;
-import java.rmi.UnexpectedException;
 
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
@@ -38,7 +37,7 @@ public class JythonFile {
         PyObject invokeres = null;
         PyObject method = interpreter.get(mName);
         if (method.getType().getName().equals("function")) {
-            invokeres = method.__call__();
+            invokeres = method.__call__(args);
         } else {
             throw new RuntimeException("Expected function, got "
                     + method.getType().getName());
