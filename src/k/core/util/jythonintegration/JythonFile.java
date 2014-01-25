@@ -40,8 +40,8 @@ public class JythonFile {
         if (method.getType().getName().equals("function")) {
             invokeres = method.__call__();
         } else {
-            throw new RuntimeException(new UnexpectedException(
-                    "Expected function, got " + method.getType().getName()));
+            throw new RuntimeException("Expected function, got "
+                    + method.getType().getName());
         }
         return invokeres;
     }
