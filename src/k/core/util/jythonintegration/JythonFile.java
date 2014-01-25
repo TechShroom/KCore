@@ -20,8 +20,9 @@ public class JythonFile {
         } else {
             interpreter = JythonIntergration.mainInterpreter;
         }
+        interpreter.eval("__import__('sys').path.append('"
+                + pyfile.getParentFile().getAbsolutePath() + "')");
         interpreter.execfile(f.getAbsolutePath());
-        System.err.println(interpreter.getLocals());
     }
 
     /**
