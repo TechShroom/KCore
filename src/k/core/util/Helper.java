@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 
-
 public class Helper {
     public static class Files {
         public static String topLevel;
@@ -193,6 +192,40 @@ public class Helper {
             Object array = Array.newInstance(type, size);
             fillArray(array, value);
             return array;
+        }
+
+        public static <T> T splice(T array, int start, int end, int step) {
+            if (start < 0) {
+                throw new IndexOutOfBoundsException("start < 0");
+            }
+            if (end > Array.getLength(array)) {
+                throw new IndexOutOfBoundsException("end > length");
+            }
+            if (end < start) {
+                throw new IllegalArgumentException("start < end");
+            }
+            if (step == 0) {
+                throw new IllegalArgumentException("step == 0");
+            }
+            int len = end - start; // get length when step == 1
+            if (step > 1) {
+                int mod = len % step; // modulo to get leftovers
+                len -= mod; // remove them to floor the result
+                len /= step; // divide by step
+            }
+            T out = (T) Array.newInstance(array.getClass().getComponentType(),
+                    len);
+            if (step < 0) {
+                step = -step;
+                for (int i = end - 1, index = 0; i >= start; i -= step, index++) {
+                    Array.set(out, index, Array.get(array, i));
+                }
+            } else {
+                for (int i = start, index = 0; i < end; i += step, index++) {
+                    Array.set(out, index, Array.get(array, i));
+                }
+            }
+            return out;
         }
     }
 
