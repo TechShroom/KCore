@@ -16,7 +16,6 @@ public class DataStruct {
             KEY_CHAR = 'c', KEY_BYTE = 'b', KEY_FLOAT = 'f', KEY_DOUBLE = 'd',
             KEY_BOOL = 'B', KEY_OTHER = 'o';
     private Object[] dataValues = {};
-    private String dataString = "";
 
     /**
      * The 'decode' constructor. Used for decoding the data to values.
@@ -26,7 +25,6 @@ public class DataStruct {
      */
     public DataStruct(String data) {
         dataValues = decodeData(data);
-        dataString = data;
     }
 
     private Object[] decodeData(String s) {
@@ -95,7 +93,6 @@ public class DataStruct {
      */
     public DataStruct(Object[] values) {
         dataValues = values;
-        dataString = encodeData(values);
     }
 
     private String encodeData(Object[] enc) {
@@ -185,6 +182,6 @@ public class DataStruct {
 
     @Override
     public String toString() {
-        return dataString;
+        return encodeData(dataValues);
     }
 }
