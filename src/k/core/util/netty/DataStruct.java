@@ -1,10 +1,10 @@
 package k.core.util.netty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
-
-import k.core.util.Helper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -15,7 +15,7 @@ public class DataStruct {
     public static final char KEY_STRING = 's', KEY_LONG = 'l', KEY_INT = 'i',
             KEY_CHAR = 'c', KEY_BYTE = 'b', KEY_FLOAT = 'f', KEY_DOUBLE = 'd',
             KEY_BOOL = 'B', KEY_OTHER = 'o';
-    private Object[] dataValues = {};
+    private List<Object> dataValues = new ArrayList<Object>();
 
     /**
      * The 'decode' constructor. Used for decoding the data to values.
@@ -27,7 +27,7 @@ public class DataStruct {
         dataValues = decodeData(data);
     }
 
-    private Object[] decodeData(String s) {
+    private List<Object> decodeData(String s) {
         String[] splitToCopy = s.split(SPLIT_PAIRS);
         Object[] out = new Object[splitToCopy.length];
         System.arraycopy(splitToCopy, 0, out, 0, splitToCopy.length);
@@ -41,7 +41,7 @@ public class DataStruct {
                 out[i] = "<invalid>";
             }
         }
-        return out;
+        return Arrays.asList(out);
     }
 
     private Object decode(char key, String val) {
@@ -92,16 +92,16 @@ public class DataStruct {
      *            - the data values
      */
     public DataStruct(Object[] values) {
-        dataValues = values;
+        dataValues = Arrays.asList(values);
     }
 
-    private String encodeData(Object[] enc) {
+    private String encodeData(List<Object> enc) {
         String out = "";
         for (Object o : enc) {
             try {
                 out += encode(o);
             } catch (NullPointerException e) {
-                System.err.println("npe on " + Helper.BetterArrays.dump0(enc));
+                System.err.println("npe on " + enc + " at " + o);
             }
             out += SPLIT_PAIRS;
         }
@@ -167,8 +167,20 @@ public class DataStruct {
         if (dataValues == null) {
             return def;
         }
-        return dataValues.length <= index ? def
-                : dataValues[index] == null ? def : dataValues[index];
+        return dataValues.size() <= index ? def
+                : dataValues.get(index) == null ? def : dataValues.get(index);
+    }
+
+    public void add(Object o) {
+        dataValues.add(o);
+    }
+
+    public void remove(Object o) {
+        dataValues.remove(o);
+    }
+
+    public void remove(int index) {
+        dataValues.remove(index);
     }
 
     /**
@@ -177,7 +189,7 @@ public class DataStruct {
      * @return the object values
      */
     public Object[] getAll() {
-        return Arrays.asList(dataValues).toArray(new Object[0]);
+        return dataValues.toArray(new Object[0]);
     }
 
     @Override
