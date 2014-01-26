@@ -74,17 +74,17 @@ public class SwingAWTUtils {
     }
 
     /**
-     * Calls {@link JPanel#validate()} then {@link JPanel#repaint()} on the
-     * given {@link JPanel} to fully reload the JPanel.
+     * Calls {@link Container#validate()} then {@link Container#repaint()} on
+     * the given {@link Container} to fully reload the Container.
      * 
-     * @param jp
-     *            - the JPanel to use
-     * @see JPanel#repaint()
-     * @see JPanel#validate()
+     * @param c
+     *            - the Container to use
+     * @see Container#repaint()
+     * @see Container#validate()
      */
-    public static void validate(JPanel jp) {
-        jp.validate();
-        jp.repaint();
+    public static void validate(Container c) {
+        c.validate();
+        c.repaint();
     }
 
     /**
