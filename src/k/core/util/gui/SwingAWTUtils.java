@@ -5,17 +5,16 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class SwingAWTUtils {
 
-    public static void drop(JFrame frame) {
+    public static void drop(Window frame) {
         frame.setLocationRelativeTo(null);
     }
 
@@ -40,7 +39,7 @@ public class SwingAWTUtils {
         }
     }
 
-    public static void removeAll(JComponent c) {
+    public static void removeAll(Container c) {
         c.removeAll();
         c.validate();
         c.repaint();
@@ -48,19 +47,19 @@ public class SwingAWTUtils {
 
     /**
      * Adds all of the specified {@link Component components} with the given
-     * constraints, then calls {@link SwingAWTUtils#validate(JPanel) validate()}
-     * on <tt>to</tt>.
+     * constraints, then calls {@link SwingAWTUtils#validate(Container)
+     * validate()} on <tt>to</tt>.
      * 
      * @param to
-     *            - the {@link JPanel} to add to
+     *            - the {@link Container} to add to
      * @param comps
      *            - the components to add
      * @param constraints
      *            - the constraints. If <tt>null</tt>, a new array of size
      *            <tt>comps.length</tt> is created.
-     * @see SwingAWTUtils#validate(JPanel)
+     * @see SwingAWTUtils#validate(Container)
      */
-    public static void addAllAndValidate(JPanel to, Component[] comps,
+    public static void addAllAndValidate(Container to, Component[] comps,
             Object[] constraints) {
         if (constraints == null) {
             constraints = new Object[comps.length];
