@@ -152,10 +152,15 @@ public class SwingAWTUtils {
             c.setMaximumSize(size);
         }
         if ((flags & SETMINIMUMSIZE) != 0) {
-            c.setMaximumSize(size);
+            c.setMinimumSize(size);
         }
         if ((flags & SETSIZE) != 0) {
             c.setSize(size);
+        }
+        if (c instanceof Container) {
+            validate((Container) c);
+        } else {
+            validate(c.getParent());
         }
     }
 }
