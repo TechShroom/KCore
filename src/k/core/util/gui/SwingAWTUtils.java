@@ -3,6 +3,7 @@ package k.core.util.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -98,5 +99,63 @@ public class SwingAWTUtils {
     public static Font getDefaultModdedFont(Component c, int style, int size) {
         Font f = c.getFont();
         return new Font(f.getFontName(), style, size);
+    }
+
+    /**
+     * Indicates that you wish to set the preferred size in
+     * {@link #setAllSize(Component, Dimension, int)}.
+     */
+    public static final byte SETPREFERREDSIZE = 1 << 0;
+
+    /**
+     * Indicates that you wish to set the maximum size in
+     * {@link #setAllSize(Component, Dimension, int)}.
+     */
+    public static final byte SETMAXIMUMSIZE = 1 << 1;
+
+    /**
+     * Indicates that you wish to set the minimum size in
+     * {@link #setAllSize(Component, Dimension, int)}.
+     */
+    public static final byte SETMINIMUMSIZE = 1 << 2;
+
+    /**
+     * Indicates that you wish to set the size in
+     * {@link #setAllSize(Component, Dimension, int)}.
+     */
+    public static final byte SETSIZE = 1 << 3;
+
+    /**
+     * Indicates that you wish to set all sizes in
+     * {@link #setAllSize(Component, Dimension, int)}.
+     */
+    public static final byte SETALL = SETPREFERREDSIZE | SETMAXIMUMSIZE
+            | SETMINIMUMSIZE | SETSIZE;
+
+    /**
+     * Calls the setXSize methods on the given {@link Component}.
+     * 
+     * @param c
+     *            - the component to change
+     * @param size
+     *            - the size to set to
+     * @param flags
+     *            - a bitwise OR of {@link #SETPREFERREDSIZE},
+     *            {@link #SETMAXIMUMSIZE}, {@link #SETMINIMUMSIZE}, or
+     *            {@link #SETSIZE}.
+     */
+    public static void setAllSize(Component c, Dimension size, int flags) {
+        if ((flags & SETPREFERREDSIZE) != 0) {
+            c.setPreferredSize(size);
+        }
+        if ((flags & SETMAXIMUMSIZE) != 0) {
+            c.setMaximumSize(size);
+        }
+        if ((flags & SETMINIMUMSIZE) != 0) {
+            c.setMaximumSize(size);
+        }
+        if ((flags & SETSIZE) != 0) {
+            c.setSize(size);
+        }
     }
 }
