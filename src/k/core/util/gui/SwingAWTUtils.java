@@ -41,8 +41,7 @@ public class SwingAWTUtils {
 
     public static void removeAll(Container c) {
         c.removeAll();
-        c.validate();
-        c.repaint();
+        validate(c);
     }
 
     /**
