@@ -19,7 +19,7 @@ public class InputPipeStream extends InputStream {
     }
 
     public boolean connected() {
-        return buf == null;
+        return buf != null;
     }
 
     @Override
