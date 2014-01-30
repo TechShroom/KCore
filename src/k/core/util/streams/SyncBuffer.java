@@ -19,6 +19,9 @@ public class SyncBuffer {
 
     public byte get() {
         index--;
+        if (index < 0) {
+            return -1;
+        }
         byte b = buf[index];
         buf[index] = 0;
         return b;
