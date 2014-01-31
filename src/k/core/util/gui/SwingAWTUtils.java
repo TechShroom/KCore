@@ -8,10 +8,15 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import k.core.util.streams.InputPipeStream;
+import k.core.util.streams.OutputPipeStream;
 
 public class SwingAWTUtils {
 
@@ -161,6 +166,23 @@ public class SwingAWTUtils {
             validate((Container) c);
         } else {
             validate(c.getParent());
+        }
+    }
+
+    public static <T extends Component> T cloneLikeSerial(T c) {
+        try {
+            InputPipeStream ips = new InputPipeStream();
+            OutputPipeStream ops = new OutputPipeStream(ips);
+            ObjectOutputStream oos = new ObjectOutputStream(ops);
+            oos.writeObject(c);
+            oos.close();
+            ObjectInputStream ois = new ObjectInputStream(ips);
+            @SuppressWarnings("unchecked")
+            T inst = (T) ois.readObject();
+            ois.close();
+            return inst;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
