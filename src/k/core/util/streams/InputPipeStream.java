@@ -22,15 +22,12 @@ public class InputPipeStream extends InputStream {
                 if (reqdbytes.get() > 0) {
                     for (int i = 0; i < reqdbytes.get(); i++) {
                         try {
-                            aia.addAndGet(i, in.read());
-                        } catch (IOException e) {
+                            aia.set(i, in.read());
+                        } catch (Exception e) {
                             e.printStackTrace();
                             Thread.currentThread().interrupt();
                             break;
                         }
-                    }
-                    if (Thread.interrupted()) {
-                        break;
                     }
                     reqdbytes.set(-1);
                 }
@@ -41,16 +38,30 @@ public class InputPipeStream extends InputStream {
             reqdbytes.set(1);
             while (reqdbytes.get() > 0) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException ie) {
                 }
             }
             return aia.get(0);
         }
+
+        public int read(byte[] b, int off, int len) {
+            reqdbytes.set(len);
+            while (reqdbytes.get() > 0) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ie) {
+                }
+            }
+            for (int i = 0, j = off; i < len; i++, j++) {
+                b[j] = (byte) aia.get(i);
+            }
+            return len;
+        }
     }
 
     private PipeRunnable running = null;
-    private PipedInputStream i = new PipedInputStream();
+    private PipedInputStream i = new PipedInputStream(1024 * 16);
     private boolean conn = false;
     private Thread runningt;
 
@@ -67,10 +78,7 @@ public class InputPipeStream extends InputStream {
             e.printStackTrace();
             return;
         }
-        running = new PipeRunnable(i);
-        runningt = new Thread(running, "PipeIn");
-        runningt.setDaemon(true);
-        runningt.start();
+        setup();
         conn = true;
     }
 
@@ -83,7 +91,13 @@ public class InputPipeStream extends InputStream {
         return running.read();
     }
 
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return running.read(b, off, len);
+    }
+
     PipedInputStream getSnk() {
+        setup();
         return i;
     }
 
@@ -95,6 +109,13 @@ public class InputPipeStream extends InputStream {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setup() {
+        running = new PipeRunnable(i);
+        runningt = new Thread(running, "PipeIn");
+        runningt.setDaemon(true);
+        runningt.start();
     }
 
 }

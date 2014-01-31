@@ -3,6 +3,7 @@ package k.core.util.streams;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedOutputStream;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -23,7 +24,7 @@ public class OutputPipeStream extends OutputStream {
                     for (int i = 0; i < reqdbytes.get(); i++) {
                         try {
                             out.write(aia.get(i));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                             Thread.currentThread().interrupt();
                             break;
@@ -38,8 +39,28 @@ public class OutputPipeStream extends OutputStream {
         }
 
         public void write(int b) {
-            aia.addAndGet(0, b);
+            aia.set(0, b);
             reqdbytes.set(1);
+            while (reqdbytes.get() > 0) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ie) {
+                }
+            }
+        }
+
+        public void write(byte[] b, int off, int len) {
+            byte[] slice = Arrays.copyOfRange(b, off, off + len);
+            for (int i = 0; i < len; i++) {
+                aia.set(i, slice[i]);
+            }
+            reqdbytes.set(len);
+            while (reqdbytes.get() > 0) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ie) {
+                }
+            }
         }
 
     }
@@ -62,6 +83,7 @@ public class OutputPipeStream extends OutputStream {
             e.printStackTrace();
             return;
         }
+        setup();
         conn = true;
     }
 
@@ -74,7 +96,13 @@ public class OutputPipeStream extends OutputStream {
         running.write(b);
     }
 
+    @Override
+    public void write(byte[] b, int off, int len) {
+        running.write(b, off, len);
+    }
+
     PipedOutputStream getSrc() {
+        setup();
         return o;
     }
 
