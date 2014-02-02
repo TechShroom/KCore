@@ -1,5 +1,7 @@
 A common core for most of TechShroom's programs.
 
+Please note that Java 8 is incomatible with the Arrays package, and you will need to use the jre8 branch/distribution in order to use it in Java 8.
+
 Get distributed pre-compiled jars over at [TechShroom](http://techshroom.com)
 
 Parts of KCore (distributed):
