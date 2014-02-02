@@ -102,6 +102,14 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @SuppressWarnings("unchecked")
     public ResizableArray(Class<T> type, Collection<?> c) {
+        if (c instanceof ResizableArray) {
+            ResizableArray<T> ra = (ResizableArray<T>) c;
+            size = ra.size;
+            arrayType = ra.arrayType;
+            permitUndef = ra.permitUndef;
+            elementData = ra.copyOf(ra.size);
+            return;
+        }
         if (c.size() == 0) {
             Type ptype = c.getClass().getGenericSuperclass();
             if (ptype instanceof ParameterizedType) {
