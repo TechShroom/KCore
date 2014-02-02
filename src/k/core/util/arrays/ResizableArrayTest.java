@@ -28,14 +28,14 @@ public class ResizableArrayTest {
 
     private static void testRA() {
         long start = System.currentTimeMillis();
-        ResizableArray<double[]> array = new ResizableArray<double[]>(
-                double[].class);
+        ResizableArray<Double[]> array = new ResizableArray<Double[]>(
+                Double[].class);
         printLength(array);
         for (int i = 0; i < 10000; i++) {
             array.add(Math.random());
         }
         print(array);
-        double d = (Double) array.get(0);
+        Double d = (Double) array.get(0);
         System.err.println(d);
         long end = System.currentTimeMillis() - start;
         System.err.println("Took " + end);
