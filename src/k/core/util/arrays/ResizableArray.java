@@ -24,7 +24,6 @@ import k.core.util.reflect.Reflect;
  * {@link ArrayList}, but allows the use of primitive values as the array type.
  * 
  * @author kenzietogami
- * 
  */
 public class ResizableArray<T> extends AbstractList<Object> implements
         List<Object>, RandomAccess, Cloneable, java.io.Serializable {
