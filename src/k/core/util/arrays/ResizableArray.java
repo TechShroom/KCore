@@ -202,7 +202,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     private void invalidCheck() {
         // create with size() so that it doesn't create a huge array from
         // doubling size.
-        ArrayList<Object> rem = new ArrayList<Object>(size());
+        ResizableArray<T> rem = new ResizableArray<T>(arrayType, size());
         for (Object o : this) {
             if (o == null || primitveInvalids(o)) {
                 rem.add(o);
@@ -964,8 +964,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         // Read in array length and allocate array
         s.readInt(); // length now ignored in jre8
         arrayType = (Class<T>) s.readObject();
-        elementData = (T) Array.newInstance(arrayType.getComponentType(),
-                0);
+        elementData = (T) Array.newInstance(arrayType.getComponentType(), 0);
 
         if (size > 0) {
             // be like clone(), allocate array based upon size not capacity
