@@ -13,6 +13,7 @@ public class ResizableArrayTest {
     }
 
     private static void testAL() {
+        System.err.println("Starting AL test...");
         long start = System.currentTimeMillis();
         ArrayList<Double> array = new ArrayList<Double>();
         printLength(array);
@@ -27,6 +28,7 @@ public class ResizableArrayTest {
     }
 
     private static void testRA() {
+        System.err.println("Starting RA test...");
         long start = System.currentTimeMillis();
         ResizableArray<Double[]> array = new ResizableArray<Double[]>(
                 Double[].class);
@@ -43,7 +45,7 @@ public class ResizableArrayTest {
 
     private static void printLength(Object array) {
         try {
-            System.out.println(Reflect.invokeMethod(int.class, "size", array));
+            System.err.println(Reflect.invokeMethod(int.class, "size", array));
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -64,6 +66,7 @@ public class ResizableArrayTest {
 
     private static void print(Object array) {
         // System.out.println(array);
+        printLength(array);
     }
 
 }
