@@ -1,4 +1,4 @@
-A common core for most of TechShroom's programs.
+A common core for most of TechShroom's programs. This is the branch of KCore used for Java 8.
 
 Get distributed pre-compiled jars over at [TechShroom](http://techshroom.com)
 
