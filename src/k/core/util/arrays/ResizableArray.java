@@ -13,7 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.RandomAccess;
+import java.util.function.Consumer;
 
 import k.core.util.Helper.BetterArrays;
 import k.core.util.classes.ClassHelp;
@@ -30,11 +32,16 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
+     * Default initial capacity.
+     */
+    private static final int DEFAULT_CAPACITY = 10;
+
+    /**
      * The array buffer into which the elements of the ResizableArray are
      * stored. The capacity of the ResizableArray is the length of this array
      * buffer.
      */
-    private transient T elementData;
+    transient T elementData;
 
     /**
      * The size of the ResizableArray (the number of elements it contains).
@@ -76,7 +83,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      * Constructs an empty list with an initial capacity of ten.
      */
     public ResizableArray(Class<T> type) {
-        this(type, 10);
+        this(type, 0);
     }
 
     /**
@@ -162,8 +169,15 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      *            the desired minimum capacity
      */
     public void ensureCapacity(int minCapacity) {
-        if (minCapacity > 0)
-            ensureCapacityInternal(minCapacity);
+        int minExpand = (length() != 0)
+        // any size if real element table
+        ? 0
+                // larger than default for empty table. It's already supposed to
+                // be
+                // at default size.
+                : DEFAULT_CAPACITY;
+        if (minCapacity > minExpand)
+            ensureExplicitCapacity(minCapacity);
     }
 
     /**
@@ -228,7 +242,16 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     private void ensureCapacityInternal(int minCapacity) {
+        if (length() == 0) {
+            minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
+        }
+
+        ensureExplicitCapacity(minCapacity);
+    }
+
+    private void ensureExplicitCapacity(int minCapacity) {
         modCount++;
+
         // overflow-conscious code
         if (minCapacity - length() > 0)
             grow(minCapacity);
@@ -830,6 +853,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @Override
     public boolean removeAll(Collection<?> c) {
+        Objects.requireNonNull(c);
         return batchRemove(c, false);
     }
 
@@ -854,6 +878,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @Override
     public boolean retainAll(Collection<?> c) {
+        Objects.requireNonNull(c);
         return batchRemove(c, true);
     }
 
@@ -913,7 +938,6 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             s.writeObject(elementData(i));
 
         s.writeBoolean(permitUndef);
-        ;
 
         if (modCount != expectedModCount) {
             throw new ConcurrentModificationException();
@@ -928,18 +952,25 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     @SuppressWarnings("unchecked")
     private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {
+
         // Read in size, and any hidden stuff
         s.defaultReadObject();
 
         // Read in array length and allocate array
-        int arrayLength = s.readInt();
+        s.readInt(); // length now ignored in jre8
         arrayType = (Class<T>) s.readObject();
         T a = elementData = (T) Array.newInstance(arrayType.getComponentType(),
-                arrayLength);
+                0);
 
-        // Read in all elements in the proper order.
-        for (int i = 0; i < size; i++)
-            Array.set(a, i, s.readObject());
+        if (size > 0) {
+            // be like clone(), allocate array based upon size not capacity
+            ensureCapacityInternal(size);
+
+            // Read in all elements in the proper order.
+            for (int i = 0; i < size; i++) {
+                fastSet(i, s.readObject());
+            }
+        }
 
         permitUndef = s.readBoolean();
     }
@@ -1392,6 +1423,21 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         private void checkForComodification() {
             if (ResizableArray.this.modCount != this.modCount)
                 throw new ConcurrentModificationException();
+        }
+    }
+
+    @Override
+    public void forEach(Consumer<? super E> action) {
+        Objects.requireNonNull(action);
+        final int expectedModCount = modCount;
+        @SuppressWarnings("unchecked")
+        final E[] elementData = (E[]) this.elementData;
+        final int size = this.size;
+        for (int i=0; modCount == expectedModCount && i < size; i++) {
+            action.accept(elementData[i]);
+        }
+        if (modCount != expectedModCount) {
+            throw new ConcurrentModificationException();
         }
     }
 }
