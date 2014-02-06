@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public abstract class JMIActionListener implements ActionListener {
-    protected String cmd, jmi_ref, menu;
+    private String cmd, jmi_ref, menu;
 
-    public static class NonAbstractJMIActionListener extends JMIActionListener {
+    private static class NonAbstractJMIActionListener extends JMIActionListener {
 
         public NonAbstractJMIActionListener(String command,
                 String jmi_ref_name, String mtitle) {
@@ -16,8 +16,8 @@ public abstract class JMIActionListener implements ActionListener {
 
         @Override
         public void onAction(ActionEvent e) {
-            System.err
-                    .println("NonAbstract JMIListener was used! Bad idea for you!");
+            throw new IllegalStateException(
+                    "Only registered listener is a dummy class");
         }
 
     }
@@ -64,14 +64,28 @@ public abstract class JMIActionListener implements ActionListener {
                     + "'), " + e.getActionCommand() + ")!");
             return;
         }
-        System.err.println("Invoking class " + listener.getClass().getName()
-                + " with action " + e.toString());
-        System.err.println("entry for title " + e.getActionCommand()
-                + " (ref is " + translatedKey
-                + " [retrived via cmenu.translateJMITitleToRef("
-                + reg_refs.get(e.getActionCommand()) + ", "
-                + e.getActionCommand() + ")!");
+        /*
+         * System.err.println("Invoking class " + listener.getClass().getName()
+         * + " with action " + e.toString());
+         * System.err.println("entry for title " + e.getActionCommand() +
+         * " (ref is " + translatedKey +
+         * " [retrived via cmenu.translateJMITitleToRef(" +
+         * reg_refs.get(e.getActionCommand()) + ", " + e.getActionCommand() +
+         * ")!");
+         */
         listener.onAction(e);
+    }
+
+    public String getCommand() {
+        return cmd;
+    }
+
+    public String getReferenceKey() {
+        return jmi_ref;
+    }
+
+    public String getMenuReferenceKey() {
+        return menu;
     }
 
     public abstract void onAction(ActionEvent e);
