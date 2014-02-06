@@ -76,6 +76,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
     public UnlimitedDouble(UnlimitedDouble value) {
         // clone digits so that we don't overwrite
         value.digits.permitUndefined(false);
+        value.digits.trimToSize();
         digits = value.digits.clone();
         decimal = value.decimal;
         negative = value.negative;
@@ -367,18 +368,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
 
     @Override
     public UnlimitedDouble clone() {
-        try {
-            UnlimitedDouble shallow = (UnlimitedDouble) super.clone();
-            digits.trimToSize();
-            digits.permitUndefined(false);
-            shallow.digits = digits.clone();
-            shallow.decimal = decimal;
-            shallow.negative = negative;
-            return shallow;
-        } catch (CloneNotSupportedException e) {
-            // this shouldn't happen, since we are Cloneable
-            throw new InternalError();
-        }
+        return new UnlimitedDouble(this);
     }
 
     /**
