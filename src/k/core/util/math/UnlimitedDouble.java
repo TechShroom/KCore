@@ -1,5 +1,7 @@
 package k.core.util.math;
 
+import org.python.antlr.PythonParser.return_stmt_return;
+
 import k.core.util.Helper.BetterArrays;
 import k.core.util.arrays.ResizableArray;
 import k.core.util.strings.Strings;
@@ -24,8 +26,13 @@ import k.core.util.strings.Strings;
  * @author Kenzie Togami
  * 
  */
-public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
-    private static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
+public final class UnlimitedDouble extends Number implements Cloneable,
+        Comparable<UnlimitedDouble> {
+    /**
+     * Serial version
+     */
+    private static final long serialVersionUID = -3795087690346750137L;
+    public static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
             ZERO = new UnlimitedDouble("0");
     private static final boolean debugmode = Boolean.parseBoolean(System
             .getProperty("ud.debug")), negzeros = System.getProperty(
@@ -40,7 +47,7 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      * The methods that implement the comparison operators (>, <, >=, <=) are
      * undefined for this value.
      */
-    private static final UnlimitedDouble EMPTY = ZERO.clone();
+    public static final UnlimitedDouble EMPTY = ZERO.clone();
     static {
         EMPTY.digits = new ResizableArray<char[]>(new char[0]);
         EMPTY.decimal = EMPTY.digits.size();
@@ -343,6 +350,19 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
         return copy;
     }
 
+    /**
+     * Returns the integer part of this UD.
+     * 
+     * @return the integer part of this UD, or 'undefined' if this is undefined.
+     */
+    public String intPart() {
+        String toStr = toString();
+        if (toStr.equals("undefined") || decimal >= digits.size()) {
+            return toStr;
+        }
+        return toStr.substring(0, toStr.indexOf('.'));
+    }
+
     /* Overridden defaults */
 
     @Override
@@ -573,15 +593,15 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      * @see UnlimitedDouble#EMPTY
      */
     public static UnlimitedDouble empty() {
-        return EMPTY.clone();
+        return EMPTY;
     }
 
     public static UnlimitedDouble one() {
-        return ONE.clone();
+        return ONE;
     }
 
     public static UnlimitedDouble zero() {
-        return ZERO.clone();
+        return ZERO;
     }
 
     /**
@@ -600,5 +620,41 @@ public class UnlimitedDouble implements Cloneable, Comparable<UnlimitedDouble> {
      */
     public static UnlimitedDouble min(UnlimitedDouble a, UnlimitedDouble b) {
         return (a.lessThanOrEqual(b)) ? a : b;
+    }
+
+    @Override
+    public int intValue() {
+        try {
+            return Integer.parseInt(intPart());
+        } catch (NumberFormatException nfe) {
+            return negative ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        }
+    }
+
+    @Override
+    public long longValue() {
+        try {
+            return Long.parseLong(intPart());
+        } catch (NumberFormatException nfe) {
+            return negative ? Long.MIN_VALUE : Long.MAX_VALUE;
+        }
+    }
+
+    @Override
+    public float floatValue() {
+        try {
+            return Float.parseFloat(toString());
+        } catch (NumberFormatException nfe) {
+            return negative ? Float.MIN_VALUE : Float.MAX_VALUE;
+        }
+    }
+
+    @Override
+    public double doubleValue() {
+        try {
+            return Double.parseDouble(toString());
+        } catch (NumberFormatException nfe) {
+            return negative ? Double.MIN_VALUE : Double.MAX_VALUE;
+        }
     }
 }
