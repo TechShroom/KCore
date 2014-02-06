@@ -149,8 +149,8 @@ public abstract class Packet implements Comparable<Packet> {
      * 
      * @param o
      *            - the packet to compare to
-     * @return see {@link Comparable#compareTo(Object)}
-     * @see Comparable#compareTo(Object)
+     * @return see {@link #compareTo(Object)}
+     * @see #compareTo(Object)
      */
     protected int delCompareTo(Packet o) {
         int ourId = packetToId.get(getClass()), theirId = packetToId.get(o

@@ -16,10 +16,10 @@ import java.net.SocketAddress;
  * 
  */
 public class NetHandlerClient extends NetHandler {
-    Bootstrap b = null;
-    ChannelFuture futureNow = null;
-    Channel ch = null;
-    EventLoopGroup group = new NioEventLoopGroup();
+    private Bootstrap b = null;
+    private ChannelFuture futureNow = null;
+    private Channel ch = null;
+    private EventLoopGroup group = new NioEventLoopGroup();
     TelnetClient client = null;
 
     public NetHandlerClient(SocketAddress from, SocketAddress to) {

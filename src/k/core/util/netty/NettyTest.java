@@ -46,7 +46,7 @@ public class NettyTest {
             } catch (Exception e) {
             }
         }
-        System.err.println(nhc.sentPackets + ":" + nhs.sentPackets);
+        System.err.println(nhc.packetsSent() + ":" + nhs.packetsSent());
     }
 
     /**

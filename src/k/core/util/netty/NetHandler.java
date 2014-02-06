@@ -16,7 +16,7 @@ public abstract class NetHandler implements PacketSender {
     private PriorityQueue<ISendPacket> pq = new PriorityQueue<ISendPacket>();
     private PriorityQueue<IReceivePacket> pqin = new PriorityQueue<IReceivePacket>();
     protected boolean stopped = false;
-    public int sentPackets = 0;
+    private int sentPackets = 0;
 
     /**
      * Sets up the basics.
@@ -141,6 +141,10 @@ public abstract class NetHandler implements PacketSender {
 
     public boolean isShutdown() {
         return stopped;
+    }
+    
+    public int packetsSent() {
+        return sentPackets;
     }
 
     /**
