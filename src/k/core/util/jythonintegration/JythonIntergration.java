@@ -5,7 +5,7 @@ import java.io.File;
 import org.python.util.PythonInterpreter;
 
 public class JythonIntergration {
-    public static PythonInterpreter mainInterpreter = null;
+    public static final PythonInterpreter mainInterpreter;
 
     static {
         mainInterpreter = new PythonInterpreter();
