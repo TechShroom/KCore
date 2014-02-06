@@ -17,22 +17,24 @@ import javax.swing.JTextArea;
 public class SideConsole extends JFrame {
     private static final long serialVersionUID = 3733784846766341735L;
     private boolean error;
-    public JScrollPane scroller;
+    private JScrollPane scroller;
     private Menu m;
     private static PrintStream oldO, oldE, newO, newE;
     private static String[] exceptions = { "Error creating the OutputStreams",
             "Error setting System.out", "Error setting System.err" };
-    protected static PrintStream log;
+    static PrintStream log;
     static {
         log = new PrintStream(System.err);
     }
     private static String earlyBufferE = null, earlyBufferO = null;
     private static boolean chained = false;
 
-    public static final String OPTION_MENU = "options",
-            DEBUG_JMIKEY = "debug_checkbox";
+    static final String OPTION_MENU = "options";
+    static final String DEBUG_JMIKEY = "debug_checkbox";
 
-    public static final DJMIActionListener DEBUG_LISTENER = new DJMIActionListener();
+    static {
+        new DJMIActionListener();
+    }
     private static OutputStream earlyPOS = new OutputStream() {
 
         @Override
