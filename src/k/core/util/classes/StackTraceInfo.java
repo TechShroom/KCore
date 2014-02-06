@@ -26,7 +26,7 @@ public class StackTraceInfo {
     /**
      * Index of the StackTraceInfo methods in the stack
      */
-    public static final int CLIENT_CODE_STACK_INDEX;
+    private static final int CLIENT_CODE_STACK_INDEX;
 
     /**
      * Makes the offset zero for the calling method, by adding the required
