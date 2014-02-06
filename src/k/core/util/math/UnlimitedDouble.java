@@ -92,10 +92,11 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         if (Strings.count(value, '.') > 1) {
             throw new NumberFormatException(value);
         }
-        if (value.equals("undefined")) {
+        if ("undefined".equals(value)) {
             decimal = EMPTY.decimal;
             digits = EMPTY.digits;
             negative = EMPTY.negative;
+            return;
         }
         // remove the invalids
         value = value.replace(new String(new char[] { 0 }), "");
