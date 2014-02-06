@@ -914,7 +914,6 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             s.writeObject(elementData(i));
 
         s.writeBoolean(permitUndef);
-        ;
 
         if (modCount != expectedModCount) {
             throw new ConcurrentModificationException();
