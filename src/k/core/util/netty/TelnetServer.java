@@ -5,11 +5,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.LinkedList;
 
-public class TelnetServer extends SimpleChannelInboundHandler<String> implements
+class TelnetServer extends SimpleChannelInboundHandler<String> implements
         PacketSender {
-    LinkedList<Packet> send = new LinkedList<Packet>();
+    private LinkedList<Packet> send = new LinkedList<Packet>();
     NetHandlerServer server = null;
-    public ChannelHandlerContext mostRecent = null;
+    private ChannelHandlerContext mostRecent = null;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
