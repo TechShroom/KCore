@@ -186,7 +186,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         // reversed into a new array. trimToSize is required here.
         a.digits.trimToSize();
         b.digits.trimToSize();
-        char[] caa = (char[]) a.digits.getUnderlyingArray(), cab = (char[]) b.digits
+        char[] caa = a.digits.getUnderlyingArray(), cab = b.digits
                 .getUnderlyingArray();
         // create the array used to carry numbers
         byte[] carry = new byte[larger.length() + 1];
