@@ -9,9 +9,9 @@ import javax.swing.event.DocumentListener;
 
 public class TextAreaPrinter extends ByteArrayOutputStream implements
         DocumentListener {
-    JTextArea out = null;
-    String pre = ">";
-    String buffer = "";
+    private JTextArea out = null;
+    private String pre = ">";
+    private String buffer = "";
 
     public TextAreaPrinter(JTextArea jta, String prefix) {
         super();
