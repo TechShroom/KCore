@@ -20,7 +20,6 @@ public class Helper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static class BetterArrays {
         public static void print(Object[] array) {
             print(array, System.err);
@@ -66,13 +65,18 @@ public class Helper {
                             + generic.getName());
                 }
             }
-            return temp.toArray((T[]) Array.newInstance(generic, src.length));
+            // Array is not generic
+            @SuppressWarnings("unchecked")
+            T[] arrType = (T[]) Array.newInstance(generic, src.length);
+            return temp.toArray(arrType);
         }
 
         public static <T> T[] randomArray(T[] in) {
             if (in.length == 0 || in.length == 1) {
                 return in;
             }
+            // Array is not generic
+            @SuppressWarnings("unchecked")
             T[] test = (T[]) Array.newInstance(
                     in.getClass().getComponentType(), in.length);
             boolean solved = false;
@@ -102,6 +106,8 @@ public class Helper {
         }
 
         public static <T> T[] repeatRandomArray(T[] in, int count) {
+            // Array is not generic
+            @SuppressWarnings("unchecked")
             T[] array = (T[]) Array.newInstance(in.getClass()
                     .getComponentType(), in.length);
             System.arraycopy(in, 0, array, 0, in.length);
@@ -160,6 +166,8 @@ public class Helper {
         }
 
         public static <T> T[] reverse(T[] stuff) {
+            // Array is not generic
+            @SuppressWarnings("unchecked")
             T[] out = (T[]) Array.newInstance(stuff.getClass()
                     .getComponentType(), stuff.length);
             for (int i = 0; i < stuff.length; i++) {
@@ -174,6 +182,8 @@ public class Helper {
          */
         public static <T> T reverseNonGeneric(T t) {
             int tlen = Array.getLength(t);
+            // Array is not generic
+            @SuppressWarnings("unchecked")
             T out = (T) Array
                     .newInstance(t.getClass().getComponentType(), tlen);
             for (int i = 0; i < tlen; i++) {
@@ -213,6 +223,8 @@ public class Helper {
                 len -= mod; // remove them to floor the result
                 len /= step; // divide by step
             }
+            // Array is not generic
+            @SuppressWarnings("unchecked")
             T out = (T) Array.newInstance(array.getClass().getComponentType(),
                     len);
             if (step < 0) {
