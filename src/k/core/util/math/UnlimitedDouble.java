@@ -419,6 +419,10 @@ public final class UnlimitedDouble extends Number implements
                             + before + " changed to " + y);
             Thread.dumpStack();
         }
+        // bdx = before x's decimal
+        // bdy before y's decimal
+        // adx = after x's decimal
+        // ady = after y's decimal
         char[] bdx = new char[x.length()], bdy = new char[y.length()], adx = new char[0], ady = new char[0];
         // read decimal
         if (x.hasDecimal()) {
