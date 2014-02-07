@@ -1,6 +1,7 @@
 package k.core.util.arrays;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractList;
@@ -29,6 +30,20 @@ import k.core.util.reflect.Reflect;
 public class ResizableArray<T> extends AbstractList<Object> implements
         List<Object>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
+    private static final Method ARR_CLONE;
+
+    static {
+        Method m = null;
+        try {
+            m = Object.class.getDeclaredMethod("clone");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        m.setAccessible(true);
+        ARR_CLONE = m;
+    }
 
     /**
      * The array buffer into which the elements of the ResizableArray are
@@ -137,7 +152,11 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         if (arrayType == null) {
             throw new IllegalArgumentException(String.valueOf(array));
         }
-        elementData = array;
+        try {
+            elementData = (T) ARR_CLONE.invoke(array);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         size = length();
     }
 
