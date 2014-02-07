@@ -24,14 +24,14 @@ import k.core.util.strings.Strings;
  * @author Kenzie Togami
  * 
  */
-public final class UnlimitedDouble extends Number implements Cloneable,
+public final class UnlimitedDouble extends Number implements
         Comparable<UnlimitedDouble> {
     /**
      * Serial version
      */
     private static final long serialVersionUID = -3795087690346750137L;
-    public static final UnlimitedDouble ONE = new UnlimitedDouble("1"),
-            ZERO = new UnlimitedDouble("0");
+    public static final UnlimitedDouble ONE = newInstance("1"),
+            ZERO = newInstance("0");
     private static final boolean debugmode = Boolean.parseBoolean(System
             .getProperty("ud.debug")), negzeros = System.getProperty(
             "ud.negzero", null) != null;
@@ -45,33 +45,29 @@ public final class UnlimitedDouble extends Number implements Cloneable,
      * The methods that implement the comparison operators (>, <, >=, <=) are
      * undefined for this value.
      */
-    public static final UnlimitedDouble EMPTY = ZERO.clone();
-    static {
-        EMPTY.digits = new ResizableArray<char[]>(new char[0]);
-        EMPTY.decimal = EMPTY.digits.size();
-        EMPTY.negative = false;
-    }
+    public static final UnlimitedDouble EMPTY = new UnlimitedDouble(
+            new ResizableArray<char[]>(char[].class, 0), 0, false);
 
     /**
      * The digits, not including the decimal or negative.
      */
-    private ResizableArray<char[]> digits = null;
+    private final ResizableArray<char[]> digits;
     /**
      * The decimal place, inserted between <tt>decimal</tt> and
      * <tt>decimal+1</tt>
      */
-    private int decimal = 0xDEADBEEF;
+    private final int decimal;
 
     /**
      * If this UD is negative or not
      */
-    private boolean negative = false;
+    private final boolean negative;
 
-    public UnlimitedDouble(String value) {
-        parse0(value);
+    public static UnlimitedDouble newInstance(String value) {
+        return parse0(value);
     }
 
-    public UnlimitedDouble(UnlimitedDouble value) {
+    private UnlimitedDouble(UnlimitedDouble value) {
         // clone digits so that we don't overwrite
         value.digits.permitUndefined(false);
         value.digits.trimToSize();
@@ -80,55 +76,21 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         negative = value.negative;
     }
 
-    /* Private methods */
-
-    /**
-     * Handles parsing for String constructor
-     * 
-     * @param value
-     *            - the original string
-     */
-    private void parse0(String value) {
-        if (Strings.count(value, '.') > 1) {
-            throw new NumberFormatException(value);
-        }
-        if ("undefined".equals(value)) {
-            decimal = EMPTY.decimal;
-            digits = EMPTY.digits;
-            negative = EMPTY.negative;
-            return;
-        }
-        // remove the invalids
-        value = value.replace(new String(new char[] { 0 }), "");
-        // do this BEFORE decimal place check, otherwise it screws up.
-        value = trimZeros(value);
-        value = value.substring(((negative = value.charAt(0) == '-') ? 1 : 0));
-        // check for negatives, but do not include them
-        String withoutDec = value.replace(".", "");
-        // only digits
-        if (!withoutDec.matches("^\\d+$")) {
-            throw new NumberFormatException(value);
-        }
-        decimal = value.indexOf('.');
-        // convert string
-        digits = new ResizableArray<char[]>(withoutDec.toCharArray());
-        digits.permitUndefined(false);
-        // decimal place = length of digits when there is none
-        if (decimal < 0) {
-            decimal = digits.size();
-        }
-        // if this == zero, then remove the negative (set property 'ud.negzero'
-        // for negative zeros :3)
-        if (!negzeros && negative && negate().equals(ZERO)) {
-            negative = false;
-        }
+    private UnlimitedDouble(ResizableArray<char[]> dig, int dec, boolean neg) {
+        digits = dig;
+        decimal = dec;
+        negative = neg;
     }
+
+    /* Private methods */
 
     private int rtlDecimal() {
         return digits.size() - decimal;
     }
 
-    private String trimZeros(String value) {
+    /* (private) Static methods */
+
+    private static String trimZeros(String value) {
         if (value.matches(".+?\\.0+$")) {
             value = value.replaceFirst("\\.0+$", "");
         } else if (value.matches(".+?\\.\\d+0+$")) {
@@ -136,8 +98,6 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         }
         return value.replaceFirst("^(\\-)?0+(?!0)(\\d+(\\.\\d+)?)$", "$1$2");
     }
-
-    /* (private) Static methods */
 
     /**
      * Makes a and b's decimal place line up for adding and subtracting.
@@ -167,6 +127,66 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         }
     }
 
+    /**
+     * Handles parsing for String constructor
+     * 
+     * @param value
+     *            - the original string
+     */
+    private static UnlimitedDouble parse0(String value) {
+        if (Strings.count(value, '.') > 1) {
+            throw new NumberFormatException(value);
+        }
+        // value length is about the real size!
+        ResizableArray<char[]> dig = new ResizableArray<char[]>(char[].class,
+                value.length());
+        int dec = 0;
+        boolean neg = false;
+        if ("undefined".equals(value)) {
+            dec = EMPTY.decimal;
+            dig = EMPTY.digits;
+            neg = EMPTY.negative;
+        } else {
+            // remove the invalids
+            value = value.replace(new String(new char[] { 0 }), "");
+            // do this BEFORE decimal place check, otherwise it screws up.
+            value = trimZeros(value);
+            value = value.substring(((neg = value.charAt(0) == '-') ? 1 : 0));
+            // check for negatives, but do not include them
+            String withoutDec = value.replace(".", "");
+            // only digits
+            if (!withoutDec.matches("^\\d+$")) {
+                throw new NumberFormatException(value);
+            }
+            dec = value.indexOf('.');
+            // convert string
+            dig = new ResizableArray<char[]>(withoutDec.toCharArray());
+            dig.permitUndefined(false);
+            // decimal place = length of digits when there is none
+            if (dec < 0) {
+                dec = dig.size();
+            }
+            // if this == zero, then remove the negative (set property
+            // 'ud.negzero'
+            // for negative zeros :3)
+            if (!negzeros && neg && dig.get(0).equals('0')) {
+                neg = false;
+            }
+        }
+        return new UnlimitedDouble(dig, dec, neg);
+    }
+
+    /**
+     * Used as a protected clone method, so that we can clone in our operations.
+     * 
+     * @param clone
+     *            - the original
+     * @return a new clone
+     */
+    static UnlimitedDouble privDup(UnlimitedDouble clone) {
+        return new UnlimitedDouble(clone);
+    }
+
     /* Public methods */
 
     public UnlimitedDouble add(UnlimitedDouble b) {
@@ -177,8 +197,8 @@ public final class UnlimitedDouble extends Number implements Cloneable,
             return b;
         }
         // don't use originals, we align the char arrays ourselves in pad()
-        UnlimitedDouble a = this.clone();
-        b = b.clone();
+        UnlimitedDouble a = privDup(this);
+        b = privDup(b);
         pad(a, b);
         UnlimitedDouble result = empty(), larger = max(a, b);
         // get the matching array for the numbers. uses getUnderlying due to
@@ -215,7 +235,8 @@ public final class UnlimitedDouble extends Number implements Cloneable,
             res.add(Strings.getCharForNum(carry[carry.length - 1]));
         }
         res.reverse();
-        result.decimal = result.length() - a.rtlDecimal();
+        result = new UnlimitedDouble(result.digits, result.length()
+                - a.rtlDecimal(), result.negative);
         return result;
     }
 
@@ -254,7 +275,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
             result = result.add(a);
             counter = counter.add(one());
         }
-        return new UnlimitedDouble(!sign ? "-" : "" + result);
+        return new UnlimitedDouble(result.digits, result.decimal, !sign);
     }
 
     public UnlimitedDouble pow(UnlimitedDouble b) {
@@ -265,7 +286,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
             return zero();
         }
         if (b.equals(ONE)) {
-            return clone();
+            return privDup(this);
         }
         return UnlimitedDouble.parseUD(Double.toString(Math.pow(
                 Double.parseDouble(this.toString()),
@@ -273,9 +294,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
     }
 
     public UnlimitedDouble abs() {
-        UnlimitedDouble clone = clone();
-        clone.negative = false;
-        return clone;
+        return new UnlimitedDouble(digits, decimal, false);
     }
 
     /**
@@ -350,9 +369,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
      * @return <tt>this</tt> * -1
      */
     public UnlimitedDouble negate() {
-        UnlimitedDouble copy = clone();
-        copy.negative = !negative;
-        return copy;
+        return new UnlimitedDouble(digits, decimal, !negative);
     }
 
     /**
@@ -370,11 +387,6 @@ public final class UnlimitedDouble extends Number implements Cloneable,
 
     /* Overridden defaults */
 
-    @Override
-    public UnlimitedDouble clone() {
-        return new UnlimitedDouble(this);
-    }
-
     /**
      * 
      * This is used by greaterThan and lessThan because it returns 1 for
@@ -387,12 +399,12 @@ public final class UnlimitedDouble extends Number implements Cloneable,
      */
     @Override
     public int compareTo(UnlimitedDouble y) {
-        UnlimitedDouble x = this.clone();
-        y = y.clone();
+        UnlimitedDouble x = privDup(this);
+        y = privDup(y);
         // must trim zeros before compare, or it breaks SEVERLEY
         // but don't mod the originals, that can cause repercussions
         String before = x.toString();
-        x.parse0(before);
+        x = parse0(before);
         if (!before.equals(x.toString()) && debugmode) {
             System.err
                     .println("If you are getting bad results, compareTo is broken here. DEBUG: "
@@ -400,7 +412,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
             Thread.dumpStack();
         }
         before = y.toString();
-        y.parse0(before);
+        y = parse0(before);
         if (!before.equals(y.toString()) && debugmode) {
             System.err
                     .println("If you are getting bad results, compareTo is broken here. DEBUG: "
@@ -558,7 +570,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
     /* (public) Static methods */
 
     public static UnlimitedDouble parseUD(String s) {
-        return new UnlimitedDouble(s);
+        return newInstance(s);
     }
 
     /**
@@ -575,7 +587,7 @@ public final class UnlimitedDouble extends Number implements Cloneable,
         if (value instanceof UnlimitedDouble) {
             return new UnlimitedDouble((UnlimitedDouble) value);
         }
-        return new UnlimitedDouble(value.toString());
+        return newInstance(String.valueOf(value));
     }
 
     /**
