@@ -230,10 +230,10 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             return ((Character) o) == 0;
         }
         if (primCheck == Float.class) {
-            return ((Float) o) == 0.0f;
+            return Float.compare(0, (Float) o) == 0;
         }
         if (primCheck == Double.class) {
-            return ((Double) o) == 0.0d;
+            return Double.compare(0, (Double) o) == 0;
         }
         if (primCheck == Short.class) {
             return ((Short) o) == 0;
