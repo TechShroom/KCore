@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 public class ExtraMath {
 
     public static UnlimitedDouble factorial(UnlimitedDouble num1) {
-        UnlimitedDouble one = UnlimitedDouble.one(), fact = one.clone();
-        for (UnlimitedDouble i = new UnlimitedDouble("2"); i.lessThan(num1); i
-                .add(one)) {
+        UnlimitedDouble one = UnlimitedDouble.one(), fact = one;
+        for (UnlimitedDouble i = UnlimitedDouble.newInstance("2"); i
+                .lessThan(num1); i = i.add(one)) {
             fact = fact.multiply(i);
         }
         return fact;

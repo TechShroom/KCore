@@ -1,9 +1,11 @@
 package k.core.util.math;
 
+import static k.core.util.math.UnlimitedDouble.*;
+
 public class MathTest {
     public static void main(String[] args) {
-        UnlimitedDouble a = new UnlimitedDouble("4.010"), b = new UnlimitedDouble(
-                "60.0"), c = UnlimitedDouble.empty();
+        UnlimitedDouble a = newInstance("4.010"), b = newInstance("60.0"), c = UnlimitedDouble
+                .empty();
         System.err.println(a);
         System.err.println(b);
         System.err
@@ -21,7 +23,7 @@ public class MathTest {
         invalid();
 
         // test to ensure valid things are not marked as invalid
-        c = new UnlimitedDouble("-001.0003");
+        c = newInstance("-001.0003");
         System.err.println(c);
     }
 
@@ -44,21 +46,21 @@ public class MathTest {
         UnlimitedDouble c = UnlimitedDouble.empty();
         // invalid tests
         try {
-            c = new UnlimitedDouble("!");
+            c = newInstance("!");
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this should happen!)");
             // nfe.printStackTrace();
         }
         try {
-            c = new UnlimitedDouble("-1");
+            c = newInstance("-1");
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this shouldn't happen!)");
             // nfe.printStackTrace();
         }
         try {
-            c = new UnlimitedDouble("1.00.02");
+            c = newInstance("1.00.02");
             System.err.println(c);
         } catch (NumberFormatException nfe) {
             System.err.println("invalid (this should happen!)");
