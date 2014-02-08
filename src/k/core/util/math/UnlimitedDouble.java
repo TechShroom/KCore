@@ -598,12 +598,9 @@ public final class UnlimitedDouble extends Number implements
     }
 
     /**
-     * Gives out a new empty value for usage via {@link UnlimitedDouble#clone()
-     * clone()}
+     * Returns an empty value.
      * 
-     * @return {@link UnlimitedDouble#EMPTY EMPTY}
-     *         {@link UnlimitedDouble#clone() .clone()}
-     * @see UnlimitedDouble#EMPTY
+     * @return {@link #EMPTY}
      */
     public static UnlimitedDouble empty() {
         return EMPTY;
