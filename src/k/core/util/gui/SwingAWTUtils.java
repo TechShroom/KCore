@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -109,30 +110,40 @@ public class SwingAWTUtils {
     /**
      * Indicates that you wish to set the preferred size in
      * {@link #setAllSize(Component, Dimension, int)}.
+     * 
+     * @deprecated Use enums instead now.
      */
     public static final byte SETPREFERREDSIZE = 1 << 0;
 
     /**
      * Indicates that you wish to set the maximum size in
      * {@link #setAllSize(Component, Dimension, int)}.
+     * 
+     * @deprecated Use enums instead now.
      */
     public static final byte SETMAXIMUMSIZE = 1 << 1;
 
     /**
      * Indicates that you wish to set the minimum size in
      * {@link #setAllSize(Component, Dimension, int)}.
+     * 
+     * @deprecated Use enums instead now.
      */
     public static final byte SETMINIMUMSIZE = 1 << 2;
 
     /**
      * Indicates that you wish to set the size in
      * {@link #setAllSize(Component, Dimension, int)}.
+     * 
+     * @deprecated Use enums instead now.
      */
     public static final byte SETSIZE = 1 << 3;
 
     /**
      * Indicates that you wish to set all sizes in
      * {@link #setAllSize(Component, Dimension, int)}.
+     * 
+     * @deprecated Use enums instead now.
      */
     public static final byte SETALL = SETPREFERREDSIZE | SETMAXIMUMSIZE
             | SETMINIMUMSIZE | SETSIZE;
@@ -148,6 +159,7 @@ public class SwingAWTUtils {
      *            - a bitwise OR of {@link #SETPREFERREDSIZE},
      *            {@link #SETMAXIMUMSIZE}, {@link #SETMINIMUMSIZE}, or
      *            {@link #SETSIZE}.
+     * @deprecated Use enums instead now.
      */
     public static void setAllSize(Component c, Dimension size, int flags) {
         if ((flags & SETPREFERREDSIZE) != 0) {
@@ -160,6 +172,41 @@ public class SwingAWTUtils {
             c.setMinimumSize(size);
         }
         if ((flags & SETSIZE) != 0) {
+            c.setSize(size);
+        }
+        if (c instanceof Container) {
+            validate((Container) c);
+        } else {
+            validate(c.getParent());
+        }
+    }
+
+    public static enum Size {
+        SETPREFFERED, SETMAX, SETMIN, SET, SETALL;
+    }
+
+    /**
+     * Calls the setXSize methods on the given {@link Component}.
+     * 
+     * @param c
+     *            - the component to change
+     * @param size
+     *            - the size to set to
+     * @param flags
+     *            - a set of the requested size changes. {@link EnumSet} is
+     *            preferred.
+     */
+    public static void setAllSize(Component c, Dimension size, Set<Size> flags) {
+        if (flags.contains(Size.SETPREFFERED) || flags.contains(Size.SETALL)) {
+            c.setPreferredSize(size);
+        }
+        if (flags.contains(Size.SETMAX) || flags.contains(Size.SETALL)) {
+            c.setMaximumSize(size);
+        }
+        if (flags.contains(Size.SETMIN) || flags.contains(Size.SETALL)) {
+            c.setMinimumSize(size);
+        }
+        if (flags.contains(Size.SET) || flags.contains(Size.SETALL)) {
             c.setSize(size);
         }
         if (c instanceof Container) {
