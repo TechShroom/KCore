@@ -235,8 +235,8 @@ public final class UnlimitedDouble extends Number implements
             res.add(Strings.getCharForNum(carry[carry.length - 1]));
         }
         res.reverse();
-        result = new UnlimitedDouble(result.digits, result.length()
-                - a.rtlDecimal(), result.negative);
+        result = new UnlimitedDouble(res, res.size() - a.rtlDecimal(),
+                result.negative);
         return result;
     }
 
