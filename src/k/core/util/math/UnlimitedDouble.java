@@ -66,7 +66,8 @@ public final class UnlimitedDouble extends Number implements
      * If this UD is negative or not
      */
     private final boolean negative;
-    private final UnlimitedDouble absolute;
+    /* Non-final to allow bypass in readObject */
+    private UnlimitedDouble absolute;
 
     public static UnlimitedDouble newInstance(String value) {
         return parse0(value);
@@ -86,7 +87,20 @@ public final class UnlimitedDouble extends Number implements
         digits = dig;
         decimal = dec;
         negative = neg;
-        absolute = new UnlimitedDouble(digits, decimal, false);
+        absolute = neg ? new UnlimitedDouble(digits, decimal, false) : this;
+    }
+
+    /**
+     * Absolute value creator
+     * 
+     * @param dig
+     * @param dec
+     */
+    private UnlimitedDouble(ResizableArray<char[]> dig, int dec) {
+        digits = dig;
+        decimal = dec;
+        negative = false;
+        absolute = this;
     }
 
     /* Private methods */
@@ -94,13 +108,23 @@ public final class UnlimitedDouble extends Number implements
     private int rtlDecimal() {
         return digits.size() - decimal;
     }
-    
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
+
+    @SuppressWarnings("unchecked")
+    private void readObject(ObjectInputStream ois)
+            throws ClassNotFoundException, IOException {
+        absolute = new UnlimitedDouble(
+                (ResizableArray<char[]>) ois.readObject(), ois.readInt(),
+                ois.readBoolean());
     }
-    
+
+    private Object readResolve() {
+        return absolute;
+    }
+
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
+        oos.writeObject(digits); // RAs are serializable
+        oos.writeBoolean(negative);
+        oos.writeInt(decimal);
     }
 
     /* (private) Static methods */
