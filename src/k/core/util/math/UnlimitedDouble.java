@@ -123,8 +123,8 @@ public final class UnlimitedDouble extends Number implements
 
     private void writeObject(ObjectOutputStream oos) throws IOException {
         oos.writeObject(digits); // RAs are serializable
-        oos.writeBoolean(negative);
         oos.writeInt(decimal);
+        oos.writeBoolean(negative);
     }
 
     /* (private) Static methods */
