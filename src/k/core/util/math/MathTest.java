@@ -1,6 +1,12 @@
 package k.core.util.math;
 
-import static k.core.util.math.UnlimitedDouble.*;
+import static k.core.util.math.UnlimitedDouble.newInstance;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import k.core.util.streams.InputPipeStream;
+import k.core.util.streams.OutputPipeStream;
 
 public class MathTest {
     public static void main(String[] args) {
@@ -26,6 +32,12 @@ public class MathTest {
         // test to ensure valid things are not marked as invalid
         c = newInstance("-001.0003");
         System.err.println(c);
+
+        try {
+            serialization();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void multiply(UnlimitedDouble a, UnlimitedDouble b) {
@@ -69,4 +81,18 @@ public class MathTest {
         }
     }
 
+    private static void serialization() throws Exception {
+        UnlimitedDouble serialize = newInstance("-0001.1312300");
+        InputPipeStream ips = new InputPipeStream();
+        OutputPipeStream ops = new OutputPipeStream(ips);
+        ObjectOutputStream oos = new ObjectOutputStream(ops);
+        oos.writeObject(serialize);
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(ips);
+        @SuppressWarnings("unchecked")
+        UnlimitedDouble inst = (UnlimitedDouble) ois.readObject();
+        System.err.println(serialize + " = " + inst + " -> "
+                + (serialize.compareTo(inst) == 0));
+        ois.close();
+    }
 }
