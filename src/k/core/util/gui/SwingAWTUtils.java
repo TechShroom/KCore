@@ -113,6 +113,7 @@ public class SwingAWTUtils {
      * 
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static final byte SETPREFERREDSIZE = 1 << 0;
 
     /**
@@ -121,6 +122,7 @@ public class SwingAWTUtils {
      * 
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static final byte SETMAXIMUMSIZE = 1 << 1;
 
     /**
@@ -129,6 +131,7 @@ public class SwingAWTUtils {
      * 
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static final byte SETMINIMUMSIZE = 1 << 2;
 
     /**
@@ -137,6 +140,7 @@ public class SwingAWTUtils {
      * 
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static final byte SETSIZE = 1 << 3;
 
     /**
@@ -145,6 +149,7 @@ public class SwingAWTUtils {
      * 
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static final byte SETALL = SETPREFERREDSIZE | SETMAXIMUMSIZE
             | SETMINIMUMSIZE | SETSIZE;
 
@@ -161,6 +166,7 @@ public class SwingAWTUtils {
      *            {@link #SETSIZE}.
      * @deprecated Use enums instead now.
      */
+    @Deprecated
     public static void setAllSize(Component c, Dimension size, int flags) {
         if ((flags & SETPREFERREDSIZE) != 0) {
             c.setPreferredSize(size);
