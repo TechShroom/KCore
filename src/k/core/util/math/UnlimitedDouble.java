@@ -606,17 +606,25 @@ public final class UnlimitedDouble extends Number implements
         return EMPTY;
     }
 
+    /**
+     * Returns the value of one.
+     * 
+     * @return {@link #ONE}
+     */
     public static UnlimitedDouble one() {
         return ONE;
     }
 
+    /**
+     * Returns the value of zero.
+     * 
+     * @return {@link #ZERO}
+     */
     public static UnlimitedDouble zero() {
         return ZERO;
     }
 
     /**
-     * See {@link Math#max(int, int)}
-     * 
      * @see Math#max(int, int)
      */
     public static UnlimitedDouble max(UnlimitedDouble a, UnlimitedDouble b) {
@@ -624,8 +632,6 @@ public final class UnlimitedDouble extends Number implements
     }
 
     /**
-     * See {@link Math#min(int, int)}
-     * 
      * @see Math#min(int, int)
      */
     public static UnlimitedDouble min(UnlimitedDouble a, UnlimitedDouble b) {
