@@ -163,7 +163,7 @@ public final class UnlimitedDouble extends Number implements
             dig = new ResizableArray<char[]>(withoutDec.toCharArray());
             dig.permitUndefined(false);
             // decimal place = length of digits when there is none
-            if (dec < 0) {
+            if (dec <= 0) {
                 dec = dig.size();
             }
             // if this == zero, then remove the negative (set property
@@ -351,7 +351,7 @@ public final class UnlimitedDouble extends Number implements
      * @return if this number has a decimal point
      */
     public boolean hasDecimal() {
-        return decimal != digits.size();
+        return decimal != digits.size() || decimal != 0;
     }
 
     /**
@@ -399,8 +399,7 @@ public final class UnlimitedDouble extends Number implements
      */
     @Override
     public int compareTo(UnlimitedDouble y) {
-        UnlimitedDouble x = privDup(this);
-        y = privDup(y);
+        UnlimitedDouble x = this;
         // must trim zeros before compare, or it breaks SEVERLEY
         // but don't mod the originals, that can cause repercussions
         String before = x.toString();
