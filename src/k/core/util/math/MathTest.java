@@ -4,7 +4,7 @@ import static k.core.util.math.UnlimitedDouble.*;
 
 public class MathTest {
     public static void main(String[] args) {
-        System.setProperty("ud.debug", Boolean.TRUE.toString());
+        System.setProperty("ud.debug", (args.length > 0 ? args[0] : "false"));
         UnlimitedDouble a = newInstance("4.010"), b = newInstance("60.0"), c = UnlimitedDouble
                 .empty();
         System.err.println(a);
