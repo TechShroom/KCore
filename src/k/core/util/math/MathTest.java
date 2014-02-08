@@ -89,7 +89,6 @@ public class MathTest {
         oos.writeObject(serialize);
         oos.close();
         ObjectInputStream ois = new ObjectInputStream(ips);
-        @SuppressWarnings("unchecked")
         UnlimitedDouble inst = (UnlimitedDouble) ois.readObject();
         System.err.println(serialize + " = " + inst + " -> "
                 + (serialize.compareTo(inst) == 0));
