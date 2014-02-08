@@ -1,5 +1,9 @@
 package k.core.util.math;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import k.core.util.Helper.BetterArrays;
 import k.core.util.arrays.ResizableArray;
 import k.core.util.strings.Strings;
@@ -62,6 +66,7 @@ public final class UnlimitedDouble extends Number implements
      * If this UD is negative or not
      */
     private final boolean negative;
+    private final UnlimitedDouble absolute;
 
     public static UnlimitedDouble newInstance(String value) {
         return parse0(value);
@@ -74,18 +79,28 @@ public final class UnlimitedDouble extends Number implements
         digits = value.digits.clone();
         decimal = value.decimal;
         negative = value.negative;
+        absolute = new UnlimitedDouble(digits, decimal, false);
     }
 
     private UnlimitedDouble(ResizableArray<char[]> dig, int dec, boolean neg) {
         digits = dig;
         decimal = dec;
         negative = neg;
+        absolute = new UnlimitedDouble(digits, decimal, false);
     }
 
     /* Private methods */
 
     private int rtlDecimal() {
         return digits.size() - decimal;
+    }
+    
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+    }
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
     }
 
     /* (private) Static methods */
@@ -294,7 +309,7 @@ public final class UnlimitedDouble extends Number implements
     }
 
     public UnlimitedDouble abs() {
-        return new UnlimitedDouble(digits, decimal, false);
+        return absolute;
     }
 
     /**
