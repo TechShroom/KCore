@@ -394,6 +394,10 @@ public final class UnlimitedDouble extends Number implements
      * <tt>this</tt> If you have a error regarding the function, please set the
      * system property 'ud.debug' to <tt>true</tt>. <br>
      * <br>
+     * This should be used instead of equals because numbers with 0's in their
+     * decimal places do not equal integers via {@link #equals(Object)}, but do
+     * via <tt>compareTo</tt>.<br>
+     * <br>
      * From {@link Comparable#compareTo(Object)}: <br>
      * {@inheritDoc}
      */
