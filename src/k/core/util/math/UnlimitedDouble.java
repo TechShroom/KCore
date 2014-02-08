@@ -200,7 +200,7 @@ public final class UnlimitedDouble extends Number implements
         UnlimitedDouble a = privDup(this);
         b = privDup(b);
         pad(a, b);
-        UnlimitedDouble result = empty(), larger = max(a, b);
+        UnlimitedDouble result = privDup(EMPTY), larger = max(a, b);
         // get the matching array for the numbers. uses getUnderlying due to
         // increased speed. We don't mod the original number arrays, they are
         // reversed into a new array. trimToSize is required here.
