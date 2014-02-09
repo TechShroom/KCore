@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import k.core.util.gui.SpecialReader;
 import k.core.util.gui.TextFieldReader;
 
 public class ExpressionTest {
