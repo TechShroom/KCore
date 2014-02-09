@@ -18,25 +18,59 @@ import k.core.util.streams.ChainedStream;
 
 public class SideConsole extends JFrame {
     private static final long serialVersionUID = 3733784846766341735L;
+    /**
+     * true for STDERR, false for STDOUT
+     */
     private boolean error;
+    /**
+     * The scroll pane used
+     */
     private JScrollPane scroller;
+    /**
+     * The menu instance used
+     */
     private Menu m;
+    /**
+     * The streams used
+     */
     private static PrintStream oldO, oldE, newO, newE;
+    /**
+     * Some exception messages
+     */
     private static String[] exceptions = { "Error creating the OutputStreams",
             "Error setting System.out", "Error setting System.err" };
+    /**
+     * The log on the old STDERR
+     */
     static PrintStream log;
     static {
         log = new PrintStream(System.err);
     }
+    /**
+     * The early binding buffers
+     */
     private static String earlyBufferE = null, earlyBufferO = null;
+    /**
+     * Set to true when we chain on the standard streams
+     */
     private static boolean chained = false;
 
+    /**
+     * The option reference name
+     */
     static final String OPTION_MENU = "options";
+    /**
+     * The debug checkbox reference name
+     */
     static final String DEBUG_JMIKEY = "debug_checkbox";
 
     static {
+        // registers the action listener
         new DJMIActionListener();
     }
+    /**
+     * The pre-init STDERR returned by {@link #earlyChainE(PrintStream)}
+     */
     private static OutputStream earlyPOS = new OutputStream() {
 
         @Override
@@ -51,6 +85,9 @@ public class SideConsole extends JFrame {
             // log.println(b); //DEBUG
         }
     };
+    /**
+     * The pre-init STDOUT returned by {@link #earlyChainO(PrintStream)}
+     */
     private static OutputStream earlyPOS_ = new OutputStream() {
 
         @Override
@@ -71,14 +108,32 @@ public class SideConsole extends JFrame {
      */
     public static SideConsole console;
 
+    /**
+     * Sets the old output stream.
+     * 
+     * @param temp
+     *            - the old output stream
+     */
     public static void setOut(PrintStream temp) {
         oldO = temp;
     }
 
+    /**
+     * Sets the old error stream.
+     * 
+     * @param temp
+     *            - the old error stream
+     */
     public static void setErr(PrintStream temp_) {
         oldE = temp_;
     }
 
+    /**
+     * Creates a new console.
+     * 
+     * @param debug
+     *            - if STDERR should be logged
+     */
     public SideConsole(boolean debug) {
         super("Console");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -136,6 +191,9 @@ public class SideConsole extends JFrame {
         }
     }
 
+    /**
+     * Sets up the menu for the console.
+     */
     private void addMenu() {
         // Create menu creator //
         m = Menu.create("console");

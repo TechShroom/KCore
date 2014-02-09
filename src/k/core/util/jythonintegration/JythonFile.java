@@ -6,6 +6,9 @@ import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 public class JythonFile {
+    /**
+     * The {@link File} that backs this JFile.
+     */
     private File f = null;
 
     /**
@@ -31,8 +34,8 @@ public class JythonFile {
      * @param mName
      *            - the name of the method to invoke
      * @param args
-     *            -
-     * @return
+     *            - the arguments to pass to the method
+     * @return the result of invoking the method
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
         PyObject invokeres = null;
@@ -46,6 +49,13 @@ public class JythonFile {
         return invokeres;
     }
 
+    /**
+     * Gets the class by name (like {@link Class#forName(String)}.
+     * 
+     * @param className
+     *            - the name of the class
+     * @return a {@link JythonClass} object representing the class
+     */
     public JythonClass getJClass(String className) {
         return new JythonClass(this, className);
     }

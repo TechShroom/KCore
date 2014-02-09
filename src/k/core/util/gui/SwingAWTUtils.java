@@ -10,7 +10,10 @@ import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -21,15 +24,36 @@ import k.core.util.streams.OutputPipeStream;
 
 public class SwingAWTUtils {
 
+    /**
+     * Centers the given {@link Window} on the screen using
+     * {@link Window#setLocationRelativeTo(Component)}.
+     * 
+     * @param frame
+     *            - the window to center
+     */
     public static void drop(Window frame) {
         frame.setLocationRelativeTo(null);
     }
 
+    /**
+     * Sets the background color on the given {@link JFrame}.
+     * 
+     * @param c
+     *            - the color to set the background to
+     * @param fr
+     *            - the frame to apply the color to
+     */
     public static void setBackground(Color c, JFrame fr) {
         Container frame = fr.getContentPane();
         frame.setBackground(c);
     }
 
+    /**
+     * Closes the given {@link JFrame}.
+     * 
+     * @param win
+     *            - the frame to close
+     */
     public static void kill(JFrame win) {
         if (win == null) {
             return;
@@ -38,14 +62,40 @@ public class SwingAWTUtils {
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(close);
     }
 
+    /**
+     * Safe handling for the {@link SwingUtilities#invokeAndWait(Runnable)}
+     * method. It is unsafe to call invokeAndWait on the dispatch thread due to
+     * deadlocks. This method simply runs the given {@link Runnable} if this is
+     * called in the dispatch thread.
+     * 
+     * @param r
+     *            - the runnable to run
+     * @throws Exception
+     *             - any exceptions propagate, the possible
+     *             {@link InvocationTargetException} is unwrapped.
+     */
     public static void runOnDispatch(Runnable r) throws Exception {
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();
         } else {
-            SwingUtilities.invokeAndWait(r);
+            try {
+                SwingUtilities.invokeAndWait(r);
+            } catch (InvocationTargetException iie) {
+                if (iie.getCause() instanceof Exception) {
+                    throw (Exception) iie.getCause();
+                } else {
+                    throw iie;
+                }
+            }
         }
     }
 
+    /**
+     * Removes all the Components from the container, then validates it.
+     * 
+     * @param c
+     *            - the container to remove from
+     */
     public static void removeAll(Container c) {
         c.removeAll();
         validate(c);
@@ -53,8 +103,7 @@ public class SwingAWTUtils {
 
     /**
      * Adds all of the specified {@link Component components} with the given
-     * constraints, then calls {@link SwingAWTUtils#validate(Container)
-     * validate()} on <tt>to</tt>.
+     * constraints, then calls {@link #validate(Container)} on <tt>to</tt>.
      * 
      * @param to
      *            - the {@link Container} to add to
@@ -63,7 +112,7 @@ public class SwingAWTUtils {
      * @param constraints
      *            - the constraints. If <tt>null</tt>, a new array of size
      *            <tt>comps.length</tt> is created.
-     * @see SwingAWTUtils#validate(Container)
+     * @see #validate(Container)
      */
     public static void addAllAndValidate(Container to, Component[] comps,
             Object[] constraints) {
@@ -187,6 +236,11 @@ public class SwingAWTUtils {
         }
     }
 
+    /**
+     * An enum representing the different setXSize methods.
+     * 
+     * @author Kenzie Togami
+     */
     public static enum Size {
         SETPREFFERED, SETMAX, SETMIN, SET, SETALL;
     }
@@ -222,6 +276,13 @@ public class SwingAWTUtils {
         }
     }
 
+    /**
+     * Clones the given Component via {@link Serializable} interfacing.
+     * 
+     * @param c
+     *            - the component to clone
+     * @return a clone of the original component, done via serialization
+     */
     public static <T extends Component> T cloneLikeSerial(T c) {
         try {
             InputPipeStream ips = new InputPipeStream();

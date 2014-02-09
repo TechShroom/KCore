@@ -4,10 +4,26 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 
 public class JythonClass {
+    /**
+     * The parent file for this class
+     */
     private JythonFile parent = null;
+    /**
+     * The PyObject associated with this class
+     */
     private PyObject us = null;
+    /**
+     * The class name
+     */
     private String us_str;
 
+    /**
+     * Wraps around the given class.
+     * 
+     * @param jfile
+     *            - the {@link JythonFile} that the
+     * @param className
+     */
     public JythonClass(JythonFile jfile, String className) {
         parent = jfile;
 
@@ -17,13 +33,13 @@ public class JythonClass {
     }
 
     /**
-     * Invokes the given method
+     * Invokes the given method from this class
      * 
      * @param mName
      *            - the name of the method to invoke
      * @param args
-     *            -
-     * @return
+     *            - the arguments to hand to the method
+     * @return the result of invoking the method
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
         PyObject invokeres = null;
@@ -41,10 +57,22 @@ public class JythonClass {
         return invokeres;
     }
 
+    /**
+     * Returns the backing class object
+     * 
+     * @return the {@link PyObject} that backs this class
+     */
     public PyObject getPyClass() {
         return us;
     }
 
+    /**
+     * Gets a new instance of this class
+     * 
+     * @param args
+     *            - the arguments (optional) to use in creation
+     * @return a new instance
+     */
     public PyObject newInstance(PyObject... args) {
         return getPyClass().__call__(args);
     }

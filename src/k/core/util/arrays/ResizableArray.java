@@ -30,6 +30,10 @@ import k.core.util.reflect.Reflect;
 public class ResizableArray<T> extends AbstractList<Object> implements
         List<Object>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
+    /**
+     * A reference to the Object.clone() method that is actually arrays clone
+     * method.
+     */
     private static final Method ARR_CLONE;
 
     static {
