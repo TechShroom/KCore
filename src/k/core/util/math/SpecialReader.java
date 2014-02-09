@@ -1,13 +1,27 @@
-package k.core.util.gui;
+package k.core.util.math;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-public class SpecialReader extends Reader {
+import javax.swing.JTextField;
 
+import k.core.util.gui.TextFieldReader;
+
+class SpecialReader extends Reader {
+
+    /**
+     * The {@link JTextField} reader
+     */
     private TextFieldReader in;
 
+    /**
+     * Creates a new reader that prints out to STDOUT what is read via
+     * {@link #readLine()}
+     * 
+     * @param is
+     *            - the input stream this is backed by
+     */
     public SpecialReader(InputStream is) {
         try {
             in = (TextFieldReader) is;
