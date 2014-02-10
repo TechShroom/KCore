@@ -64,7 +64,7 @@ public class ExpressionTest {
             }
             try {
                 if (EOperation.hasOP(line)) {
-                    System.err.println(ExtraMath.solveExpression(line));
+                    System.err.println(ExtraMath.evalExpression(line));
                 }
             } catch (NumberFormatException nfe) {
                 writeException(nfe);
