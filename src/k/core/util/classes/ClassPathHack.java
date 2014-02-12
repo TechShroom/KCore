@@ -56,5 +56,10 @@ public class ClassPathHack {
                     "Error, could not add URL to system classloader", t);
         }
 
+        System.setProperty("java.class.path",
+                System.getProperty("java.class.path")
+                        + File.pathSeparator
+                        + u.getFile().replace('/', File.separatorChar)
+                                .substring(1).replace("%20", " "));
     }
 }
