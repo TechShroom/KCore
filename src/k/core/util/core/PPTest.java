@@ -1,8 +1,8 @@
-package k.core.util;
+package k.core.util.core;
 
 import java.util.Arrays;
 
-import k.core.util.Helper.ProgramProps;
+import k.core.util.core.Helper.ProgramProps;
 
 public class PPTest {
 
