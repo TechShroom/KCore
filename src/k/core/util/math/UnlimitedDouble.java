@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import k.core.util.Helper.BetterArrays;
 import k.core.util.arrays.ResizableArray;
+import k.core.util.core.Helper.BetterArrays;
 import k.core.util.strings.Strings;
 
 /**
