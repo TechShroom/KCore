@@ -30,6 +30,9 @@
 	<target name="clean">
 		<delete dir="${output}" />
 	</target>
+	<target name="nofailclean">
+		<delete dir="${output}" failonerror="false" />
+	</target>
 	<target depends="clean" name="cleanall" />
 	<target depends="build-subprojects,build-project" name="build" />
 	<target name="build-subprojects" />
@@ -122,7 +125,7 @@
 	</target>
 	<target depends="ConsoleTest,DataStructTest,ExpressionTest,JythonIntegrateTest,LRFPSTest,NettyTest,TranslationTest" name="Test All">
 	</target>
-	<target depends="clean,build,jar-segments" name="build-jars">
+	<target depends="nofailclean,build,jar-segments" name="build-jars">
 	</target>
 
 	<property name="build.classes" value="." />
@@ -153,7 +156,7 @@
 	<target name="do-jar">
 		<!-- Get the basename of the basedir (foo, bar, etc.) -->
 		<basename file="${basedir}" property="suffix" />
-		
+
 		<jar basedir="." jarfile="${user.dir}/${output}/${jarout}/${prefix}-${suffix}.jar">
 			<fileset dir=".">
 				<include name="${root}/${suffix}/**" />
