@@ -120,7 +120,7 @@
 	</target>
 	<target depends="ConsoleTest,DataStructTest,ExpressionTest,JythonIntegrateTest,LRFPSTest,NettyTest,TranslationTest" name="Test All">
 	</target>
-	<target depends="build,jar-segments" name="build-jars">
+	<target depends="clean,build,jar-segments" name="build-jars">
 	</target>
 
 	<property name="build.classes" value="." />
@@ -146,26 +146,15 @@
                  basedir. -->
 			<dirset dir="${root}" includes="*" />
 		</subant>
-		<antcall target="jar-core" />
 	</target>
 
 	<target name="do-jar">
 		<!-- Get the basename of the basedir (foo, bar, etc.) -->
 		<basename file="${basedir}" property="suffix" />
-		
-		<jar jarfile="${prefix}-${suffix}.jar">
-			<fileset dir="${build.classes}">
-				<include name="${root}/${suffix}/**" />
-				<exclude name="${root}/${suffix}/*.jar" />
-			</fileset>
-		</jar>
-	</target>
 
-	<!-- Bundles the core bit, as it is the only thing that can't be automated easily -->
-	<target name="jar-core">
-		<jar jarfile="${root}/${prefix}-core.jar">
-			<fileset dir="${build.classes}">
-				<include name="${root}/*.class" />
+		<jar basedir="." jarfile="${prefix}-${suffix}.jar">
+			<fileset dir=".">
+				<include name="${root}/${suffix}/**" />
 			</fileset>
 		</jar>
 	</target>
