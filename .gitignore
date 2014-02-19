@@ -16,6 +16,9 @@ local.properties
 .loadpath
 *.class
 
+# don't upload ant build
+antbuild/
+
 # External tool builders
 .externalToolBuilders/
 
