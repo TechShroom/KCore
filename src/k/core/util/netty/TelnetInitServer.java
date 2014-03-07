@@ -8,7 +8,7 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
-public class TelnetInitServer extends ChannelInitializer<SocketChannel> {
+class TelnetInitServer extends ChannelInitializer<SocketChannel> {
     private static final StringDecoder DECODER = new StringDecoder();
     private static final StringEncoder ENCODER = new StringEncoder();
     private NetHandlerServer nhs = null;

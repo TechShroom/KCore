@@ -16,8 +16,8 @@ public class JythonObject {
      * @param mName
      *            - the name of the method to invoke
      * @param args
-     *            -
-     * @return
+     *            - the arguments to pass to the method
+     * @return the result of invoking the method
      */
     public PyObject invokeMethod(String mName, PyObject... args) {
         PyObject invokeres = null;

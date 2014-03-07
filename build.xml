@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build-jars" name="KCore">
+	<property environment="env" />
+	<property name="EmergencyLanding.location" value="../EmergencyLanding" />
+	<property name="Examplify.location" value="../../Documents/wkspace/Examplify" />
+	<property name="GOnline_Compiler.location" value="../../Documents/wkspace/GOnline_Compiler" />
+	<property name="LD72.location" value="../../Documents/wkspace/LD72" />
+	<property name="TheChairGame.location" value="../TheChairGame" />
+	<property name="ECLIPSE_HOME" value="../../Downloads/eclipse-SDK-4.2.2-win32-x86_64/eclipse" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="output" value="antbuild" />
+	<property name="jarout" value="jars" />
+	<path id="KCore.classpath">
+		<pathelement location="${output}" />
+		<pathelement location="libs/jython.jar" />
+		<pathelement location="libs/netty.jar" />
+		<pathelement location="libs/gson.jar" />
+		<pathelement location="libs/RXTXcomm.jar" />
+	</path>
+	<target name="init">
+		<mkdir dir="${output}" />
+		<copy includeemptydirs="false" todir="${output}">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="${output}" />
+	</target>
+	<target name="nofailclean">
+		<delete dir="${output}" failonerror="false" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target depends="build-subprojects,build-project" name="build" />
+	<target name="build-subprojects" />
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${output}" includeantruntime="false" source="${source}" target="${target}">
+			<src path="src" />
+			<classpath refid="KCore.classpath" />
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+		<ant antfile="build.xml" dir="${EmergencyLanding.location}" inheritAll="false" target="clean" />
+		<ant antfile="build.xml" dir="${EmergencyLanding.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${Examplify.location}" inheritAll="false" target="clean" />
+		<ant antfile="build.xml" dir="${Examplify.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${GOnline_Compiler.location}" inheritAll="false" target="clean" />
+		<ant antfile="build.xml" dir="${GOnline_Compiler.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${LD72.location}" inheritAll="false" target="clean" />
+		<ant antfile="build.xml" dir="${LD72.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${TheChairGame.location}" inheritAll="false" target="clean" />
+		<ant antfile="build.xml" dir="${TheChairGame.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+	</target>
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<antcall target="build" />
+	</target>
+	<target depends="build" name="ConsoleTest">
+		<java classname="k.core.util.gui.ConsoleTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="DataStructTest">
+		<java classname="k.core.util.netty.DataStructTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="ExpressionTest">
+		<java classname="k.core.util.math.ExpressionTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="JythonIntegrateTest">
+		<java classname="k.core.util.jythonintegration.JythonIntegrateTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="LRFPSTest">
+		<java classname="k.core.util.timing.LRFPSTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="NettyTest">
+		<java classname="k.core.util.netty.NettyTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="build" name="TranslationTest">
+		<java classname="k.core.util.translate.TranslationTest" failonerror="true" fork="yes">
+			<classpath refid="KCore.classpath" />
+		</java>
+	</target>
+	<target depends="ConsoleTest,DataStructTest,ExpressionTest,JythonIntegrateTest,LRFPSTest,NettyTest,TranslationTest" name="Test All">
+	</target>
+	<target depends="nofailclean,build,jar-segments" name="build-jars">
+	</target>
+
+	<property name="build.classes" value="." />
+	<property name="prefix" value="KCore" />
+	<property name="root" value="${output}/k/core/util" />
+
+	<target name="jar-segments">
+		<mkdir dir="${root}" />
+		<!-- ${ant.file} is the name of the current build file -->
+		<subant genericantfile="${ant.file}" target="do-jar">
+
+			<!-- Pass the needed properties to the subant call. You could also use
+                 the inheritall attribute on the subant element above to pass all
+                 properties. -->
+			<propertyset>
+				<propertyref name="build.classes" />
+				<propertyref name="prefix" />
+				<propertyref name="root" />
+			</propertyset>
+
+			<!-- subant will call the "do-jar" target for every directory in the
+                 ${build.classes}/${root} directory, making the subdirectory the
+                 basedir. -->
+			<dirset dir="${root}" includes="*" />
+		</subant>
+	</target>
+
+	<target name="do-jar">
+		<!-- Get the basename of the basedir (foo, bar, etc.) -->
+		<basename file="${basedir}" property="suffix" />
+
+		<jar basedir="." jarfile="${user.dir}/${output}/${jarout}/${prefix}-${suffix}.jar">
+			<fileset dir=".">
+				<include name="${root}/${suffix}/**" />
+			</fileset>
+		</jar>
+	</target>
+</project>

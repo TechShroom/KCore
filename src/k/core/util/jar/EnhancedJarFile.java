@@ -51,7 +51,6 @@ public class EnhancedJarFile {
      * @see java.util.jar.JarFile#JarFile(java.lang.String)
      */
     public EnhancedJarFile(String name) throws IOException {
-
         this.jar = new JarFile(name);
     }
 
@@ -59,7 +58,6 @@ public class EnhancedJarFile {
      * @see java.util.jar.JarFile#JarFile(java.lang.String, boolean)
      */
     public EnhancedJarFile(String name, boolean verify) throws IOException {
-
         this.jar = new JarFile(name, verify);
     }
 
@@ -67,7 +65,6 @@ public class EnhancedJarFile {
      * @see java.util.jar.JarFile#JarFile(java.io.File)
      */
     public EnhancedJarFile(File file) throws IOException {
-
         this.jar = new JarFile(file);
     }
 
@@ -75,7 +72,6 @@ public class EnhancedJarFile {
      * @see java.util.jar.JarFile#JarFile(java.io.File, boolean)
      */
     public EnhancedJarFile(File file, boolean verify) throws IOException {
-
         this.jar = new JarFile(file, verify);
     }
 
@@ -84,7 +80,6 @@ public class EnhancedJarFile {
      */
     public EnhancedJarFile(File file, boolean verify, int mode)
             throws IOException {
-
         this.jar = new JarFile(file, verify, mode);
     }
 
@@ -101,27 +96,21 @@ public class EnhancedJarFile {
     public List<JarEntry> listSubEntries(String entryName) {
         Enumeration<JarEntry> entries = jar.entries();
         List<JarEntry> subEntries = new ArrayList<JarEntry>();
-
         while (entries.hasMoreElements()) {
             JarEntry nextEntry = (JarEntry) entries.nextElement();
-
             if (nextEntry.getName().startsWith(entryName)) {
-                // the next entry name starts with the entryName so it
-                // is a potential sub entry
-
-                // tokenize the rest of the next entry name to see how
-                // many tokens exist
+                // the next entry name starts with the entryName so it is a
+                // potential sub entry tokenize the rest of the next entry name
+                // to see how many tokens exist
                 StringTokenizer tokenizer = new StringTokenizer(nextEntry
                         .getName().substring(entryName.length()),
                         EnhancedJarFile.JAR_DELIMETER);
-
                 if (tokenizer.countTokens() == 1) {
                     // only 1 token exists, so it is a sub-entry
                     subEntries.add(nextEntry);
                 }
             }
         }
-
         return subEntries;
     }
 
@@ -151,7 +140,6 @@ public class EnhancedJarFile {
         if (entry != null && getEntry(entry.getName()) != null) {
             JarEntryOutputStream outputStream = new JarEntryOutputStream(this,
                     entry.getName());
-
             outputStream.close();
         }
     }
@@ -195,7 +183,6 @@ public class EnhancedJarFile {
      * @see java.util.zip.ZipFile#close()
      */
     public void close() throws IOException {
-
         this.jar.close();
     }
 

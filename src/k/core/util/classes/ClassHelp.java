@@ -67,26 +67,9 @@ public class ClassHelp {
      * @param type
      *            - the type to get a value for
      * @return the matching high level class, or <tt>null</tt> if there is none
+     * @see Primitives#getWrapperClass(Class)
      */
     public static Class<?> getPrimitveClassAutoboxed(Class<?> type) {
-        Class<?> out = null;
-        if (type == int.class) {
-            out = Integer.class;
-        } else if (type == short.class) {
-            out = Short.class;
-        } else if (type == byte.class) {
-            out = Byte.class;
-        } else if (type == long.class) {
-            out = Long.class;
-        } else if (type == float.class) {
-            out = Float.class;
-        } else if (type == boolean.class) {
-            out = Boolean.class;
-        } else if (type == double.class) {
-            out = Double.class;
-        } else if (type == char.class) {
-            out = Character.class;
-        }
-        return out;
+        return Primitives.getWrapperClass(type);
     }
 }

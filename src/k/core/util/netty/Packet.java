@@ -39,6 +39,7 @@ public abstract class Packet implements Comparable<Packet> {
     static {
         registerPacket(PacketFinished.class, TERMINATION_PACKET_ID);
     }
+    private final String PACKET_CLASS_NAME = getClass().getName();
 
     /**
      * Uses an empty constructor for a packet.
@@ -118,8 +119,7 @@ public abstract class Packet implements Comparable<Packet> {
      * {@link Packet#newPacket(int, Class[], Object[])}
      */
     protected Packet(DataStruct ds) {
-        if (!StackTraceInfo.getInvokingClassName().equals(
-                Packet.class.getName())) {
+        if (!StackTraceInfo.getInvokingClassName().equals(PACKET_CLASS_NAME)) {
             throw new IllegalAccessError(
                     "cannot create Packet class via constructor");
         }
@@ -149,8 +149,8 @@ public abstract class Packet implements Comparable<Packet> {
      * 
      * @param o
      *            - the packet to compare to
-     * @return see {@link Comparable#compareTo(Object)}
-     * @see Comparable#compareTo(Object)
+     * @return see {@link #compareTo(Object)}
+     * @see #compareTo(Object)
      */
     protected int delCompareTo(Packet o) {
         int ourId = packetToId.get(getClass()), theirId = packetToId.get(o

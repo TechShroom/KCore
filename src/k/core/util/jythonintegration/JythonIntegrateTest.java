@@ -3,7 +3,7 @@ package k.core.util.jythonintegration;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import k.core.util.Helper;
+import k.core.util.core.Helper;
 
 import org.python.core.PyObject;
 

@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import k.core.util.gui.SpecialReader;
 import k.core.util.gui.TextFieldReader;
 
 public class ExpressionTest {
@@ -65,7 +64,7 @@ public class ExpressionTest {
             }
             try {
                 if (EOperation.hasOP(line)) {
-                    System.err.println(ExtraMath.solveExpression(line));
+                    System.err.println(ExtraMath.evalExpression(line));
                 }
             } catch (NumberFormatException nfe) {
                 writeException(nfe);

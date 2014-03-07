@@ -1,6 +1,7 @@
 package k.core.util.arrays;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractList;
@@ -22,8 +23,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import k.core.util.Helper.BetterArrays;
 import k.core.util.classes.ClassHelp;
+import k.core.util.core.Helper.BetterArrays;
 import k.core.util.reflect.Reflect;
 
 /**
@@ -35,6 +36,24 @@ import k.core.util.reflect.Reflect;
 public class ResizableArray<T> extends AbstractList<Object> implements
         List<Object>, RandomAccess, Cloneable, java.io.Serializable {
     private static final long serialVersionUID = 8683452581122892189L;
+    /**
+     * A reference to the Object.clone() method that is actually arrays clone
+     * method.
+     */
+    private static final Method ARR_CLONE;
+
+    static {
+        Method m = null;
+        try {
+            m = Object.class.getDeclaredMethod("clone");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        m.setAccessible(true);
+        ARR_CLONE = m;
+    }
 
     /**
      * Default initial capacity.
@@ -134,9 +153,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             }
         }
         elementData = (T) Array.newInstance(type.getComponentType(), c.size());
-        for (Object o : c) {
-            add(o);
-        }
+        addAll(c);
         arrayType = type;
     }
 
@@ -156,7 +173,11 @@ public class ResizableArray<T> extends AbstractList<Object> implements
         if (arrayType == null) {
             throw new IllegalArgumentException(String.valueOf(array));
         }
-        elementData = array;
+        try {
+            elementData = (T) ARR_CLONE.invoke(array);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         size = length();
     }
 
@@ -237,10 +258,10 @@ public class ResizableArray<T> extends AbstractList<Object> implements
             return ((Character) o) == 0;
         }
         if (primCheck == Float.class) {
-            return ((Float) o) == 0.0f;
+            return Float.compare(0, (Float) o) == 0;
         }
         if (primCheck == Double.class) {
-            return ((Double) o) == 0.0d;
+            return Double.compare(0, (Double) o) == 0;
         }
         if (primCheck == Short.class) {
             return ((Short) o) == 0;
@@ -613,7 +634,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @Override
     public void add(int index, Object element) {
-        rangeCheckForAdd(index);
+        betterRangeCheck(index);
 
         ensureCapacityInternal(size + 1); // Increments modCount!!
         System.arraycopy(elementData, index, elementData, index + 1, size
@@ -760,7 +781,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
      */
     @Override
     public boolean addAll(int index, Collection<?> c) {
-        rangeCheckForAdd(index);
+        betterRangeCheck(index);
 
         Object[] a = c.toArray();
         int numNew = a.length;
@@ -777,7 +798,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     public boolean addAll(int index, Object a) {
-        rangeCheckForAdd(index);
+        betterRangeCheck(index);
 
         int numNew = Array.getLength(a);
         ensureCapacityInternal(size + numNew); // Increments modCount
@@ -819,20 +840,17 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     /**
-     * Checks if the given index is in range. If not, throws an appropriate
-     * runtime exception. This method does *not* check if the index is negative:
-     * It is always used immediately prior to an array access, which throws an
-     * ArrayIndexOutOfBoundsException if index is negative.
+     * Calls betterRangeCheck() for negative checking
      */
     private void rangeCheck(int index) {
-        if (index >= size)
-            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+        betterRangeCheck(index);
     }
 
     /**
-     * A version of rangeCheck used by add and addAll.
+     * A better rangeCheck that gives more information that some other
+     * exceptions
      */
-    private void rangeCheckForAdd(int index) {
+    private void betterRangeCheck(int index) {
         if (index > size || index < 0)
             throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
     }
@@ -922,7 +940,7 @@ public class ResizableArray<T> extends AbstractList<Object> implements
     }
 
     /**
-     * Reverses this list.
+     * Reverses this list. This also calls {@link #trimToSize()}.
      */
     public void reverse() {
         elementData = BetterArrays.reverseNonGeneric(copyOf(size));

@@ -10,9 +10,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 public class DataStruct {
-    public static final String SPLIT_PAIRS = ";", SPLIT_KEYVALUE = "|",
+    protected static final String SPLIT_PAIRS = ";", SPLIT_KEYVALUE = "|",
             SPLIT_CLASS = "`";
-    public static final char KEY_STRING = 's', KEY_LONG = 'l', KEY_INT = 'i',
+    protected static final char KEY_STRING = 's', KEY_LONG = 'l', KEY_INT = 'i',
             KEY_CHAR = 'c', KEY_BYTE = 'b', KEY_FLOAT = 'f', KEY_DOUBLE = 'd',
             KEY_BOOL = 'B', KEY_OTHER = 'o';
     private List<Object> dataValues = new ArrayList<Object>();

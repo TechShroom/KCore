@@ -81,6 +81,12 @@ public class JClickableText extends JLabel implements MouseListener {
     public void mouseExited(MouseEvent e) {
     }
 
+    /**
+     * Sets the {@link Action} this text should perform.
+     * 
+     * @param a
+     *            - an action to call on click.
+     */
     public void setAction(Action a) {
         act = a;
     }

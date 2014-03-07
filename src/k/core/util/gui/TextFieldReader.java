@@ -11,10 +11,25 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 public class TextFieldReader extends InputStream {
-    JTextField in = null;
-    ArrayList<Byte> buf = new ArrayList<Byte>();
-    int ci = 0;
+    /**
+     * The field to read from
+     */
+    private JTextField in = null;
+    /**
+     * The temp. buffer
+     */
+    private ArrayList<Byte> buf = new ArrayList<Byte>();
+    /**
+     * The internal counter (not sure what for)
+     */
+    private int ci = 0;
 
+    /**
+     * Creates a new TFR using the given {@link JTextField} as input.
+     * 
+     * @param jtf
+     *            - the input field
+     */
     public TextFieldReader(JTextField jtf) {
         in = jtf;
         Action a = new EnterAction(this);
@@ -23,7 +38,12 @@ public class TextFieldReader extends InputStream {
         jtf.getActionMap().put("enter_key", a);
     }
 
-    public class EnterAction extends AbstractAction {
+    /**
+     * Responds to the enter key, and handles adding the buffer data.
+     * 
+     * @author Kenzie Togami
+     */
+    private class EnterAction extends AbstractAction {
         private static final long serialVersionUID = -2045859309599836915L;
         TextFieldReader handle;
 

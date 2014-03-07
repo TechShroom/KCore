@@ -14,10 +14,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * 
  */
 public class NetHandlerServer extends NetHandler {
-    ServerBootstrap sb = null;
-    ChannelFuture futureNow = null;
-    Channel ch = null;
-    EventLoopGroup boss = new NioEventLoopGroup(),
+    private ServerBootstrap sb = null;
+    private ChannelFuture futureNow = null;
+    private Channel ch = null;
+    private EventLoopGroup boss = new NioEventLoopGroup(),
             worker = new NioEventLoopGroup();
     TelnetServer server = null;
 

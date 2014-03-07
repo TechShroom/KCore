@@ -9,10 +9,27 @@ import javax.swing.event.DocumentListener;
 
 public class TextAreaPrinter extends ByteArrayOutputStream implements
         DocumentListener {
-    JTextArea out = null;
-    String pre = ">";
-    String buffer = "";
+    /**
+     * The JTA used with this TAP
+     */
+    private JTextArea out = null;
+    /**
+     * The prefix to add to lines
+     */
+    private String pre = ">";
+    /**
+     * The buffer that holds all the data
+     */
+    private String buffer = "";
 
+    /**
+     * Creates a new TAP from the given {@link JTextArea} and prefix string.
+     * 
+     * @param jta
+     *            - a text area to write to
+     * @param prefix
+     *            - the prfix to add to each line
+     */
     public TextAreaPrinter(JTextArea jta, String prefix) {
         super();
         out = jta;
@@ -42,6 +59,8 @@ public class TextAreaPrinter extends ByteArrayOutputStream implements
         }
     }
 
+    /* These overrides handle autoscrolling in a Document */
+    
     @Override
     public void insertUpdate(DocumentEvent e) {
         out.setCaretPosition(out.getDocument().getLength());

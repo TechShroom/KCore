@@ -27,8 +27,16 @@ public final class Primitives {
             wrapper = { Byte.class, Short.class, Integer.class, Long.class,
                     Double.class, Character.class, Boolean.class };
 
+    /**
+     * All primitive and wrapper classes in one list.
+     */
     private static final List<Class<?>> all;
 
+    /**
+     * valueOf methods for all the primitives/wrappers. Character does not have
+     * one, so we allow taking the first char of the input String via
+     * {@link #overriden_vo_char(String)}.
+     */
     private static final Method[] valueOfs = new Method[PRIMITIVE_COUNT];
 
     /**
@@ -66,46 +74,115 @@ public final class Primitives {
         all = Collections.unmodifiableList(all0);
     }
 
+    /**
+     * Returns the mapping from primitive classes to wrapper classes.
+     * 
+     * @return a read-only map of the primitive to wrapper pairs.
+     */
     public static Map<Class<?>, Class<?>> getPTWMap() {
         return primitivesToWrapper;
     }
 
+    /**
+     * Returns the mapping from wrapper classes to primitive classes.
+     * 
+     * @return a read-only map of the wrapper to primitive pairs.
+     */
     public static Map<Class<?>, Class<?>> getWTPMap() {
         return wrapperToPrimitives;
     }
 
+    /**
+     * Returns the array of primitives.
+     * 
+     * @return an array of primitive classes.
+     */
     public static Class<?>[] getPArray() {
         return primitive.clone();
     }
 
+    /**
+     * Returns the array of wrappers.
+     * 
+     * @return an array of wrapper classes.
+     */
     public static Class<?>[] getWArray() {
         return wrapper.clone();
     }
 
+    /**
+     * Determines if the given class represents a byte class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Byte.class || c == byte.class</tt>
+     */
     public static boolean isByte(Class<?> c) {
         return c == primitive[BYTE] || c == wrapper[BYTE];
     }
 
+    /**
+     * Determines if the given class represents a short class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Short.class || c == short.class</tt>
+     */
     public static boolean isShort(Class<?> c) {
         return c == primitive[SHORT] || c == wrapper[SHORT];
     }
 
+    /**
+     * Determines if the given class represents a int class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Integer.class || c == int.class</tt>
+     */
     public static boolean isInt(Class<?> c) {
         return c == primitive[INT] || c == wrapper[INT];
     }
 
+    /**
+     * Determines if the given class represents a long class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Long.class || c == long.class</tt>
+     */
     public static boolean isLong(Class<?> c) {
         return c == primitive[LONG] || c == wrapper[LONG];
     }
 
+    /**
+     * Determines if the given class represents a double class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Double.class || c == double.class</tt>
+     */
     public static boolean isDouble(Class<?> c) {
         return c == primitive[DOUBLE] || c == wrapper[DOUBLE];
     }
 
+    /**
+     * Determines if the given class represents a char class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Character.class || c == char.class</tt>
+     */
     public static boolean isChar(Class<?> c) {
         return c == primitive[CHAR] || c == wrapper[CHAR];
     }
 
+    /**
+     * Determines if the given class represents a boolean class.
+     * 
+     * @param c
+     *            - class to test
+     * @return <tt>c == Boolean.class || c == boolean.class</tt>
+     */
     public static boolean isBool(Class<?> c) {
         return c == primitive[BOOL] || c == wrapper[BOOL];
     }
@@ -189,5 +266,6 @@ public final class Primitives {
     }
 
     private Primitives() {
+        throw new IllegalAccessError("No Primitive instances for you!");
     }
 }

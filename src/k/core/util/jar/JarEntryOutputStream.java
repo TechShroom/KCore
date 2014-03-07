@@ -53,7 +53,6 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
      */
     public JarEntryOutputStream(EnhancedJarFile jar, String jarEntryName) {
         super();
-
         this.jarEntryName = jarEntryName;
         this.jar = jar;
     }
@@ -76,7 +75,6 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
      * old jar.
      */
     private void writeToJar() throws IOException {
-
         File jarDir = new File(this.jar.getName()).getParentFile();
         // create new jar
         File newJarFile = File.createTempFile(
@@ -84,10 +82,8 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
         newJarFile.deleteOnExit();
         JarOutputStream jarOutputStream = new JarOutputStream(
                 new FileOutputStream(newJarFile));
-
         try {
             Enumeration<JarEntry> entries = this.jar.entries();
-
             // copy all current entries into the new jar
             while (entries.hasMoreElements()) {
                 JarEntry nextEntry = (JarEntry) entries.nextElement();
@@ -99,18 +95,15 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
                     JarEntry entryCopy = new JarEntry(nextEntry);
                     entryCopy.setCompressedSize(-1);
                     jarOutputStream.putNextEntry(entryCopy);
-
                     InputStream intputStream = this.jar
                             .getInputStream(nextEntry);
                     // write the data
                     for (int data = intputStream.read(); data != -1; data = intputStream
                             .read()) {
-
                         jarOutputStream.write(data);
                     }
                 }
             }
-
             // write the new or modified entry to the jar
             if (size() > 0) {
                 jarOutputStream.putNextEntry(new JarEntry(this.jarEntryName));
@@ -127,7 +120,6 @@ public class JarEntryOutputStream extends ByteArrayOutputStream {
                 // eat it, just wanted to close stream
             }
         }
-
         // swap the jar
         this.jar.swapJars(newJarFile);
     }

@@ -9,16 +9,35 @@ import java.util.regex.Pattern;
 
 public class ExtraMath {
 
+    /**
+     * Handles UD factorial.
+     * 
+     * @param num1
+     *            - factorial number
+     * @return <tt>num1!</tt>, or {@link UnlimitedDouble#EMPTY} if num1 is not
+     *         an integer.
+     */
     public static UnlimitedDouble factorial(UnlimitedDouble num1) {
-        UnlimitedDouble one = UnlimitedDouble.one(), fact = one.clone();
-        for (UnlimitedDouble i = new UnlimitedDouble("2"); i.lessThan(num1); i
-                .add(one)) {
+        if (num1.hasDecimal()) {
+            return UnlimitedDouble.EMPTY;
+        }
+        UnlimitedDouble one = UnlimitedDouble.one(), fact = one;
+        for (UnlimitedDouble i = UnlimitedDouble.newInstance("2"); i
+                .lessThan(num1); i = i.add(one)) {
             fact = fact.multiply(i);
         }
         return fact;
     }
 
-    public static String solveExpression(String expr) {
+    /**
+     * Evaluates the given expression
+     * 
+     * @param expr
+     *            - an expression to evaluate
+     * @return the result of evaluating the expression. Undefined if the
+     *         expression is not valid.
+     */
+    public static String evalExpression(String expr) {
         // replace known values (pi, E)
         expr = expr.replace("pi", Double.toString(Math.PI));
         expr = expr.replace("e", Double.toString(Math.E));
@@ -28,14 +47,14 @@ public class ExtraMath {
                 "\\((.+?)\\)" + OPERATIONS_REGEX + "\\((.+?)\\)").matcher(expr);
         while (dualM.find()) {
             String one = dualM.group(1), two = dualM.group(2);
-            String solve1 = solveExpression(one), solve2 = solveExpression(two);
+            String solve1 = evalExpression(one), solve2 = evalExpression(two);
             expr = expr.replaceFirst("\\Q(" + one + ")\\E", solve1);
             expr = expr.replaceFirst("\\Q(" + two + ")\\E", solve2);
             dualM.reset(expr);
         }
         while (m.find()) {
             String one = m.group(1);
-            String solve1 = solveExpression(one);
+            String solve1 = evalExpression(one);
             expr = expr.replaceFirst("\\Q(" + one + ")\\E", solve1);
             m.reset(expr);
         }
