@@ -151,10 +151,11 @@ final class GNet {
                 // connect timeout
                 return GData.TIMEOUT;
             }
-            lastModsForUrls.put(endOfUrl, urlc.getLastModified());
             GData data = data(urlc, headers, DataTransferMethod.GET, endOfUrl,
                     "", auth);
+            lastModsForUrls.put(endOfUrl, urlc.getLastModified());
             lastDataForUrls.put(endOfUrl, data);
+            GitHub.sync();
             return data;
         } catch (MalformedURLException murle) {
             murle.printStackTrace();
