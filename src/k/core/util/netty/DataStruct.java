@@ -92,7 +92,7 @@ public class DataStruct {
      *            - the data values
      */
     public DataStruct(Object[] values) {
-        dataValues = Arrays.asList(values);
+        dataValues = new ArrayList<Object>(Arrays.asList(values));
     }
 
     /**
