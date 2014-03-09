@@ -71,6 +71,12 @@ public class GData {
         }
     }
 
+    void contentloaded(String dataRaw, int remain, int limit, int reset,
+            Map<String, List<String>> headers) {
+        raw = dataRaw;
+        data = new SpecialData(remain, limit, reset, headers);
+    }
+
     void content(HttpURLConnection urlc, Object content) throws IOException {
         if (content instanceof InputStream) {
             // data is inputstreamed
@@ -93,9 +99,9 @@ public class GData {
             int rllim = 0;
             long rlreset = 0;
             try {
-                 rlremain = getRLRemaining(headers);
-                 rllim = getRLL(headers);
-                 rlreset = getRLReset(headers);
+                rlremain = getRLRemaining(headers);
+                rllim = getRLL(headers);
+                rlreset = getRLReset(headers);
                 headers.remove(RATELIMIT_KEY);
                 headers.remove(RATEREMAINING_KEY);
                 headers.remove(RATERESET_KEY);
