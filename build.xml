@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build-jars" name="KCore">
+<project basedir="." default="build-jars" name="KCore-J8">
 	<property environment="env" />
 	<property name="EmergencyLanding.location" value="../EmergencyLanding" />
 	<property name="Examplify.location" value="../../Documents/wkspace/Examplify" />
@@ -8,8 +8,8 @@
 	<property name="TheChairGame.location" value="../TheChairGame" />
 	<property name="ECLIPSE_HOME" value="../../Downloads/eclipse-SDK-4.2.2-win32-x86_64/eclipse" />
 	<property name="debuglevel" value="source,lines,vars" />
-	<property name="target" value="1.6" />
-	<property name="source" value="1.6" />
+	<property name="target" value="1.8" />
+	<property name="source" value="1.8" />
 	<property name="output" value="antbuild" />
 	<property name="jarout" value="jars" />
 	<path id="KCore.classpath">
@@ -38,6 +38,7 @@
 	<target name="build-subprojects" />
 	<target depends="init" name="build-project">
 		<echo message="${ant.project.name}: ${ant.file}" />
+		<echo message="Using Java version ${ant.java.version}."/>
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${output}" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src" />
 			<classpath refid="KCore.classpath" />
