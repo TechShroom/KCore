@@ -1,8 +1,15 @@
 package k.core.util.github;
 
 import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
 
+import k.core.util.github.GData.GDataError;
+import k.core.util.github.gitjson.GithubJsonCreator;
+import k.core.util.github.gitjson.GithubJsonParser;
 import k.core.util.netty.DataStruct;
+
+import com.google.gson.*;
 
 /**
  * Handles all storage, NOTHING gives this data, it pulls all. IT COMMANDS ALL.
@@ -12,9 +19,26 @@ import k.core.util.netty.DataStruct;
  *
  */
 final class GStore {
+    private static final JsonParser parser = GithubJsonParser.parser;
+    static final int AUTH_INDEX = 0, LAST_MOD_INDEX = 1, LAST_DATA_INDEX = 2;
+
     static void storeGitData() {
         DataStruct dataStruct = new DataStruct();
         dataStruct.add(GNet.authorization);
+        GithubJsonCreator<JsonObject> lastMod = GithubJsonCreator
+                .getForObjectCreation();
+        Map<String, Long> lm = GNet.lastModsForUrls;
+        for (Entry<String, Long> e : lm.entrySet()) {
+            lastMod.add(e.getKey(), new JsonPrimitive(e.getValue()));
+        }
+        dataStruct.add(lastMod.toString());
+        GithubJsonCreator<JsonObject> lastData = GithubJsonCreator
+                .getForObjectCreation();
+        Map<String, GData> ld = GNet.lastDataForUrls;
+        for (Entry<String, GData> e : ld.entrySet()) {
+            lastData.add(e.getKey(), buildGDataJSON(e.getValue()));
+        }
+        dataStruct.add(lastData.toString());
         File config = new File("./config/config.datastruct").getAbsoluteFile();
         try {
             config.getParentFile().mkdirs();
@@ -40,6 +64,25 @@ final class GStore {
                 // ignore closing problems
             }
         }
+    }
+
+    private static JsonObject buildGDataJSON(GData value) {
+        GithubJsonCreator<JsonObject> gdata = GithubJsonCreator
+                .getForObjectCreation(), headers = GithubJsonCreator
+                .getForObjectCreation();
+        gdata.add("rate", value.rate().json());
+        gdata.add("rawdata", value.getData());
+        Map<String, List<String>> gheads = value.getHeaders();
+        for (Entry<String, List<String>> e : gheads.entrySet()) {
+            headers.add(
+                    e.getKey(),
+                    GithubJsonCreator.arrayOf(e.getValue().toArray(
+                            new String[0])));
+        }
+        gdata.add("headers", headers.result());
+        gdata.add("errstate", value.getErrorState().toString());
+        System.err.println(gdata.toString());
+        return gdata.result();
     }
 
     public static void loadGitData() {
@@ -69,7 +112,27 @@ final class GStore {
                 }
             }
             DataStruct dataStruct = new DataStruct(data);
-            GNet.authorization = (GAuth) dataStruct.get(0, null);
+            GNet.authorization = (GAuth) dataStruct.get(AUTH_INDEX, null);
+            try {
+                Map<String, Long> lm = GNet.lastModsForUrls;
+                JsonObject savedMap = parser.parse(
+                        (String) dataStruct.get(LAST_MOD_INDEX, "{}"))
+                        .getAsJsonObject();
+                for (Entry<String, JsonElement> e : GithubJsonParser
+                        .getAsMapWithNullKeys(savedMap).entrySet()) {
+                    lm.put(e.getKey(), e.getValue().getAsLong());
+                }
+                Map<String, GData> ld = GNet.lastDataForUrls;
+                savedMap = parser.parse(
+                        (String) dataStruct.get(LAST_DATA_INDEX, "{}"))
+                        .getAsJsonObject();
+                for (Entry<String, JsonElement> e : GithubJsonParser
+                        .getAsMapWithNullKeys(savedMap).entrySet()) {
+                    ld.put(e.getKey(), createGData(e.getValue()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -80,5 +143,29 @@ final class GStore {
                 }
             }
         }
+    }
+
+    private static GData createGData(JsonElement value) {
+        System.err.println("Loading GData from " + value);
+        JsonObject obj = value.getAsJsonObject();
+        GData out = new GData(GDataError.valueOf(obj.get("errstate")
+                .getAsString()));
+        RateLimit rate = RateLimit.fromJSON(obj.get("rate").getAsJsonObject());
+        String raw = obj.get("rawdata").getAsString();
+        Map<String, List<String>> gheads = new HashMap<String, List<String>>();
+        for (Entry<String, JsonElement> e : obj.get("headers")
+                .getAsJsonObject().entrySet()) {
+            String key = e.getKey();
+            JsonArray array = e.getValue().getAsJsonArray();
+            ArrayList<String> v = new ArrayList<String>(array.size());
+            Iterator<JsonElement> it = array.iterator();
+            while (it.hasNext()) {
+                v.add(it.next().getAsString());
+            }
+            gheads.put(key, v);
+        }
+        out.contentloaded(raw, rate.getRemaining(), rate.getLimit(),
+                rate.getResetTime(), gheads);
+        return out;
     }
 }

@@ -6,7 +6,7 @@ import java.util.Date;
 import k.core.util.github.gitjson.GithubJsonCreator;
 import k.core.util.github.gitjson.GithubJsonParser;
 
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 
 public final class RateLimit {
     public static enum RateType {
@@ -48,19 +48,17 @@ public final class RateLimit {
         return resetDate;
     }
 
-    public String json() {
+    public JsonObject json() {
         return GithubJsonCreator.getForObjectCreation()
                 .add("limit", new JsonPrimitive(limit))
                 .add("reset", new JsonPrimitive(reset))
-                .add("remaining", new JsonPrimitive(remaining)).toString();
+                .add("remaining", new JsonPrimitive(remaining)).result();
     }
 
-    public static RateLimit fromJSON(String json) {
-        GithubJsonParser parser = GithubJsonParser.begin(json);
-        JsonPrimitive lim = parser.data("limit").getAsJsonPrimitive();
-        JsonPrimitive res = parser.data("reset").getAsJsonPrimitive();
-        JsonPrimitive rem = parser.data("remaining").getAsJsonPrimitive();
-        parser.end();
+    public static RateLimit fromJSON(JsonObject json) {
+        JsonPrimitive lim = json.get("limit").getAsJsonPrimitive();
+        JsonPrimitive res = json.get("reset").getAsJsonPrimitive();
+        JsonPrimitive rem = json.get("remaining").getAsJsonPrimitive();
         return new RateLimit(rem.getAsInt(), lim.getAsInt(), res.getAsLong());
     }
 

@@ -115,6 +115,9 @@ public abstract class GithubJsonCreator<T extends JsonElement> {
 
     public static JsonObject createKeyValuePair(String key, JsonElement object) {
         JsonObject obj = new JsonObject();
+        if(key == null) {
+            key = "null";
+        }
         obj.add(key, object);
         return obj;
     }

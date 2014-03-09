@@ -172,29 +172,29 @@ final class GNet {
             Map<String, String> headers, DataTransferMethod method,
             String endOfUrl, String postContent, Auth auth) throws IOException {
         GData data = new GData();
+        int code = urlc.getResponseCode();
+        InputStream is = null;
+        if (code == HttpStatus.SC_OK) {
+        } else if ((data = handleCodeRetry(code, urlc, headers, method,
+                endOfUrl, postContent, auth)) != null) {
+            return data;
+        } else if ((is = handleCodeError(code, urlc, headers)) != null) {
+            System.err.println(headers);
+            dumpIS(is);
+            return GData.IOERRORS;
+        } else {
+            System.err.println("Error Code " + code + " ("
+                    + HttpStatus.getStatusText(code)
+                    + ") received, returning IOERRORS");
+            return GData.IOERRORS;
+        }
         try {
             data.content(urlc, urlc.getContent());
             return data;
         } catch (IOException e) {
             e.printStackTrace();
-            int code = urlc.getResponseCode();
-            InputStream is = null;
-            if (code == HttpStatus.SC_OK) {
-                System.err.println("OK 200 received, but IOException thrown!");
-                return GData.BADURL; // assume bad URL
-            } else if ((data = handleCodeRetry(code, urlc, headers, method,
-                    endOfUrl, postContent, auth)) != null) {
-                return data;
-            } else if ((is = handleCodeError(code, urlc, headers)) != null) {
-                System.err.println(headers);
-                dumpIS(is);
-                return GData.IOERRORS;
-            } else {
-                System.err.println("Error Code " + code + " ("
-                        + HttpStatus.getStatusText(code)
-                        + ") received, returning IOERRORS");
-                return GData.IOERRORS;
-            }
+            System.err.println("Exception with reponse code 200?");
+            return GData.IOERRORS;
         }
     }
 

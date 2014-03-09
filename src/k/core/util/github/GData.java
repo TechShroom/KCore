@@ -59,11 +59,11 @@ public class GData {
 
     private String raw = "";
 
-    public GData() {
+    GData() {
         this(GDataError.NONE);
     }
 
-    private GData(GDataError e) {
+    GData(GDataError e) {
         if (e != null) {
             errstate = e;
         } else {
@@ -71,7 +71,7 @@ public class GData {
         }
     }
 
-    void contentloaded(String dataRaw, int remain, int limit, int reset,
+    void contentloaded(String dataRaw, int remain, int limit, long reset,
             Map<String, List<String>> headers) {
         raw = dataRaw;
         data = new SpecialData(remain, limit, reset, headers);

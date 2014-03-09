@@ -1,6 +1,7 @@
 package k.core.util.github.gitjson;
 
-import java.util.HashMap;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import k.core.util.core.Helper.BetterArrays;
@@ -110,6 +111,21 @@ public final class GithubJsonParser {
         if (parent != null && !keepParentAlive) {
             parent.end(false);
         }
+    }
+
+    public static HashMap<String, JsonElement> getAsMapWithNullKeys(JsonObject o) {
+        Set<Entry<String, JsonElement>> preset = o.entrySet();
+        HashMap<String, JsonElement> out = new HashMap<String, JsonElement>(
+                preset.size());
+        for (Entry<String, JsonElement> e : preset) {
+            String key = e.getKey();
+            JsonElement value = e.getValue();
+            if (key.equals("null")) {
+                key = null;
+            }
+            out.put(key, value);
+        }
+        return out;
     }
 
 }
