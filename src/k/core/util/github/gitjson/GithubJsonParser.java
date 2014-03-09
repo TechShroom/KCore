@@ -8,7 +8,10 @@ import k.core.util.core.Helper.BetterArrays;
 import com.google.gson.*;
 
 public final class GithubJsonParser {
-    private static final JsonParser parser = new JsonParser();
+    /**
+     * This parser should remain the only used parser, like a singleton.
+     */
+    public static final JsonParser parser = new JsonParser();
 
     /**
      * Path cache, saves lookup time on really long paths
