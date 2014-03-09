@@ -78,13 +78,24 @@ final class GNet {
         // if this throws a ClassCastException, something is wrong.
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (authorization != null) {
-            conn.setRequestProperty("Authorization", authorization.getAuthValue());
+            conn.setRequestProperty("Authorization",
+                    authorization.getAuthValue());
         }
         return conn;
     }
 
     private static URL createGAPIUrl(String end) throws MalformedURLException {
         return new URL("https", "api.github.com", end);
+    }
+
+    private static boolean handleCode(int code, HttpURLConnection urlc,
+            Map<String, String> headers) {
+        if (code == 400) {
+            System.err.println("Bad request. Wrong auth? Header dump: "
+                    + headers + ", auth dump: " + authorization);
+            return true;
+        }
+        return false;
     }
 
     public static GData getData(String endOfUrl, Map<String, String> headers) {
@@ -180,6 +191,8 @@ final class GNet {
                     System.err
                             .println("OK 200 received, but IOException thrown!");
                     return GData.BADURL; // assume bad URL
+                } else if (handleCode(code, urlc, headers)) {
+                    return GData.IOERRORS;
                 } else {
                     System.err.println("Error Code " + code + " ("
                             + HttpStatus.getStatusText(code)

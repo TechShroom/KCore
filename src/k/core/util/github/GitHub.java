@@ -57,6 +57,10 @@ public final class GitHub {
         GStore.storeGitData();
     }
 
+    public static void load() {
+        GStore.loadGitData();
+    }
+
     public static RateLimit rateLimit(RateType search) {
         if (search == null) {
             throw new NullPointerException();
