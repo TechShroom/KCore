@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 
 public final class GitHub {
     public static final int LOWEST_JAVA_ALLOWED = 6;
+    private static GAuth authorization;
     static {
         String jVersion = System.getProperty("java.version");
         String minor = jVersion.split("\\.")[1];
@@ -21,7 +22,7 @@ public final class GitHub {
         }
     }
 
-    public static void authorize(JsonArray authScope, String clientID,
+    public static GAuth authorize(JsonArray authScope, String clientID,
             String clientSecret, String user, String pass, String... notes) {
         String note = "", note_url = "";
         if (notes != null) {
@@ -39,10 +40,14 @@ public final class GitHub {
                 .add("client_secret", clientSecret).result();
         // basic auth first
         HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", "Basic " + user + ":" + pass);
-        GData response = GNet.postData("/authorizations/1", headers,
+        headers.put("Authorization", GAuth.basic(user, pass));
+        GData response = GNet.postData("/authorizations", headers,
                 je.toString());
-        System.err.println(response);
+        authorization = new GAuth(GithubJsonParser.begin(response.getData())
+                .data("token").toString(),
+                response.getFirstHeaderValue("Location"));
+        System.err.println("Authorized: " + authorization);
+        return authorization;
     }
 
     public static GData allRateLimits() {
