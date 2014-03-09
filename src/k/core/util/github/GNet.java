@@ -15,6 +15,8 @@ final class GNet {
 
     private static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
 
+    static GAuth authorization = null;
+
     private static final class DefaultHeader implements Entry<String, String> {
         private String key, value;
 
@@ -70,7 +72,11 @@ final class GNet {
         // add leading slash if there is one
         URL url = createGAPIUrl(end);
         // if this throws a ClassCastException, something is wrong.
-        return (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        if (authorization != null) {
+            conn.setRequestProperty("Authorization", authorization.getAuthValue());
+        }
+        return conn;
     }
 
     public static GData getData(String endOfUrl, Map<String, String> headers) {
