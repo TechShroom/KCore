@@ -2,6 +2,7 @@ package k.core.util.github;
 
 import java.util.HashMap;
 
+import k.core.util.github.GNet.Auth;
 import k.core.util.github.RateLimit.RateType;
 import k.core.util.github.gitjson.GithubJsonCreator;
 import k.core.util.github.gitjson.GithubJsonParser;
@@ -21,12 +22,32 @@ public final class GitHub {
         }
     }
 
+    private static JsonArray scope;
+    private static String cid, cs, u, p;
+    private static String[] notes;
+
     public static GData allRateLimits() {
-        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED);
+        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
     }
 
     public static GAuth authorize(JsonArray authScope, String clientID,
             String clientSecret, String user, String pass, String... notes) {
+        scope = authScope;
+        cid = clientID;
+        cs = clientSecret;
+        u = user;
+        p = pass;
+        GitHub.notes = notes;
+        if (GNet.authorization != null) {
+            System.err.println("Using loaded token.");
+            return GNet.authorization;
+        }
+        return authWithVars();
+    }
+
+    static GAuth authWithVars() {
+        // remove current auth, might be invalid
+        GNet.authorization = null;
         String note = "", note_url = "";
         if (notes != null) {
             if (notes.length >= 2) {
@@ -38,23 +59,34 @@ public final class GitHub {
         }
         System.err.println("Authorizing...");
         JsonElement je = GithubJsonCreator.getForObjectCreation()
-                .add("scope", authScope).add("note", note)
-                .add("note_url", note_url).add("client_id", clientID)
-                .add("client_secret", clientSecret).result();
+                .add("scope", scope).add("note", note)
+                .add("note_url", note_url).add("client_id", cid)
+                .add("client_secret", cs).result();
         // basic auth first
         HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", GAuth.basic(user, pass));
+        headers.put("Authorization", GAuth.basic(u, p));
         GData response = GNet.postData("/authorizations", headers,
-                je.toString());
+                je.toString(), Auth.OFF);
         GNet.authorization = new GAuth(GAuth.token(GithubJsonParser
                 .begin(response.getData()).data("token").toString()),
                 response.getFirstHeaderValue("Location"));
         System.err.println("Authorized: " + GNet.authorization);
+        sync();
         return GNet.authorization;
     }
 
-    public static void close() {
-        GStore.storeGitData();
+    public static void sync() {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                GStore.storeGitData();
+            }
+        };
+        Thread t = new Thread(r, "Data Sync");
+        t.setDaemon(false);
+        // right below max of 10
+        t.setPriority(8);
+        t.start();
     }
 
     public static void load() {
@@ -85,6 +117,6 @@ public final class GitHub {
 
     public static GUser user(String username) {
         return GUser.from(GNet.getData("/users/" + username,
-                GNet.NO_HEADERS_SPECIFIED));
+                GNet.NO_HEADERS_SPECIFIED, Auth.OFF));
     }
 }

@@ -37,9 +37,11 @@ public class GData {
     private static int getRLL(Map<String, List<String>> headers) {
         return Integer.parseInt(headers.get(RATELIMIT_KEY).get(0));
     }
+
     private static int getRLRemaining(Map<String, List<String>> headers) {
         return Integer.parseInt(headers.get(RATEREMAINING_KEY).get(0));
     }
+
     /**
      * Note: this converts GitHub's returned epoch seconds into Java's epoch
      * milliseconds.
@@ -87,12 +89,19 @@ public class GData {
             raw = data;
             Map<String, List<String>> headers = urlc.getHeaderFields();
             headers = new HashMap<String, List<String>>(headers); // copy out
-            int rlremain = getRLRemaining(headers);
-            int rllim = getRLL(headers);
-            long rlreset = getRLReset(headers);
-            headers.remove(RATELIMIT_KEY);
-            headers.remove(RATEREMAINING_KEY);
-            headers.remove(RATERESET_KEY);
+            int rlremain = 0;
+            int rllim = 0;
+            long rlreset = 0;
+            try {
+                 rlremain = getRLRemaining(headers);
+                 rllim = getRLL(headers);
+                 rlreset = getRLReset(headers);
+                headers.remove(RATELIMIT_KEY);
+                headers.remove(RATEREMAINING_KEY);
+                headers.remove(RATERESET_KEY);
+            } catch (NullPointerException npe) {
+                // no ratelimits, errored probably
+            }
             headers = Collections.unmodifiableMap(headers); // protect
             this.data = new SpecialData(rlremain, rllim, rlreset, headers);
         } else {

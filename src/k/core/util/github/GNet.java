@@ -41,6 +41,14 @@ final class GNet {
         }
     }
 
+    static enum Auth {
+        ON, OFF, TRY;
+    }
+
+    static enum DataTransferMethod {
+        GET, POST;
+    }
+
     private static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
 
     static GAuth authorization = null;
@@ -71,15 +79,17 @@ final class GNet {
         writer.close();
     }
 
-    private static HttpURLConnection createConnection(String end)
+    private static HttpURLConnection createConnection(String end, Auth auth)
             throws IOException {
         // add leading slash if there is one
         URL url = createGAPIUrl(end);
         // if this throws a ClassCastException, something is wrong.
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        if (authorization != null) {
+        if (authorization != null && auth != Auth.OFF) {
             conn.setRequestProperty("Authorization",
                     authorization.getAuthValue());
+        } else if (auth == Auth.ON) {
+            throw new IllegalStateException(end + " requires auth");
         }
         return conn;
     }
@@ -88,21 +98,30 @@ final class GNet {
         return new URL("https", "api.github.com", end);
     }
 
-    private static boolean handleCode(int code, HttpURLConnection urlc,
-            Map<String, String> headers) {
-        if (code == 400) {
-            System.err.println("Bad request. Wrong auth? Header dump: "
-                    + headers + ", auth dump: " + authorization);
-            return true;
+    private static InputStream handleCodeError(int code,
+            HttpURLConnection urlc, Map<String, String> headers) {
+        if (code == HttpStatus.SC_BAD_REQUEST) {
+            System.err.println("Bad request!");
+            return urlc.getErrorStream();
         }
-        return false;
+        return null;
     }
 
-    public static GData getData(String endOfUrl, Map<String, String> headers) {
+    private static GData handleCodeRetry(int code, HttpURLConnection urlc,
+            Map<String, String> headers, DataTransferMethod method) {
+        if (code == HttpStatus.SC_UNAUTHORIZED) {
+            System.err.println("Retrying with re-auth...");
+            GitHub.authWithVars();
+        }
+        return null;
+    }
+
+    public static GData getData(String endOfUrl, Map<String, String> headers,
+            Auth auth) {
         // normalize
         endOfUrl = (endOfUrl.startsWith("/") ? "" : "/") + endOfUrl;
         try {
-            HttpURLConnection urlc = createConnection(endOfUrl);
+            HttpURLConnection urlc = createConnection(endOfUrl, auth);
             // add accept header
             urlc.addRequestProperty(accepts.getKey(), accepts.getValue());
             for (Entry<String, String> head : headers.entrySet()) {
@@ -125,24 +144,7 @@ final class GNet {
                 return GData.TIMEOUT;
             }
             lastModsForUrls.put(endOfUrl, urlc.getLastModified());
-            try {
-                GData data = new GData();
-                data.content(urlc, urlc.getContent());
-                return data;
-            } catch (IOException e) {
-                e.printStackTrace();
-                int code = urlc.getResponseCode();
-                if (code == 200) {
-                    System.err
-                            .println("OK 200 received, but IOException thrown!");
-                    return GData.BADURL; // assume bad URL
-                } else {
-                    System.err.println("Error Code " + code + " ("
-                            + HttpStatus.getStatusText(code)
-                            + ") received, returning IOERRORS");
-                    return GData.IOERRORS;
-                }
-            }
+            return data(urlc, headers, DataTransferMethod.GET);
         } catch (MalformedURLException murle) {
             murle.printStackTrace();
             return GData.BADURL;
@@ -154,12 +156,41 @@ final class GNet {
         }
     }
 
+    private static GData data(HttpURLConnection urlc,
+            Map<String, String> headers, DataTransferMethod method)
+            throws IOException {
+        GData data = new GData();
+        try {
+            data.content(urlc, urlc.getContent());
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+            int code = urlc.getResponseCode();
+            InputStream is = null;
+            if (code == HttpStatus.SC_OK) {
+                System.err.println("OK 200 received, but IOException thrown!");
+                return GData.BADURL; // assume bad URL
+            } else if ((data = handleCodeRetry(code, urlc, headers, method)) != null) {
+                return data;
+            } else if ((is = handleCodeError(code, urlc, headers)) != null) {
+                System.err.println(headers);
+                dumpIS(is);
+                return GData.IOERRORS;
+            } else {
+                System.err.println("Error Code " + code + " ("
+                        + HttpStatus.getStatusText(code)
+                        + ") received, returning IOERRORS");
+                return GData.IOERRORS;
+            }
+        }
+    }
+
     public static GData postData(String endOfUrl, Map<String, String> headers,
-            String postContent) {
+            String postContent, Auth auth) {
         // normalize
         endOfUrl = (endOfUrl.startsWith("/") ? "" : "/") + endOfUrl;
         try {
-            HttpURLConnection urlc = createConnection(endOfUrl);
+            HttpURLConnection urlc = createConnection(endOfUrl, auth);
             // add accept header
             urlc.addRequestProperty(accepts.getKey(), accepts.getValue());
             for (Entry<String, String> head : headers.entrySet()) {
@@ -180,26 +211,7 @@ final class GNet {
                 // connect timeout
                 return GData.TIMEOUT;
             }
-            try {
-                GData data = new GData();
-                data.content(urlc, urlc.getContent());
-                return data;
-            } catch (IOException e) {
-                e.printStackTrace();
-                int code = urlc.getResponseCode();
-                if (code == 200) {
-                    System.err
-                            .println("OK 200 received, but IOException thrown!");
-                    return GData.BADURL; // assume bad URL
-                } else if (handleCode(code, urlc, headers)) {
-                    return GData.IOERRORS;
-                } else {
-                    System.err.println("Error Code " + code + " ("
-                            + HttpStatus.getStatusText(code)
-                            + ") received, returning IOERRORS");
-                    return GData.IOERRORS;
-                }
-            }
+            return data(urlc, headers, DataTransferMethod.POST);
         } catch (MalformedURLException murle) {
             murle.printStackTrace();
             return GData.BADURL;
@@ -209,5 +221,22 @@ final class GNet {
         } catch (Exception e) {
             throw new RuntimeException("unexpected exception", e);
         }
+    }
+
+    private static void dumpIS(InputStream in) {
+        System.err.println("DUMPING INPUT STREAM DATA");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String line = "";
+        try {
+            while ((line = br.readLine()) != null) {
+                System.err.println(line);
+            }
+        } catch (IOException e1) {
+        }
+        try {
+            br.close();
+        } catch (IOException e) {
+        }
+        System.err.println("DONE");
     }
 }
