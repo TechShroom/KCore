@@ -15,23 +15,29 @@ final class GStore {
     static void storeGitData() {
         DataStruct dataStruct = new DataStruct();
         dataStruct.add(GNet.authorization);
-        File config = new File("./config/config.datastruct");
+        File config = new File("./config/config.datastruct").getAbsoluteFile();
+        try {
+            config.getParentFile().mkdirs();
+            config.createNewFile();
+        } catch (IOException e) {
+            throw new IllegalStateException("path: " + config, e);
+        }
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(config);
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
             return;
         }
         try {
             fos.write(dataStruct.toString().getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         } finally {
             try {
                 fos.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // ignore closing problems
             }
         }
     }
