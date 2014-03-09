@@ -53,6 +53,10 @@ public final class GitHub {
         return GNet.authorization;
     }
 
+    public static void close() {
+        GStore.storeGitData();
+    }
+
     public static RateLimit rateLimit(RateType search) {
         if (search == null) {
             throw new NullPointerException();
