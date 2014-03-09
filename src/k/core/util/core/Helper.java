@@ -7,7 +7,19 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class Helper {
+    public static class Base64 {
+        public static String toB64(String data) {
+            return DatatypeConverter.printBase64Binary(data.getBytes());
+        }
+
+        public static String fromB64(String b64data) {
+            return new String(DatatypeConverter.parseBase64Binary(b64data));
+        }
+    }
+
     public static class Files {
         public static String topLevel;
         static {
