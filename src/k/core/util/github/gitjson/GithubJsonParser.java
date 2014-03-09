@@ -17,7 +17,7 @@ public final class GithubJsonParser {
     private transient HashMap<String, JsonElement> lookedUpPaths = new HashMap<String, JsonElement>();
     private JsonObject relatedObj = null;
 
-    public GithubJsonParser(String data) {
+    private GithubJsonParser(String data) {
         this(parser.parse(data).getAsJsonObject(), null);
     }
 
