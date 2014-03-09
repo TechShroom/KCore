@@ -1,0 +1,17 @@
+pygments: true
+exclude:
+- bin
+- config.rb
+- Gemfile
+- Gemfile.lock
+- gems
+- Procfile
+- Rakefile
+- README.md
+- script
+- vendor
+title: TechShroom Studios
+include:
+- _stylesheets
+permalink: /:categories/:year/:month/:day/:title/
+markdown: rdiscount
