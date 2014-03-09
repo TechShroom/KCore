@@ -74,4 +74,9 @@ public final class GitHub {
         }
         throw new IllegalArgumentException("Unknown RateType " + search);
     }
+
+    public static GUser user(String username) {
+        return GUser.from(GNet.getData("/users/" + username,
+                GNet.NO_HEADERS_SPECIFIED));
+    }
 }
