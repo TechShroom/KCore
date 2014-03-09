@@ -57,7 +57,7 @@ public final class GitHub {
             }
         }
         System.err.println("Authorizing...");
-        JsonElement je = GithubJsonCreator.getForObjectCreation()
+        JsonElement authData = GithubJsonCreator.getForObjectCreation()
                 .add("scope", scope).add("note", note)
                 .add("note_url", note_url).add("client_id", cid)
                 .add("client_secret", cs).result();
@@ -65,7 +65,7 @@ public final class GitHub {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", GAuth.basic(u, p));
         GData response = GNet.postData("/authorizations", headers,
-                je.toString(), Auth.OFF);
+                authData.toString(), Auth.OFF);
         GNet.authorization = new GAuth(GAuth.token(GithubJsonParser
                 .begin(response.getData()).data("token").toString()),
                 response.getFirstHeaderValue("Location"));
