@@ -12,9 +12,9 @@ import com.google.gson.JsonSyntaxException;
 public class DataStruct {
     protected static final String SPLIT_PAIRS = ";", SPLIT_KEYVALUE = "|",
             SPLIT_CLASS = "`";
-    protected static final char KEY_STRING = 's', KEY_LONG = 'l', KEY_INT = 'i',
-            KEY_CHAR = 'c', KEY_BYTE = 'b', KEY_FLOAT = 'f', KEY_DOUBLE = 'd',
-            KEY_BOOL = 'B', KEY_OTHER = 'o';
+    protected static final char KEY_STRING = 's', KEY_LONG = 'l',
+            KEY_INT = 'i', KEY_CHAR = 'c', KEY_BYTE = 'b', KEY_FLOAT = 'f',
+            KEY_DOUBLE = 'd', KEY_BOOL = 'B', KEY_OTHER = 'o';
     private List<Object> dataValues = new ArrayList<Object>();
 
     /**
@@ -93,6 +93,13 @@ public class DataStruct {
      */
     public DataStruct(Object[] values) {
         dataValues = Arrays.asList(values);
+    }
+
+    /**
+     * A second encode constructor that passes nothing to start with.
+     */
+    public DataStruct() {
+        this(new Object[0]);
     }
 
     private String encodeData(List<Object> enc) {
