@@ -21,6 +21,10 @@ public final class GitHub {
         }
     }
 
+    public static GData allRateLimits() {
+        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED);
+    }
+
     public static GAuth authorize(JsonArray authScope, String clientID,
             String clientSecret, String user, String pass, String... notes) {
         String note = "", note_url = "";
@@ -47,10 +51,6 @@ public final class GitHub {
                 response.getFirstHeaderValue("Location"));
         System.err.println("Authorized: " + GNet.authorization);
         return GNet.authorization;
-    }
-
-    public static GData allRateLimits() {
-        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED);
     }
 
     public static RateLimit rateLimit(RateType search) {

@@ -13,10 +13,6 @@ import java.util.Map.Entry;
  */
 final class GNet {
 
-    private static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
-
-    static GAuth authorization = null;
-
     private static final class DefaultHeader implements Entry<String, String> {
         private String key, value;
 
@@ -45,6 +41,10 @@ final class GNet {
         }
     }
 
+    private static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
+
+    static GAuth authorization = null;
+
     /**
      * The value for the default accept header.
      */
@@ -63,8 +63,12 @@ final class GNet {
     public static final Map<String, String> NO_HEADERS_SPECIFIED = Collections
             .unmodifiableMap(new HashMap<String, String>(0));
 
-    private static URL createGAPIUrl(String end) throws MalformedURLException {
-        return new URL("https", "api.github.com", end);
+    private static void addData(HttpURLConnection urlc, String postContent)
+            throws IOException {
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                urlc.getOutputStream()));
+        writer.write(postContent);
+        writer.close();
     }
 
     private static HttpURLConnection createConnection(String end)
@@ -77,6 +81,10 @@ final class GNet {
             conn.setRequestProperty("Authorization", authorization.getAuthValue());
         }
         return conn;
+    }
+
+    private static URL createGAPIUrl(String end) throws MalformedURLException {
+        return new URL("https", "api.github.com", end);
     }
 
     public static GData getData(String endOfUrl, Map<String, String> headers) {
@@ -188,13 +196,5 @@ final class GNet {
         } catch (Exception e) {
             throw new RuntimeException("unexpected exception", e);
         }
-    }
-
-    private static void addData(HttpURLConnection urlc, String postContent)
-            throws IOException {
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                urlc.getOutputStream()));
-        writer.write(postContent);
-        writer.close();
     }
 }

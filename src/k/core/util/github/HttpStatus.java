@@ -81,56 +81,10 @@ package k.core.util.github;
  */
 public final class HttpStatus {
 
-    // -------------------------------------------------------- Class Variables
-
     /** Reason phrases lookup table. */
     private static final String[][] REASON_PHRASES = new String[][] {
             new String[0], new String[3], new String[8], new String[8],
             new String[25], new String[8] };
-
-    // --------------------------------------------------------- Public Methods
-
-    /**
-     * Get the reason phrase for a particular status code.
-     * 
-     * This method always returns the English text as specified in the relevent
-     * RFCs and is not internationalized.
-     * 
-     * @param statusCode
-     *            the numeric status code
-     * @return the reason phrase associated with the given status code or null
-     *         if the status code is not recognized.
-     * 
-     *         TODO: getStatusText should be called getReasonPhrase to match RFC
-     */
-    public static String getStatusText(int statusCode) {
-
-        int classIndex = statusCode / 100;
-        int codeIndex = statusCode - classIndex * 100;
-        if (classIndex < 1 || classIndex > (REASON_PHRASES.length - 1)
-                || codeIndex < 0
-                || codeIndex > REASON_PHRASES[classIndex].length) {
-            return null;
-        }
-        return REASON_PHRASES[classIndex][codeIndex];
-    }
-
-    // -------------------------------------------------------- Private Methods
-
-    /**
-     * Store the given reason phrase, by status code.
-     * 
-     * @param statusCode
-     *            The status code to lookup
-     * @param reasonPhrase
-     *            The reason phrase for this status code
-     */
-    private static void addStatusCodeMap(int statusCode, String reasonPhrase) {
-        int classIndex = statusCode / 100;
-        REASON_PHRASES[classIndex][statusCode - classIndex * 100] = reasonPhrase;
-    }
-
-    // -------------------------------------------------------------- Constants
 
     // --- 1xx Informational ---
 
@@ -169,6 +123,7 @@ public final class HttpStatus {
     public static final int SC_MULTIPLE_CHOICES = 300;
     /** <tt>301 Moved Permanently</tt> (HTTP/1.0 - RFC 1945) */
     public static final int SC_MOVED_PERMANENTLY = 301;
+
     /**
      * <tt>302 Moved Temporarily</tt> (Sometimes <tt>Found</tt>) (HTTP/1.0 - RFC
      * 1945)
@@ -221,15 +176,6 @@ public final class HttpStatus {
     public static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
     /** <tt>417 Expectation Failed</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_EXPECTATION_FAILED = 417;
-
-    /**
-     * Static constant for a 418 error. <tt>418 Unprocessable Entity</tt>
-     * (WebDAV drafts?) or <tt>418 Reauthentication Required</tt> (HTTP/1.1
-     * drafts?)
-     */
-    // not used
-    // public static final int SC_UNPROCESSABLE_ENTITY = 418;
-
     /**
      * Static constant for a 419 error.
      * <tt>419 Insufficient Space on Resource</tt> (WebDAV -
@@ -242,6 +188,15 @@ public final class HttpStatus {
      * draft-ietf-webdav-protocol-05?)
      */
     public static final int SC_METHOD_FAILURE = 420;
+
+    /**
+     * Static constant for a 418 error. <tt>418 Unprocessable Entity</tt>
+     * (WebDAV drafts?) or <tt>418 Reauthentication Required</tt> (HTTP/1.1
+     * drafts?)
+     */
+    // not used
+    // public static final int SC_UNPROCESSABLE_ENTITY = 418;
+
     /** <tt>422 Unprocessable Entity</tt> (WebDAV - RFC 2518) */
     public static final int SC_UNPROCESSABLE_ENTITY = 422;
     /** <tt>423 Locked</tt> (WebDAV - RFC 2518) */
@@ -263,11 +218,8 @@ public final class HttpStatus {
     public static final int SC_GATEWAY_TIMEOUT = 504;
     /** <tt>505 HTTP Version Not Supported</tt> (HTTP/1.1 - RFC 2616) */
     public static final int SC_HTTP_VERSION_NOT_SUPPORTED = 505;
-
     /** <tt>507 Insufficient Storage</tt> (WebDAV - RFC 2518) */
     public static final int SC_INSUFFICIENT_STORAGE = 507;
-
-    // ----------------------------------------------------- Static Initializer
 
     /** Set up status code to "reason phrase" map. */
     static {
@@ -330,6 +282,44 @@ public final class HttpStatus {
         addStatusCodeMap(SC_LOCKED, "Locked");
         addStatusCodeMap(SC_INSUFFICIENT_STORAGE, "Insufficient Storage");
         addStatusCodeMap(SC_FAILED_DEPENDENCY, "Failed Dependency");
+    }
+
+    /**
+     * Store the given reason phrase, by status code.
+     * 
+     * @param statusCode
+     *            The status code to lookup
+     * @param reasonPhrase
+     *            The reason phrase for this status code
+     */
+    private static void addStatusCodeMap(int statusCode, String reasonPhrase) {
+        int classIndex = statusCode / 100;
+        REASON_PHRASES[classIndex][statusCode - classIndex * 100] = reasonPhrase;
+    }
+
+    /**
+     * Get the reason phrase for a particular status code.
+     * 
+     * This method always returns the English text as specified in the relevent
+     * RFCs and is not internationalized.
+     * 
+     * @param statusCode
+     *            the numeric status code
+     * @return the reason phrase associated with the given status code or null
+     *         if the status code is not recognized.
+     * 
+     *         TODO: getStatusText should be called getReasonPhrase to match RFC
+     */
+    public static String getStatusText(int statusCode) {
+
+        int classIndex = statusCode / 100;
+        int codeIndex = statusCode - classIndex * 100;
+        if (classIndex < 1 || classIndex > (REASON_PHRASES.length - 1)
+                || codeIndex < 0
+                || codeIndex > REASON_PHRASES[classIndex].length) {
+            return null;
+        }
+        return REASON_PHRASES[classIndex][codeIndex];
     }
 
 }

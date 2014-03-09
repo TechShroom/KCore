@@ -34,79 +34,12 @@ public class GData {
             BADURL = new GData(GDataError.BADURL), IOERRORS = new GData(
                     GDataError.IOERRORS);
 
-    private final GDataError errstate;
-    private SpecialData data;
-    private String raw = "";
-
-    private GData(GDataError e) {
-        if (e != null) {
-            errstate = e;
-        } else {
-            errstate = GDataError.NONE;
-        }
-    }
-
-    public GData() {
-        this(GDataError.NONE);
-    }
-
-    /**
-     * Returns the error status of the data.
-     * 
-     * @return the error that occurred while creating the data, or
-     *         {@link GDataError#NONE} if none happened.
-     * @see GDataError
-     */
-    public GDataError getErrorState() {
-        return errstate;
-    }
-
-    public boolean isErrored() {
-        return errstate != GDataError.NONE;
-    }
-
-    private void throwIfErrored() {
-        if (!isErrored()) {
-            return;
-        }
-        throw new IllegalStateException("errored");
-    }
-
-    public String getData() {
-        throwIfErrored();
-        return raw;
-    }
-
-    public Map<String, List<String>> getHeaders() {
-        throwIfErrored();
-        return data.headers;
-    }
-
-    public List<String> getHeaderValues(String headerKey) {
-        throwIfErrored();
-        return data.headers.get(headerKey);
-    }
-
-    public String getFirstHeaderValue(String headerKey) {
-        throwIfErrored();
-        return data.headers.get(headerKey).get(0);
-    }
-
-    /* Some special methods that return headers GitHub always returns */
-
-    public RateLimit rate() {
-        throwIfErrored();
-        return data.limits;
-    }
-
-    private static int getRLRemaining(Map<String, List<String>> headers) {
-        return Integer.parseInt(headers.get(RATEREMAINING_KEY).get(0));
-    }
-
     private static int getRLL(Map<String, List<String>> headers) {
         return Integer.parseInt(headers.get(RATELIMIT_KEY).get(0));
     }
-
+    private static int getRLRemaining(Map<String, List<String>> headers) {
+        return Integer.parseInt(headers.get(RATEREMAINING_KEY).get(0));
+    }
     /**
      * Note: this converts GitHub's returned epoch seconds into Java's epoch
      * milliseconds.
@@ -118,10 +51,22 @@ public class GData {
         return Long.parseLong(headers.get(RATERESET_KEY).get(0)) * 1000;
     }
 
-    @Override
-    public String toString() {
-        return (!isErrored()) ? "RateLimit: " + rate() + " " + getHeaders()
-                + "; " + getData() : "Error: " + errstate;
+    private final GDataError errstate;
+
+    private SpecialData data;
+
+    private String raw = "";
+
+    public GData() {
+        this(GDataError.NONE);
+    }
+
+    private GData(GDataError e) {
+        if (e != null) {
+            errstate = e;
+        } else {
+            errstate = GDataError.NONE;
+        }
     }
 
     void content(HttpURLConnection urlc, Object content) throws IOException {
@@ -154,6 +99,61 @@ public class GData {
             throw new UnsupportedOperationException("no handler for "
                     + content.getClass());
         }
+    }
+
+    public String getData() {
+        throwIfErrored();
+        return raw;
+    }
+
+    /**
+     * Returns the error status of the data.
+     * 
+     * @return the error that occurred while creating the data, or
+     *         {@link GDataError#NONE} if none happened.
+     * @see GDataError
+     */
+    public GDataError getErrorState() {
+        return errstate;
+    }
+
+    public String getFirstHeaderValue(String headerKey) {
+        throwIfErrored();
+        return data.headers.get(headerKey).get(0);
+    }
+
+    /* Some special methods that return headers GitHub always returns */
+
+    public Map<String, List<String>> getHeaders() {
+        throwIfErrored();
+        return data.headers;
+    }
+
+    public List<String> getHeaderValues(String headerKey) {
+        throwIfErrored();
+        return data.headers.get(headerKey);
+    }
+
+    public boolean isErrored() {
+        return errstate != GDataError.NONE;
+    }
+
+    public RateLimit rate() {
+        throwIfErrored();
+        return data.limits;
+    }
+
+    private void throwIfErrored() {
+        if (!isErrored()) {
+            return;
+        }
+        throw new IllegalStateException("errored");
+    }
+
+    @Override
+    public String toString() {
+        return (!isErrored()) ? "RateLimit: " + rate() + " " + getHeaders()
+                + "; " + getData() : "Error: " + errstate;
     }
 
 }

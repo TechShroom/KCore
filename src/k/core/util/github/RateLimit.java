@@ -4,14 +4,19 @@ import java.util.Calendar;
 import java.util.Date;
 
 public final class RateLimit {
-    private static final Calendar staticCal = Calendar.getInstance();
-
     public static enum RateType {
         CORE, SEARCH;
     }
 
+    private static final Calendar staticCal = Calendar.getInstance();
+
+    private static synchronized Date setCalAndGet(long millis) {
+        staticCal.setTimeInMillis(millis);
+        return staticCal.getTime();
+    }
     private final int remaining, limit;
     private final long reset;
+
     private final Date resetDate;
 
     RateLimit(int rateremain, int ratelim, long ratereset) {
@@ -21,17 +26,12 @@ public final class RateLimit {
         resetDate = setCalAndGet(reset);
     }
 
-    @Override
-    public String toString() {
-        return remaining + "/" + limit + ", resets at " + resetDate;
+    public int getLimit() {
+        return limit;
     }
 
     public int getRemaining() {
         return remaining;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public long getResetTime() {
@@ -42,8 +42,8 @@ public final class RateLimit {
         return resetDate;
     }
 
-    private static synchronized Date setCalAndGet(long millis) {
-        staticCal.setTimeInMillis(millis);
-        return staticCal.getTime();
+    @Override
+    public String toString() {
+        return remaining + "/" + limit + ", resets at " + resetDate;
     }
 }
