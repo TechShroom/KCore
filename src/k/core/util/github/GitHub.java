@@ -2,7 +2,6 @@ package k.core.util.github;
 
 import java.util.HashMap;
 
-import k.core.util.github.GNet.Auth;
 import k.core.util.github.RateLimit.RateType;
 import k.core.util.github.gitjson.GithubJsonCreator;
 import k.core.util.github.gitjson.GithubJsonParser;
@@ -26,8 +25,8 @@ public final class GitHub {
     private static String cid, cs, u, p;
     private static String[] notes;
 
-    public static GData allRateLimits() {
-        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
+    public static GData allLimitsFor(Auth auth) {
+        return GNet.getData("/rate_limit", GNet.NO_HEADERS_SPECIFIED, auth);
     }
 
     public static GAuth authorize(JsonArray authScope, String clientID,
@@ -93,14 +92,14 @@ public final class GitHub {
         GStore.loadGitData();
     }
 
-    public static RateLimit rateLimit(RateType search) {
-        if (search == null) {
+    public static RateLimit limitsFor(RateType rate, Auth auth) {
+        if (rate == null) {
             throw new NullPointerException();
         }
-        GData all = allRateLimits();
-        if (search == RateType.CORE) {
+        GData all = allLimitsFor(auth);
+        if (rate == RateType.CORE) {
             return all.rate(); // already done!
-        } else if (search == RateType.SEARCH) {
+        } else if (rate == RateType.SEARCH) {
             // get the search data
             GithubJsonParser searchData = GithubJsonParser.begin(all.getData())
                     .subparser("resources/search");
@@ -112,11 +111,23 @@ public final class GitHub {
             // return object!
             return new RateLimit(remain, limit, reset);
         }
-        throw new IllegalArgumentException("Unknown RateType " + search);
+        throw new IllegalArgumentException("Unknown RateType " + rate);
     }
 
     public static GUser user(String username) {
+        return user(username, false);
+    }
+
+    public static GUser user(String username, boolean auth) {
         return GUser.from(GNet.getData("/users/" + username,
-                GNet.NO_HEADERS_SPECIFIED, Auth.OFF));
+                GNet.NO_HEADERS_SPECIFIED, (auth ? Auth.ON : Auth.OFF)));
+    }
+
+    public static GData limitsFromMaxLimit() {
+        return allLimitsFor(Auth.TRY);
+    }
+
+    public static RateLimit limitsFor(RateType rate) {
+        return limitsFor(rate, Auth.TRY);
     }
 }

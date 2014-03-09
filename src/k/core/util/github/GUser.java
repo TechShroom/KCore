@@ -16,7 +16,7 @@ public class GUser {
     protected GUser(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String toString() {
         return name;
@@ -25,6 +25,6 @@ public class GUser {
     static GUser from(GData data) {
         String name = GithubJsonParser.begin(data.getData()).data("login")
                 .toString();
-        return new GUser(name);
+        return new GUser(name.replace("\"", ""));
     }
 }

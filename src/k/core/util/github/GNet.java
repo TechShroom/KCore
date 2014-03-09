@@ -41,15 +41,13 @@ final class GNet {
         }
     }
 
-    static enum Auth {
-        ON, OFF, TRY;
-    }
-
     static enum DataTransferMethod {
         GET, POST;
     }
 
-    private static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
+    static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
+
+    static HashMap<String, GData> lastDataForUrls = new HashMap<String, GData>();
 
     static GAuth authorization = null;
 
@@ -108,10 +106,20 @@ final class GNet {
     }
 
     private static GData handleCodeRetry(int code, HttpURLConnection urlc,
-            Map<String, String> headers, DataTransferMethod method) {
+            Map<String, String> headers, DataTransferMethod method,
+            String endOfUrl, String postContent, Auth auth) {
         if (code == HttpStatus.SC_UNAUTHORIZED) {
             System.err.println("Retrying with re-auth...");
             GitHub.authWithVars();
+            if (method == DataTransferMethod.GET) {
+                return getData(endOfUrl, headers, auth);
+            } else if (method == DataTransferMethod.POST) {
+                return postData(endOfUrl, headers, postContent, auth);
+            }
+        } else if (code == HttpStatus.SC_NOT_MODIFIED) {
+            System.err
+                    .println("GitHub says unmodified, returning stored data...");
+            return lastDataForUrls.get(endOfUrl);
         }
         return null;
     }
@@ -144,7 +152,10 @@ final class GNet {
                 return GData.TIMEOUT;
             }
             lastModsForUrls.put(endOfUrl, urlc.getLastModified());
-            return data(urlc, headers, DataTransferMethod.GET);
+            GData data = data(urlc, headers, DataTransferMethod.GET, endOfUrl,
+                    "", auth);
+            lastDataForUrls.put(endOfUrl, data);
+            return data;
         } catch (MalformedURLException murle) {
             murle.printStackTrace();
             return GData.BADURL;
@@ -157,8 +168,8 @@ final class GNet {
     }
 
     private static GData data(HttpURLConnection urlc,
-            Map<String, String> headers, DataTransferMethod method)
-            throws IOException {
+            Map<String, String> headers, DataTransferMethod method,
+            String endOfUrl, String postContent, Auth auth) throws IOException {
         GData data = new GData();
         try {
             data.content(urlc, urlc.getContent());
@@ -170,7 +181,8 @@ final class GNet {
             if (code == HttpStatus.SC_OK) {
                 System.err.println("OK 200 received, but IOException thrown!");
                 return GData.BADURL; // assume bad URL
-            } else if ((data = handleCodeRetry(code, urlc, headers, method)) != null) {
+            } else if ((data = handleCodeRetry(code, urlc, headers, method,
+                    endOfUrl, postContent, auth)) != null) {
                 return data;
             } else if ((is = handleCodeError(code, urlc, headers)) != null) {
                 System.err.println(headers);
@@ -211,7 +223,8 @@ final class GNet {
                 // connect timeout
                 return GData.TIMEOUT;
             }
-            return data(urlc, headers, DataTransferMethod.POST);
+            return data(urlc, headers, DataTransferMethod.POST, endOfUrl,
+                    postContent, auth);
         } catch (MalformedURLException murle) {
             murle.printStackTrace();
             return GData.BADURL;
