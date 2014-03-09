@@ -61,25 +61,41 @@ public class GData {
         return errstate;
     }
 
+    public boolean isErrored() {
+        return errstate != GDataError.NONE;
+    }
+
+    private void throwIfErrored() {
+        if (!isErrored()) {
+            return;
+        }
+        throw new IllegalStateException("errored");
+    }
+
     public String getData() {
+        throwIfErrored();
         return raw;
     }
 
     public Map<String, List<String>> getHeaders() {
+        throwIfErrored();
         return data.headers;
     }
 
     public List<String> getHeaderValues(String headerKey) {
+        throwIfErrored();
         return data.headers.get(headerKey);
     }
 
     public String getFirstHeaderValue(String headerKey) {
+        throwIfErrored();
         return data.headers.get(headerKey).get(0);
     }
 
     /* Some special methods that return headers GitHub always returns */
 
     public RateLimit rate() {
+        throwIfErrored();
         return data.limits;
     }
 
@@ -104,8 +120,8 @@ public class GData {
 
     @Override
     public String toString() {
-        return (errstate == GDataError.NONE) ? "RateLimit: " + rate() + " "
-                + getHeaders() + "; " + getData() : "Error: " + errstate;
+        return (!isErrored()) ? "RateLimit: " + rate() + " " + getHeaders()
+                + "; " + getData() : "Error: " + errstate;
     }
 
     void content(HttpURLConnection urlc, Object content) throws IOException {

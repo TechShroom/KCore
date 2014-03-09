@@ -1,9 +1,13 @@
 package k.core.util.github;
 
-import com.google.gson.*;
+import java.util.HashMap;
 
 import k.core.util.github.RateLimit.RateType;
+import k.core.util.github.gitjson.GithubJsonCreator;
 import k.core.util.github.gitjson.GithubJsonParser;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 public final class GitHub {
     public static final int LOWEST_JAVA_ALLOWED = 6;
@@ -17,10 +21,28 @@ public final class GitHub {
         }
     }
 
-    public static void authorize(String authScope) {
+    public static void authorize(JsonArray authScope, String clientID,
+            String clientSecret, String user, String pass, String... notes) {
+        String note = "", note_url = "";
+        if (notes != null) {
+            if (notes.length >= 2) {
+                note_url = notes[1];
+            }
+            if (notes.length >= 1) {
+                note = notes[0];
+            }
+        }
+        System.err.println("Authorizing...");
+        JsonElement je = GithubJsonCreator.getForObjectCreation()
+                .add("scope", authScope).add("note", note)
+                .add("note_url", note_url).add("client_id", clientID)
+                .add("client_secret", clientSecret).result();
         // basic auth first
-        GData response = GNet.postData("/authorizations",
-                GNet.NO_HEADERS_SPECIFIED, postContent);
+        HashMap<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "Basic " + user + ":" + pass);
+        GData response = GNet.postData("/authorizations/1", headers,
+                je.toString());
+        System.err.println(response);
     }
 
     public static GData allRateLimits() {
