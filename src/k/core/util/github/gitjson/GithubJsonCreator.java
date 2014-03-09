@@ -153,4 +153,9 @@ public abstract class GithubJsonCreator<T extends JsonElement> {
                     "T is not JsonObject, cannot map key -> values");
         }
     }
+
+    @Override
+    public String toString() {
+        return result().toString();
+    }
 }
