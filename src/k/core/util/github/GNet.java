@@ -109,6 +109,8 @@ final class GNet {
             Map<String, String> headers, DataTransferMethod method,
             String endOfUrl, String postContent, Auth auth) {
         if (code == HttpStatus.SC_UNAUTHORIZED) {
+            System.err.println((authorization == null) ? "No authorization. "
+                    : "Authorization expired");
             System.err.println("Retrying with re-auth...");
             GitHub.authWithVars();
             if (method == DataTransferMethod.GET) {
