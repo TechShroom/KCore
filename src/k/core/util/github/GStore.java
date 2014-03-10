@@ -81,7 +81,6 @@ final class GStore {
         }
         gdata.add("headers", headers.result());
         gdata.add("errstate", value.getErrorState().toString());
-        System.err.println(gdata.toString());
         return gdata.result();
     }
 
@@ -89,7 +88,9 @@ final class GStore {
         File config = new File("./config/config.datastruct").getAbsoluteFile();
         try {
             config.getParentFile().mkdirs();
-            config.createNewFile();
+            if (config.createNewFile()) {
+                return;
+            }
         } catch (IOException e) {
             throw new IllegalStateException("path: " + config, e);
         }
@@ -110,6 +111,10 @@ final class GStore {
                     br.close();
                 } catch (IOException e) {
                 }
+            }
+            if (data.length() == 0) {
+                // nothing to read here
+                return;
             }
             DataStruct dataStruct = new DataStruct(data);
             GNet.authorization = (GAuth) dataStruct.get(AUTH_INDEX, null);
@@ -146,7 +151,6 @@ final class GStore {
     }
 
     private static GData createGData(JsonElement value) {
-        System.err.println("Loading GData from " + value);
         JsonObject obj = value.getAsJsonObject();
         GData out = new GData(GDataError.valueOf(obj.get("errstate")
                 .getAsString()));

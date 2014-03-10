@@ -174,7 +174,8 @@ final class GNet {
         GData data = new GData();
         int code = urlc.getResponseCode();
         InputStream is = null;
-        if (code == HttpStatus.SC_OK) {
+        if (200 <= code && code < 300) {
+            // success, continue
         } else if ((data = handleCodeRetry(code, urlc, headers, method,
                 endOfUrl, postContent, auth)) != null) {
             return data;
