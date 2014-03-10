@@ -116,7 +116,8 @@ final class GNet {
             } else if (method == DataTransferMethod.POST) {
                 return postData(endOfUrl, headers, postContent, auth);
             }
-        } else if (code == HttpStatus.SC_NOT_MODIFIED) {
+        } else if (code == HttpStatus.SC_NOT_MODIFIED
+                && lastDataForUrls.containsKey(endOfUrl)) {
             System.err
                     .println("GitHub says unmodified, returning stored data...");
             return lastDataForUrls.get(endOfUrl);
