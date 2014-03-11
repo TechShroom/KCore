@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import k.core.util.github.GData.GDataError;
 import k.core.util.github.gitjson.GithubJsonCreator;
-import k.core.util.github.gitjson.GithubJsonParser;
+import k.core.util.github.gitjson.GitHubJsonParser;
 import k.core.util.netty.DataStruct;
 
 import com.google.gson.*;
@@ -19,8 +19,9 @@ import com.google.gson.*;
  *
  */
 final class GStore {
-    private static final JsonParser parser = GithubJsonParser.parser;
-    static final int AUTH_INDEX = 0, LAST_MOD_INDEX = 1, LAST_DATA_INDEX = 2;
+    private static final JsonParser parser = GitHubJsonParser.parser;
+    static final int AUTH_INDEX = 0, LAST_MOD_INDEX = 1, LAST_DATA_INDEX = 2,
+            SCOPE_INDEX = 3;
 
     static void storeGitData() {
         DataStruct dataStruct = new DataStruct();
@@ -39,6 +40,7 @@ final class GStore {
             lastData.add(e.getKey(), buildGDataJSON(e.getValue()));
         }
         dataStruct.add(lastData.toString());
+        dataStruct.add(GitHub.scope.toString());
         File config = new File("./config/config.datastruct").getAbsoluteFile();
         try {
             config.getParentFile().mkdirs();
@@ -123,7 +125,7 @@ final class GStore {
                 JsonObject savedMap = parser.parse(
                         (String) dataStruct.get(LAST_MOD_INDEX, "{}"))
                         .getAsJsonObject();
-                for (Entry<String, JsonElement> e : GithubJsonParser
+                for (Entry<String, JsonElement> e : GitHubJsonParser
                         .getAsMapWithNullKeys(savedMap).entrySet()) {
                     lm.put(e.getKey(), e.getValue().getAsLong());
                 }
@@ -131,10 +133,13 @@ final class GStore {
                 savedMap = parser.parse(
                         (String) dataStruct.get(LAST_DATA_INDEX, "{}"))
                         .getAsJsonObject();
-                for (Entry<String, JsonElement> e : GithubJsonParser
+                for (Entry<String, JsonElement> e : GitHubJsonParser
                         .getAsMapWithNullKeys(savedMap).entrySet()) {
                     ld.put(e.getKey(), createGData(e.getValue()));
                 }
+                GitHub.scope = parser.parse(
+                        (String) dataStruct.get(SCOPE_INDEX, null))
+                        .getAsJsonArray();
             } catch (Exception e) {
                 e.printStackTrace();
             }

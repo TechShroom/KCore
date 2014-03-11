@@ -8,7 +8,7 @@ import k.core.util.core.Helper.BetterArrays;
 
 import com.google.gson.*;
 
-public final class GithubJsonParser {
+public final class GitHubJsonParser {
     /**
      * This parser should remain the only used parser, like a singleton.
      */
@@ -17,22 +17,22 @@ public final class GithubJsonParser {
     /**
      * Path cache, saves lookup time on really long paths
      */
-    private GithubJsonParser parent = null;
+    private GitHubJsonParser parent = null;
     private transient HashMap<String, JsonElement> lookedUpPaths = new HashMap<String, JsonElement>();
     private JsonObject relatedObj = null;
 
-    private GithubJsonParser(String data) {
+    private GitHubJsonParser(String data) {
         this(parser.parse(data).getAsJsonObject(), null);
     }
 
-    private GithubJsonParser(JsonObject obj, GithubJsonParser par) {
+    private GitHubJsonParser(JsonObject obj, GitHubJsonParser par) {
         relatedObj = obj;
         parent = par;
         lookedUpPaths.put("/", relatedObj);
     }
 
-    public static GithubJsonParser begin(String data) {
-        return new GithubJsonParser(data);
+    public static GitHubJsonParser begin(String data) {
+        return new GitHubJsonParser(data);
     }
 
     public JsonElement data(String path) {
@@ -76,10 +76,10 @@ public final class GithubJsonParser {
         return currObject;
     }
 
-    public GithubJsonParser subparser(String path) {
+    public GitHubJsonParser subparser(String path) {
         JsonElement elem = data(path);
         if (elem.isJsonObject()) {
-            return new GithubJsonParser(elem.getAsJsonObject(), this);
+            return new GitHubJsonParser(elem.getAsJsonObject(), this);
         } else {
             throw new UnsupportedOperationException(
                     "Cannot create parser for nothing");

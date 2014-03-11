@@ -88,8 +88,18 @@ final class GNet {
                     authorization.getAuthValue());
         } else if (auth == Auth.ON) {
             throw new IllegalStateException(end + " requires auth");
+        } else if (auth == Auth.TRY) {
+            System.err.println("Skipped auth for " + url);
         }
         return conn;
+    }
+
+    public static String extractEndOfUL(String url) {
+        try {
+            return new URL(url).getPath();
+        } catch (MalformedURLException e) {
+            return url.replace("https://api.github.com", "");
+        }
     }
 
     private static URL createGAPIUrl(String end) throws MalformedURLException {

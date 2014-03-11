@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import k.core.util.github.RateLimit.RateType;
 import k.core.util.github.gitjson.GithubJsonCreator;
-import k.core.util.github.gitjson.GithubJsonParser;
+import k.core.util.github.gitjson.GitHubJsonParser;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,7 +21,7 @@ public final class GitHub {
         }
     }
 
-    private static JsonArray scope;
+    static JsonArray scope;
     private static String cid, cs, u, p;
     private static String[] notes;
 
@@ -31,16 +31,17 @@ public final class GitHub {
 
     public static GAuth authorize(JsonArray authScope, String clientID,
             String clientSecret, String user, String pass, String... notes) {
-        scope = authScope;
         cid = clientID;
         cs = clientSecret;
         u = user;
         p = pass;
         GitHub.notes = notes;
-        if (GNet.authorization != null) {
+        if (GNet.authorization != null && scope.equals(authScope)) {
             System.err.println("Using loaded token.");
+            scope = authScope;
             return GNet.authorization;
         }
+        scope = authScope;
         return authWithVars();
     }
 
@@ -58,7 +59,7 @@ public final class GitHub {
         }
         System.err.println("Authorizing...");
         JsonElement authData = GithubJsonCreator.getForObjectCreation()
-                .add("scope", scope).add("note", note)
+                .add("scopes", scope).add("note", note)
                 .add("note_url", note_url).add("client_id", cid)
                 .add("client_secret", cs).result();
         // basic auth first
@@ -66,7 +67,8 @@ public final class GitHub {
         headers.put("Authorization", GAuth.basic(u, p));
         GData response = GNet.postData("/authorizations", headers,
                 authData.toString(), Auth.OFF);
-        GNet.authorization = new GAuth(GAuth.token(GithubJsonParser
+        System.err.println(response);
+        GNet.authorization = new GAuth(GAuth.token(GitHubJsonParser
                 .begin(response.getData()).data("token").toString()),
                 response.getFirstHeaderValue("Location"));
         System.err.println("Authorized: " + GNet.authorization);
@@ -101,7 +103,7 @@ public final class GitHub {
             return all.rate(); // already done!
         } else if (rate == RateType.SEARCH) {
             // get the search data
-            GithubJsonParser searchData = GithubJsonParser.begin(all.getData())
+            GitHubJsonParser searchData = GitHubJsonParser.begin(all.getData())
                     .subparser("resources/search");
             // parse the values
             int remain = searchData.data("remaining").getAsInt();

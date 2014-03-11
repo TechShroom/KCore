@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import k.core.util.github.gitjson.GithubJsonCreator;
-import k.core.util.github.gitjson.GithubJsonParser;
+import k.core.util.github.gitjson.GitHubJsonParser;
 
 import com.google.gson.*;
 
