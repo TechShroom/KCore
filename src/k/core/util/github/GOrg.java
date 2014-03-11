@@ -6,7 +6,7 @@ import k.core.util.github.gitjson.GitHubJsonParser;
 
 import com.google.gson.*;
 
-public class GOrg {
+public class GOrg implements ShortStringProvider {
     private GUser owner = null;
     private HashSet<GUser> members = new HashSet<GUser>();
     private String name, apiurl, picurl;
@@ -36,9 +36,37 @@ public class GOrg {
         return id;
     }
 
+    public boolean addMember(GUser member) {
+        return members.add(member);
+    }
+
+    public boolean removeMember(GUser member) {
+        return members.remove(member);
+    }
+
+    public boolean hasMember(GUser member) {
+        return members.contains(member);
+    }
+
+    public GUser owner() {
+        return owner;
+    }
+
+    public void setOwner(GUser owner) {
+        this.owner = owner;
+        addMember(owner);
+    }
+
     @Override
     public String toString() {
-        return name + " (#" + id + ") @ " + apiurl;
+        return toShortString() + " is owned by " + owner.name()
+                + " and has members "
+                + ShortStringTransformer.asShortStringCollection(members);
+    }
+
+    @Override
+    public String toShortString() {
+        return name + " (#" + id + "@" + apiurl + ")";
     }
 
     public static List<GOrg> fromURL(String orgUrl, GUser owner) {
@@ -55,7 +83,9 @@ public class GOrg {
             int id = in.data("id").getAsInt();
             String apiUrl = in.data("url").getAsString();
             String picUrl = in.data("avatar_url").getAsString();
-            list.add(new GOrg(name, apiUrl, id, picUrl, owner));
+            GOrg org = new GOrg(name, apiUrl, id, picUrl, owner);
+            org.members.add(owner);
+            list.add(org);
         }
         System.err.println(list);
         return list;

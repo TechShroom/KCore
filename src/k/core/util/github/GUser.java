@@ -4,7 +4,7 @@ import java.util.*;
 
 import k.core.util.github.gitjson.GitHubJsonParser;
 
-public class GUser {
+public class GUser implements ShortStringProvider {
     static HashMap<String, GUser> users = new HashMap<String, GUser>();
     protected List<GRepo> created_repos = new ArrayList<GRepo>(),
             contributed_repos = new ArrayList<GRepo>(),
@@ -19,12 +19,30 @@ public class GUser {
         users.put(name, this);
     }
 
+    public void setMemberOf(GOrg org) {
+        if (!org.hasMember(this)) {
+            org.addMember(this);
+        }
+    }
+
+    public String name() {
+        return name;
+    }
+
     @Override
     public String toString() {
         return String
                 .format("User %s has created repos %s, contributed to %s, starred %S, started %s, and is a member of %s.",
-                        name, created_repos, contributed_repos, starred_repos,
-                        owned_orgs, member_orgs);
+                        name, ShortStringTransformer
+                                .asShortStringCollection(created_repos),
+                        ShortStringTransformer
+                                .asShortStringCollection(contributed_repos),
+                        ShortStringTransformer
+                                .asShortStringCollection(starred_repos),
+                        ShortStringTransformer
+                                .asShortStringCollection(owned_orgs),
+                        ShortStringTransformer
+                                .asShortStringCollection(member_orgs));
     }
 
     static GUser from(GData data) {
@@ -39,5 +57,10 @@ public class GUser {
                 .getAsString(), user);
         user.owned_orgs.addAll(in);
         return user;
+    }
+
+    @Override
+    public String toShortString() {
+        return name;
     }
 }
