@@ -4,20 +4,24 @@ import java.util.*;
 
 import k.core.util.github.gitjson.GitHubJsonParser;
 
-public class GUser implements ShortStringProvider {
+public class GUser implements ShortStringProvider, UserLike {
     static HashMap<String, GUser> users = new HashMap<String, GUser>();
 
     static GUser from(GData data) {
-        GitHubJsonParser base = GitHubJsonParser.begin(data.getData());
+        return from(data.getData());
+    }
+
+    static GUser from(String data) {
+        GitHubJsonParser base = GitHubJsonParser.begin(data);
         String name = base.data("login").getAsString().replace("\"", "");
         System.err.println(base.toString());
         GUser user = users.get(name);
         if (user == null) {
             user = new GUser(name);
+            List<GOrg> in = GOrg.fromURL(base.data("organizations_url")
+                    .getAsString(), user);
+            user.owned_orgs.addAll(in);
         }
-        List<GOrg> in = GOrg.fromURL(base.data("organizations_url")
-                .getAsString(), user);
-        user.owned_orgs.addAll(in);
         return user;
     }
 
@@ -25,38 +29,53 @@ public class GUser implements ShortStringProvider {
             contributed_repos = new HashSet<GRepo>(),
             starred_repos = new HashSet<GRepo>();
 
-    protected Set<GOrg> owned_orgs = new HashSet<GOrg>(),
-            member_orgs = new HashSet<GOrg>();
+    protected String login;
 
     protected String name = "";
+
+    protected Set<GOrg> owned_orgs = new HashSet<GOrg>(),
+            member_orgs = new HashSet<GOrg>();
 
     protected GUser(String name) {
         this.name = name;
         users.put(name, this);
     }
 
-    public Set<GRepo> getContributedRepos() {
+    @Override
+    public String apiURL() {
+        return null;
+    }
+
+    @Override
+    public String avatarURL() {
+        return null;
+    }
+
+    public Set<GRepo> contributedRepos() {
         return contributed_repos;
     }
 
-    public Set<GRepo> getCreatedRepos() {
+    @Override
+    public Collection<GRepo> createdRepos() {
         return created_repos;
     }
 
-    public Set<GOrg> getMemberOrgs() {
+    @Override
+    public String login() {
+        return login;
+    }
+
+    public Set<GOrg> memeberOrgs() {
         return member_orgs;
     }
 
-    public Set<GOrg> getOwnedOrgs() {
-        return owned_orgs;
-    }
-
-    public Set<GRepo> getStarredRepos() {
-        return starred_repos;
-    }
-
+    @Override
     public String name() {
         return name;
+    }
+
+    public Set<GOrg> ownerOrgs() {
+        return owned_orgs;
     }
 
     public void setMemberOf(GOrg org) {
@@ -71,7 +90,11 @@ public class GUser implements ShortStringProvider {
     }
 
     public void setOwnerOf(GOrg org) {
+        org.setOwner(this);
+    }
 
+    public Set<GRepo> starredRepos() {
+        return starred_repos;
     }
 
     @Override

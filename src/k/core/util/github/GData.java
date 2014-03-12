@@ -19,10 +19,13 @@ public class GData {
 
         private final Map<String, List<String>> headers;
 
+        private final int responseCode;
+
         public SpecialData(int rateremain, int ratelim, long ratereset,
-                Map<String, List<String>> headers) {
+                Map<String, List<String>> headers, int code) {
             limits = new RateLimit(rateremain, ratelim, ratereset);
             this.headers = headers;
+            responseCode = code;
         }
     }
 
@@ -71,12 +74,6 @@ public class GData {
         }
     }
 
-    void contentloaded(String dataRaw, int remain, int limit, long reset,
-            Map<String, List<String>> headers) {
-        raw = dataRaw;
-        data = new SpecialData(remain, limit, reset, headers);
-    }
-
     void content(HttpURLConnection urlc, Object content) throws IOException {
         if (content instanceof InputStream) {
             // data is inputstreamed
@@ -109,11 +106,18 @@ public class GData {
                 // no ratelimits, errored probably
             }
             headers = Collections.unmodifiableMap(headers); // protect
-            this.data = new SpecialData(rlremain, rllim, rlreset, headers);
+            this.data = new SpecialData(rlremain, rllim, rlreset, headers,
+                    urlc.getResponseCode());
         } else {
             throw new UnsupportedOperationException("no handler for "
                     + content.getClass());
         }
+    }
+
+    void contentloaded(String dataRaw, int remain, int limit, long reset,
+            Map<String, List<String>> headers, int code) {
+        raw = dataRaw;
+        data = new SpecialData(remain, limit, reset, headers, code);
     }
 
     public String getData() {
@@ -137,12 +141,12 @@ public class GData {
         return data.headers.get(headerKey).get(0);
     }
 
-    /* Some special methods that return headers GitHub always returns */
-
     public Map<String, List<String>> getHeaders() {
         throwIfErrored();
         return data.headers;
     }
+
+    /* Some special methods that return headers GitHub always returns */
 
     public List<String> getHeaderValues(String headerKey) {
         throwIfErrored();
@@ -158,6 +162,10 @@ public class GData {
         return data.limits;
     }
 
+    public int responseCode() {
+        return data.responseCode;
+    }
+
     private void throwIfErrored() {
         if (!isErrored()) {
             return;
@@ -167,8 +175,12 @@ public class GData {
 
     @Override
     public String toString() {
-        return (!isErrored()) ? "RateLimit: " + rate() + " " + getHeaders()
-                + "; " + getData() : "Error: " + errstate;
+        return responseCode()
+                + " "
+                + HttpStatus.getStatusText(responseCode())
+                + ": "
+                + ((!isErrored()) ? "RateLimit: " + rate() + " " + getHeaders()
+                        + "; " + getData() : "Error: " + errstate);
     }
 
 }

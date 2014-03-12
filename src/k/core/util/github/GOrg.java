@@ -6,69 +6,7 @@ import k.core.util.github.gitjson.GitHubJsonParser;
 
 import com.google.gson.*;
 
-public class GOrg implements ShortStringProvider {
-    private GUser owner = null;
-    private HashSet<GUser> members = new HashSet<GUser>();
-    private String name, apiurl, picurl;
-    private int id;
-
-    private GOrg(String login, String url, int id, String picUrl, GUser owner) {
-        name = login;
-        apiurl = url;
-        this.id = id;
-        picurl = picUrl;
-        this.owner = owner;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public String apiURL() {
-        return apiurl;
-    }
-
-    public String picURL() {
-        return picurl;
-    }
-
-    public int id() {
-        return id;
-    }
-
-    public boolean addMember(GUser member) {
-        return members.add(member);
-    }
-
-    public boolean removeMember(GUser member) {
-        return members.remove(member);
-    }
-
-    public boolean hasMember(GUser member) {
-        return members.contains(member);
-    }
-
-    public GUser owner() {
-        return owner;
-    }
-
-    public void setOwner(GUser owner) {
-        this.owner = owner;
-        addMember(owner);
-    }
-
-    @Override
-    public String toString() {
-        return toShortString() + " is owned by " + owner.name()
-                + " and has members "
-                + ShortStringTransformer.asShortStringCollection(members);
-    }
-
-    @Override
-    public String toShortString() {
-        return name + " (#" + id + "@" + apiurl + ")";
-    }
-
+public class GOrg implements ShortStringProvider, UserLike {
     public static List<GOrg> fromURL(String orgUrl, GUser owner) {
         GData sum = GNet.getData(GNet.extractEndOfUL(orgUrl),
                 GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
@@ -89,5 +27,81 @@ public class GOrg implements ShortStringProvider {
         }
         System.err.println(list);
         return list;
+    }
+    private GUser owner = null;
+    private HashSet<GUser> members = new HashSet<GUser>();
+    private Set<GRepo> created_repos = new HashSet<GRepo>();
+    private String name, apiurl, picurl;
+
+    private int id;
+
+    private GOrg(String login, String url, int id, String picUrl, GUser owner) {
+        name = login;
+        apiurl = url;
+        this.id = id;
+        picurl = picUrl;
+        this.owner = owner;
+    }
+
+    public boolean addMember(GUser member) {
+        return members.add(member);
+    }
+
+    @Override
+    public String apiURL() {
+        return apiurl;
+    }
+
+    @Override
+    public String avatarURL() {
+        return picurl;
+    }
+
+    @Override
+    public Collection<GRepo> createdRepos() {
+        return created_repos;
+    }
+
+    public boolean hasMember(GUser member) {
+        return members.contains(member);
+    }
+
+    public int id() {
+        return id;
+    }
+
+    @Override
+    public String login() {
+        return name();
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    public GUser owner() {
+        return owner;
+    }
+
+    public boolean removeMember(GUser member) {
+        return members.remove(member);
+    }
+
+    public void setOwner(GUser owner) {
+        this.owner = owner;
+        addMember(owner);
+    }
+
+    @Override
+    public String toShortString() {
+        return name + " (#" + id + "@" + apiurl + ")";
+    }
+
+    @Override
+    public String toString() {
+        return toShortString() + " is owned by " + owner.name()
+                + " and has members "
+                + ShortStringTransformer.asShortStringCollection(members);
     }
 }

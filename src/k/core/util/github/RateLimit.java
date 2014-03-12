@@ -15,12 +15,19 @@ public final class RateLimit {
 
     private static final Calendar staticCal = Calendar.getInstance();
 
+    public static RateLimit fromJSON(JsonObject json) {
+        JsonPrimitive lim = json.get("limit").getAsJsonPrimitive();
+        JsonPrimitive res = json.get("reset").getAsJsonPrimitive();
+        JsonPrimitive rem = json.get("remaining").getAsJsonPrimitive();
+        return new RateLimit(rem.getAsInt(), lim.getAsInt(), res.getAsLong());
+    }
+
     private static synchronized Date setCalAndGet(long millis) {
         staticCal.setTimeInMillis(millis);
         return staticCal.getTime();
     }
-
     private final int remaining, limit;
+
     private final long reset;
 
     private final Date resetDate;
@@ -53,13 +60,6 @@ public final class RateLimit {
                 .add("limit", new JsonPrimitive(limit))
                 .add("reset", new JsonPrimitive(reset))
                 .add("remaining", new JsonPrimitive(remaining)).result();
-    }
-
-    public static RateLimit fromJSON(JsonObject json) {
-        JsonPrimitive lim = json.get("limit").getAsJsonPrimitive();
-        JsonPrimitive res = json.get("reset").getAsJsonPrimitive();
-        JsonPrimitive rem = json.get("remaining").getAsJsonPrimitive();
-        return new RateLimit(rem.getAsInt(), lim.getAsInt(), res.getAsLong());
     }
 
     @Override

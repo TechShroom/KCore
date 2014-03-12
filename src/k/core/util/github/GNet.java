@@ -13,6 +13,10 @@ import java.util.Map.Entry;
  */
 final class GNet {
 
+    static enum DataTransferMethod {
+        GET, POST;
+    }
+
     private static final class DefaultHeader implements Entry<String, String> {
         private String key, value;
 
@@ -39,10 +43,6 @@ final class GNet {
             throw new UnsupportedOperationException(
                     "default headers cannot be changed");
         }
-    }
-
-    static enum DataTransferMethod {
-        GET, POST;
     }
 
     static HashMap<String, Long> lastModsForUrls = new HashMap<String, Long>();
@@ -94,47 +94,64 @@ final class GNet {
         return conn;
     }
 
+    private static URL createGAPIUrl(String end) throws MalformedURLException {
+        return new URL("https", "api.github.com", end);
+    }
+
+    private static GData data(HttpURLConnection urlc,
+            Map<String, String> headers, DataTransferMethod method,
+            String endOfUrl, String postContent, Auth auth) throws IOException {
+        GData data = new GData();
+        int code = urlc.getResponseCode();
+        InputStream is = null;
+        if (200 <= code && code < 300) {
+            // success, continue
+        } else if ((data = handleCodeRetry(code, urlc, headers, method,
+                endOfUrl, postContent, auth)) != null) {
+            return data;
+        } else if ((is = handleCodeError(code, urlc, headers)) != null) {
+            System.err.println(headers);
+            dumpIS(is);
+            return GData.IOERRORS;
+        } else {
+            System.err.println("Error Code " + code + " ("
+                    + HttpStatus.getStatusText(code)
+                    + ") received, returning IOERRORS");
+            return GData.IOERRORS;
+        }
+        try {
+            data.content(urlc, urlc.getContent());
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Exception with reponse code 200?");
+            return GData.IOERRORS;
+        }
+    }
+
+    private static void dumpIS(InputStream in) {
+        System.err.println("DUMPING INPUT STREAM DATA");
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String line = "";
+        try {
+            while ((line = br.readLine()) != null) {
+                System.err.println(line);
+            }
+        } catch (IOException e1) {
+        }
+        try {
+            br.close();
+        } catch (IOException e) {
+        }
+        System.err.println("DONE");
+    }
+
     public static String extractEndOfUL(String url) {
         try {
             return new URL(url).getPath();
         } catch (MalformedURLException e) {
             return url.replace("https://api.github.com", "");
         }
-    }
-
-    private static URL createGAPIUrl(String end) throws MalformedURLException {
-        return new URL("https", "api.github.com", end);
-    }
-
-    private static InputStream handleCodeError(int code,
-            HttpURLConnection urlc, Map<String, String> headers) {
-        if (code == HttpStatus.SC_BAD_REQUEST) {
-            System.err.println("Bad request!");
-            return urlc.getErrorStream();
-        }
-        return null;
-    }
-
-    private static GData handleCodeRetry(int code, HttpURLConnection urlc,
-            Map<String, String> headers, DataTransferMethod method,
-            String endOfUrl, String postContent, Auth auth) {
-        if (code == HttpStatus.SC_UNAUTHORIZED) {
-            System.err.println((authorization == null) ? "No authorization. "
-                    : "Authorization expired");
-            System.err.println("Retrying with re-auth...");
-            GitHub.authWithVars();
-            if (method == DataTransferMethod.GET) {
-                return getData(endOfUrl, headers, auth);
-            } else if (method == DataTransferMethod.POST) {
-                return postData(endOfUrl, headers, postContent, auth);
-            }
-        } else if (code == HttpStatus.SC_NOT_MODIFIED
-                && lastDataForUrls.containsKey(endOfUrl)) {
-            System.err
-                    .println("GitHub says unmodified, returning stored data...");
-            return lastDataForUrls.get(endOfUrl);
-        }
-        return null;
     }
 
     public static GData getData(String endOfUrl, Map<String, String> headers,
@@ -181,35 +198,36 @@ final class GNet {
         }
     }
 
-    private static GData data(HttpURLConnection urlc,
+    private static InputStream handleCodeError(int code,
+            HttpURLConnection urlc, Map<String, String> headers) {
+        if (code == HttpStatus.SC_BAD_REQUEST) {
+            System.err.println("Bad request!");
+            return urlc.getErrorStream();
+        } else if (code == HttpStatus.SC_FORBIDDEN) {
+            return urlc.getErrorStream();
+        }
+        return null;
+    }
+
+    private static GData handleCodeRetry(int code, HttpURLConnection urlc,
             Map<String, String> headers, DataTransferMethod method,
-            String endOfUrl, String postContent, Auth auth) throws IOException {
-        GData data = new GData();
-        int code = urlc.getResponseCode();
-        InputStream is = null;
-        if (200 <= code && code < 300) {
-            // success, continue
-        } else if ((data = handleCodeRetry(code, urlc, headers, method,
-                endOfUrl, postContent, auth)) != null) {
-            return data;
-        } else if ((is = handleCodeError(code, urlc, headers)) != null) {
-            System.err.println(headers);
-            dumpIS(is);
-            return GData.IOERRORS;
-        } else {
-            System.err.println("Error Code " + code + " ("
-                    + HttpStatus.getStatusText(code)
-                    + ") received, returning IOERRORS");
-            return GData.IOERRORS;
+            String endOfUrl, String postContent, Auth auth) {
+        if (code == HttpStatus.SC_UNAUTHORIZED) {
+            System.err.println((authorization == null) ? "No authorization. "
+                    : "Authorization expired");
+            System.err.println("Retrying with re-auth...");
+            GitHub.authWithVars();
+            return retry(headers, method, endOfUrl, postContent, auth);
+        } else if (code == HttpStatus.SC_NOT_MODIFIED
+                && lastDataForUrls.containsKey(endOfUrl)) {
+            System.err
+                    .println("GitHub says unmodified, returning stored data...");
+            return lastDataForUrls.get(endOfUrl);
+        } else if (code == HttpStatus.SC_NOT_MODIFIED) {
+            lastModsForUrls.remove(endOfUrl);
+            return retry(headers, method, endOfUrl, postContent, auth);
         }
-        try {
-            data.content(urlc, urlc.getContent());
-            return data;
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Exception with reponse code 200?");
-            return GData.IOERRORS;
-        }
+        return null;
     }
 
     public static GData postData(String endOfUrl, Map<String, String> headers,
@@ -251,20 +269,15 @@ final class GNet {
         }
     }
 
-    private static void dumpIS(InputStream in) {
-        System.err.println("DUMPING INPUT STREAM DATA");
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line = "";
-        try {
-            while ((line = br.readLine()) != null) {
-                System.err.println(line);
-            }
-        } catch (IOException e1) {
+    private static GData retry(Map<String, String> headers,
+            DataTransferMethod method, String endOfUrl, String postContent,
+            Auth auth) {
+        if (method == DataTransferMethod.GET) {
+            return getData(endOfUrl, headers, auth);
+        } else if (method == DataTransferMethod.POST) {
+            return postData(endOfUrl, headers, postContent, auth);
+        } else {
+            throw new IllegalArgumentException("Illegal method " + method);
         }
-        try {
-            br.close();
-        } catch (IOException e) {
-        }
-        System.err.println("DONE");
     }
 }

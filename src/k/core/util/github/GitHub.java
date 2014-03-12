@@ -1,10 +1,10 @@
 package k.core.util.github;
 
-import java.util.HashMap;
+import java.util.*;
 
 import k.core.util.github.RateLimit.RateType;
-import k.core.util.github.gitjson.GithubJsonCreator;
 import k.core.util.github.gitjson.GitHubJsonParser;
+import k.core.util.github.gitjson.GithubJsonCreator;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -76,22 +76,8 @@ public final class GitHub {
         return GNet.authorization;
     }
 
-    public static void sync() {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                GStore.storeGitData();
-            }
-        };
-        Thread t = new Thread(r, "Data Sync");
-        t.setDaemon(false);
-        // right below max of 10
-        t.setPriority(8);
-        t.start();
-    }
-
-    public static void load() {
-        GStore.loadGitData();
+    public static RateLimit limitsFor(RateType rate) {
+        return limitsFor(rate, Auth.TRY);
     }
 
     public static RateLimit limitsFor(RateType rate, Auth auth) {
@@ -116,6 +102,28 @@ public final class GitHub {
         throw new IllegalArgumentException("Unknown RateType " + rate);
     }
 
+    public static GData limitsFromMaxLimit() {
+        return allLimitsFor(Auth.TRY);
+    }
+
+    public static void load() {
+        GStore.loadGitData();
+    }
+
+    public static void sync() {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                GStore.storeGitData();
+            }
+        };
+        Thread t = new Thread(r, "Data Sync");
+        t.setDaemon(false);
+        // right below max of 10
+        t.setPriority(8);
+        t.start();
+    }
+
     public static GUser user(String username) {
         return user(username, false);
     }
@@ -125,11 +133,15 @@ public final class GitHub {
                 GNet.NO_HEADERS_SPECIFIED, (auth ? Auth.ON : Auth.OFF)));
     }
 
-    public static GData limitsFromMaxLimit() {
-        return allLimitsFor(Auth.TRY);
-    }
-
-    public static RateLimit limitsFor(RateType rate) {
-        return limitsFor(rate, Auth.TRY);
+    public static List<GUser> users(int start, int end) {
+        GData data = GNet
+                .getData("/users", GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
+        JsonArray array = GitHubJsonParser.parser.parse(data.getData())
+                .getAsJsonArray();
+        List<GUser> users = new ArrayList<GUser>(end - start);
+        for (JsonElement je : array) {
+            users.add(GUser.from(je.toString()));
+        }
+        return users;
     }
 }

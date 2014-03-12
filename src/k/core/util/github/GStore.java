@@ -23,51 +23,6 @@ final class GStore {
     static final int AUTH_INDEX = 0, LAST_MOD_INDEX = 1, LAST_DATA_INDEX = 2,
             SCOPE_INDEX = 3;
 
-    static void storeGitData() {
-        DataStruct dataStruct = new DataStruct();
-        dataStruct.add(GNet.authorization);
-        GithubJsonCreator<JsonObject> lastMod = GithubJsonCreator
-                .getForObjectCreation();
-        Map<String, Long> lm = GNet.lastModsForUrls;
-        for (Entry<String, Long> e : lm.entrySet()) {
-            lastMod.add(e.getKey(), new JsonPrimitive(e.getValue()));
-        }
-        dataStruct.add(lastMod.toString());
-        GithubJsonCreator<JsonObject> lastData = GithubJsonCreator
-                .getForObjectCreation();
-        Map<String, GData> ld = GNet.lastDataForUrls;
-        for (Entry<String, GData> e : ld.entrySet()) {
-            lastData.add(e.getKey(), buildGDataJSON(e.getValue()));
-        }
-        dataStruct.add(lastData.toString());
-        dataStruct.add(GitHub.scope.toString());
-        File config = new File("./config/config.datastruct").getAbsoluteFile();
-        try {
-            config.getParentFile().mkdirs();
-            config.createNewFile();
-        } catch (IOException e) {
-            throw new IllegalStateException("path: " + config, e);
-        }
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(config);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        try {
-            fos.write(dataStruct.toString().getBytes());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                // ignore closing problems
-            }
-        }
-    }
-
     private static JsonObject buildGDataJSON(GData value) {
         GithubJsonCreator<JsonObject> gdata = GithubJsonCreator
                 .getForObjectCreation(), headers = GithubJsonCreator
@@ -83,7 +38,36 @@ final class GStore {
         }
         gdata.add("headers", headers.result());
         gdata.add("errstate", value.getErrorState().toString());
+        gdata.add("code", new JsonPrimitive(value.responseCode()));
         return gdata.result();
+    }
+
+    private static GData createGData(JsonElement value) {
+        JsonObject obj = value.getAsJsonObject();
+        GData out = new GData(GDataError.valueOf(obj.get("errstate")
+                .getAsString()));
+        RateLimit rate = RateLimit.fromJSON(obj.get("rate").getAsJsonObject());
+        String raw = obj.get("rawdata").getAsString();
+        Map<String, List<String>> gheads = new HashMap<String, List<String>>();
+        for (Entry<String, JsonElement> e : obj.get("headers")
+                .getAsJsonObject().entrySet()) {
+            String key = e.getKey();
+            JsonArray array = e.getValue().getAsJsonArray();
+            ArrayList<String> v = new ArrayList<String>(array.size());
+            Iterator<JsonElement> it = array.iterator();
+            while (it.hasNext()) {
+                v.add(it.next().getAsString());
+            }
+            gheads.put(key, v);
+        }
+        try {
+            int code = obj.get("code").getAsInt();
+            out.contentloaded(raw, rate.getRemaining(), rate.getLimit(),
+                    rate.getResetTime(), gheads, code);
+            return out;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void loadGitData() {
@@ -135,10 +119,15 @@ final class GStore {
                         .getAsJsonObject();
                 for (Entry<String, JsonElement> e : GitHubJsonParser
                         .getAsMapWithNullKeys(savedMap).entrySet()) {
-                    ld.put(e.getKey(), createGData(e.getValue()));
+                    GData gd = createGData(e.getValue());
+                    if (gd != null) {
+                        ld.put(e.getKey(), gd);
+                    } else {
+                        lm.remove(e.getKey());
+                    }
                 }
                 GitHub.scope = parser.parse(
-                        (String) dataStruct.get(SCOPE_INDEX, null))
+                        (String) dataStruct.get(SCOPE_INDEX, "[]"))
                         .getAsJsonArray();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -155,26 +144,52 @@ final class GStore {
         }
     }
 
-    private static GData createGData(JsonElement value) {
-        JsonObject obj = value.getAsJsonObject();
-        GData out = new GData(GDataError.valueOf(obj.get("errstate")
-                .getAsString()));
-        RateLimit rate = RateLimit.fromJSON(obj.get("rate").getAsJsonObject());
-        String raw = obj.get("rawdata").getAsString();
-        Map<String, List<String>> gheads = new HashMap<String, List<String>>();
-        for (Entry<String, JsonElement> e : obj.get("headers")
-                .getAsJsonObject().entrySet()) {
-            String key = e.getKey();
-            JsonArray array = e.getValue().getAsJsonArray();
-            ArrayList<String> v = new ArrayList<String>(array.size());
-            Iterator<JsonElement> it = array.iterator();
-            while (it.hasNext()) {
-                v.add(it.next().getAsString());
-            }
-            gheads.put(key, v);
+    static void storeGitData() {
+        DataStruct dataStruct = new DataStruct();
+        dataStruct.add(GNet.authorization);
+        GithubJsonCreator<JsonObject> lastMod = GithubJsonCreator
+                .getForObjectCreation();
+        Map<String, Long> lm = GNet.lastModsForUrls;
+        for (Entry<String, Long> e : lm.entrySet()) {
+            lastMod.add(e.getKey(), new JsonPrimitive(e.getValue()));
         }
-        out.contentloaded(raw, rate.getRemaining(), rate.getLimit(),
-                rate.getResetTime(), gheads);
-        return out;
+        dataStruct.add(lastMod.toString());
+        GithubJsonCreator<JsonObject> lastData = GithubJsonCreator
+                .getForObjectCreation();
+        Map<String, GData> ld = GNet.lastDataForUrls;
+        for (Entry<String, GData> e : ld.entrySet()) {
+            lastData.add(e.getKey(), buildGDataJSON(e.getValue()));
+        }
+        dataStruct.add(lastData.toString());
+        if (GitHub.scope != null) {
+            dataStruct.add(GitHub.scope.toString());
+        } else {
+            dataStruct.add("[]");
+        }
+        File config = new File("./config/config.datastruct").getAbsoluteFile();
+        try {
+            config.getParentFile().mkdirs();
+            config.createNewFile();
+        } catch (IOException e) {
+            throw new IllegalStateException("path: " + config, e);
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(config);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        try {
+            fos.write(dataStruct.toString().getBytes());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                // ignore closing problems
+            }
+        }
     }
 }
