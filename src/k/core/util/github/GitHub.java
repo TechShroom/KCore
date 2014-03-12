@@ -134,13 +134,31 @@ public final class GitHub {
     }
 
     public static List<GUser> users(int start, int end) {
-        GData data = GNet
-                .getData("/users", GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
-        JsonArray array = GitHubJsonParser.parser.parse(data.getData())
-                .getAsJsonArray();
-        List<GUser> users = new ArrayList<GUser>(end - start);
-        for (JsonElement je : array) {
-            users.add(GUser.from(je.toString()));
+        int since = start;
+        boolean done = false;
+        List<GUser> users = new ArrayList<GUser>();
+        while (!done) {
+            GData data = GNet.getData("/users?since=" + since,
+                    GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
+            JsonArray array = GitHubJsonParser.parser.parse(data.getData())
+                    .getAsJsonArray();
+            List<GUser> augment = new ArrayList<GUser>(end - start);
+            for (JsonElement je : array) {
+                GUser u = GUser.from(je.toString());
+                int id = je.getAsJsonObject().get("id").getAsInt();
+                if (id == end) {
+                    done = true;
+                } else if (id > end) {
+                    done = true;
+                    break;
+                }
+                since = id;
+                augment.add(u);
+                if (done) {
+                    break;
+                }
+            }
+            users.addAll(augment);
         }
         return users;
     }
