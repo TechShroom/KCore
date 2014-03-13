@@ -7,6 +7,16 @@ import k.core.util.github.gitjson.GitHubJsonParser;
 import com.google.gson.*;
 
 public class GOrg implements ShortStringProvider, UserLike {
+    public static class GTeam implements ShortStringProvider {
+        private HashSet<GUser> members = new HashSet<GUser>();
+
+        @Override
+        public String toShortString() {
+            return "NYI";
+        }
+
+    }
+
     public static List<GOrg> fromURL(String orgUrl, GUser owner) {
         GData sum = GNet.getData(GNet.extractEndOfUL(orgUrl),
                 GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
@@ -22,14 +32,14 @@ public class GOrg implements ShortStringProvider, UserLike {
             String apiUrl = in.data("url").getAsString();
             String picUrl = in.data("avatar_url").getAsString();
             GOrg org = new GOrg(name, apiUrl, id, picUrl, owner);
-            org.members.add(owner);
             list.add(org);
         }
         System.err.println(list);
         return list;
     }
+
     private GUser owner = null;
-    private HashSet<GUser> members = new HashSet<GUser>();
+    private HashMap<String, GTeam> teams = new HashMap<String, GTeam>();
     private Set<GRepo> created_repos = new HashSet<GRepo>();
     private String name, apiurl, picurl;
 
