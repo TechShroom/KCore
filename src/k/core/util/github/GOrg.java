@@ -15,6 +15,16 @@ public class GOrg implements ShortStringProvider, UserLike {
             return "NYI";
         }
 
+        public static HashMap<String, GTeam> formURL(String teamUrl) {
+            GData sum = GNet.getData(GNet.extractEndOfUL(teamUrl),
+                    GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
+            System.err.println(sum.getData());
+            JsonArray orgs = GitHubJsonParser.parser.parse(sum.getData())
+                    .getAsJsonArray();
+            HashMap<String, GTeam> map = new HashMap<String, GTeam>(orgs.size());
+            return map;
+        }
+
     }
 
     public static List<GOrg> fromURL(String orgUrl, GUser owner) {
@@ -31,7 +41,8 @@ public class GOrg implements ShortStringProvider, UserLike {
             int id = in.data("id").getAsInt();
             String apiUrl = in.data("url").getAsString();
             String picUrl = in.data("avatar_url").getAsString();
-            GOrg org = new GOrg(name, apiUrl, id, picUrl, owner);
+            HashMap<String, GTeam> teams = GTeam.formURL(orgUrl + "/teams");
+            GOrg org = new GOrg(name, apiUrl, id, picUrl, owner, teams);
             list.add(org);
         }
         System.err.println(list);
@@ -45,12 +56,14 @@ public class GOrg implements ShortStringProvider, UserLike {
 
     private int id;
 
-    private GOrg(String login, String url, int id, String picUrl, GUser owner) {
+    private GOrg(String login, String url, int id, String picUrl, GUser owner,
+            HashMap<String, GTeam> tset) {
         name = login;
         apiurl = url;
         this.id = id;
         picurl = picUrl;
         this.owner = owner;
+        teams = tset;
     }
 
     public boolean addMember(GUser member) {
