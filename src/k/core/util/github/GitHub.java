@@ -129,7 +129,7 @@ public final class GitHub {
     }
 
     public static GUser user(String username, boolean auth) {
-        return GUser.from(GNet.getData("/users/" + username,
+        return GUser.fromUrl(GNet.getData("/users/" + username,
                 GNet.NO_HEADERS_SPECIFIED, (auth ? Auth.ON : Auth.OFF)));
     }
 
@@ -144,7 +144,7 @@ public final class GitHub {
                     .getAsJsonArray();
             List<GUser> augment = new ArrayList<GUser>(end - start);
             for (JsonElement je : array) {
-                GUser u = GUser.from(je.toString());
+                GUser u = GUser.fromUrl(je.toString());
                 int id = je.getAsJsonObject().get("id").getAsInt();
                 if (id == end) {
                     done = true;

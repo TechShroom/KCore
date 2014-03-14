@@ -7,28 +7,85 @@ import k.core.util.github.gitjson.GitHubJsonParser;
 import com.google.gson.*;
 
 public class GOrg implements ShortStringProvider, UserLike {
-    public static class GTeam implements ShortStringProvider {
+    public static class GTeam implements ShortStringProvider, UserLike {
         private HashSet<GUser> members = new HashSet<GUser>();
+        private GOrg parorg = null;
+
+        private GTeam(GOrg parent) {
+            parorg = parent;
+        }
 
         @Override
         public String toShortString() {
             return "NYI";
         }
 
-        public static HashMap<String, GTeam> formURL(String teamUrl) {
-            GData sum = GNet.getData(GNet.extractEndOfUL(teamUrl),
+        public boolean addMember(GUser member) {
+            return members.add(member);
+        }
+
+        public boolean hasMember(GUser member) {
+            return members.contains(member);
+        }
+
+        public boolean removeMember(GUser member) {
+            return members.remove(member);
+        }
+
+        public GOrg org() {
+            return parorg;
+        }
+
+        public static HashMap<String, GTeam> formURL(String teamsUrl) {
+            System.err.println("loading teams from " + teamsUrl);
+            GData sum = GNet.getData(GNet.extractEndOfUL(teamsUrl),
                     GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
             System.err.println(sum.getData());
             JsonArray orgs = GitHubJsonParser.parser.parse(sum.getData())
                     .getAsJsonArray();
             HashMap<String, GTeam> map = new HashMap<String, GTeam>(orgs.size());
+            for (JsonElement je : orgs) {
+                // we need to pull the right data
+                int id = je.getAsJsonObject().get("id").getAsInt();
+                String teamUrl = "/teams/" + id;
+                GData team = GNet.getData(teamUrl, GNet.NO_HEADERS_SPECIFIED,
+                        Auth.TRY);
+                GitHubJsonParser in = GitHubJsonParser.begin(team.getData());
+                List<GUser> users = GUser.listFromUrl(GNet.getData(teamUrl,
+                        GNet.NO_HEADERS_SPECIFIED, Auth.TRY));
+            }
             return map;
+        }
+
+        @Override
+        public String apiURL() {
+            return null;
+        }
+
+        @Override
+        public String avatarURL() {
+            return null;
+        }
+
+        @Override
+        public Collection<GRepo> createdRepos() {
+            return null;
+        }
+
+        @Override
+        public String login() {
+            return null;
+        }
+
+        @Override
+        public String name() {
+            return null;
         }
 
     }
 
-    public static List<GOrg> fromURL(String orgUrl, GUser owner) {
-        GData sum = GNet.getData(GNet.extractEndOfUL(orgUrl),
+    public static List<GOrg> listFromUrl(String orgsUrl, GUser owner) {
+        GData sum = GNet.getData(GNet.extractEndOfUL(orgsUrl),
                 GNet.NO_HEADERS_SPECIFIED, Auth.TRY);
         System.err.println(sum.getData());
         JsonArray orgs = GitHubJsonParser.parser.parse(sum.getData())
@@ -36,17 +93,23 @@ public class GOrg implements ShortStringProvider, UserLike {
         List<GOrg> list = new ArrayList<GOrg>(orgs.size());
         for (JsonElement je : orgs) {
             JsonObject o = je.getAsJsonObject();
-            GitHubJsonParser in = GitHubJsonParser.begin(o.toString());
-            String name = in.data("login").getAsString();
-            int id = in.data("id").getAsInt();
-            String apiUrl = in.data("url").getAsString();
-            String picUrl = in.data("avatar_url").getAsString();
-            HashMap<String, GTeam> teams = GTeam.formURL(orgUrl + "/teams");
-            GOrg org = new GOrg(name, apiUrl, id, picUrl, owner, teams);
+            GOrg org = fromUrl(o.get("url").toString(), owner);
             list.add(org);
         }
         System.err.println(list);
         return list;
+    }
+
+    public static GOrg fromUrl(String orgUrl, GUser owner) {
+        GitHubJsonParser in = GitHubJsonParser.begin(GNet.getData(orgUrl,
+                GNet.NO_HEADERS_SPECIFIED, Auth.TRY).getData());
+        String name = in.data("login").getAsString();
+        int id = in.data("id").getAsInt();
+        String apiUrl = in.data("url").getAsString();
+        String picUrl = in.data("avatar_url").getAsString();
+        HashMap<String, GTeam> teams = GTeam.formURL(apiUrl + "/teams");
+        GOrg org = new GOrg(name, apiUrl, id, picUrl, owner, teams);
+        return org;
     }
 
     private GUser owner = null;
@@ -66,10 +129,6 @@ public class GOrg implements ShortStringProvider, UserLike {
         teams = tset;
     }
 
-    public boolean addMember(GUser member) {
-        return members.add(member);
-    }
-
     @Override
     public String apiURL() {
         return apiurl;
@@ -83,10 +142,6 @@ public class GOrg implements ShortStringProvider, UserLike {
     @Override
     public Collection<GRepo> createdRepos() {
         return created_repos;
-    }
-
-    public boolean hasMember(GUser member) {
-        return members.contains(member);
     }
 
     public int id() {
@@ -107,13 +162,9 @@ public class GOrg implements ShortStringProvider, UserLike {
         return owner;
     }
 
-    public boolean removeMember(GUser member) {
-        return members.remove(member);
-    }
-
     public void setOwner(GUser owner) {
         this.owner = owner;
-        addMember(owner);
+        teams.get("owners").addMember(owner);
     }
 
     @Override
@@ -125,6 +176,6 @@ public class GOrg implements ShortStringProvider, UserLike {
     public String toString() {
         return toShortString() + " is owned by " + owner.name()
                 + " and has members "
-                + ShortStringTransformer.asShortStringCollection(members);
+                + ShortStringTransformer.asShortStringMap(teams);
     }
 }

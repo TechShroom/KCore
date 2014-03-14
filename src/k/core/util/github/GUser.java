@@ -2,23 +2,24 @@ package k.core.util.github;
 
 import java.util.*;
 
+import k.core.util.github.GOrg.GTeam;
 import k.core.util.github.gitjson.GitHubJsonParser;
 
 public class GUser implements ShortStringProvider, UserLike {
     static HashMap<String, GUser> users = new HashMap<String, GUser>();
 
-    static GUser from(GData data) {
-        return from(data.getData());
+    public static GUser fromUrl(GData data) {
+        return fromUrl(data.getData());
     }
 
-    static GUser from(String data) {
+    public static GUser fromUrl(String data) {
         GitHubJsonParser base = GitHubJsonParser.begin(data);
         String name = base.data("login").getAsString().replace("\"", "");
         System.err.println(base.toString());
         GUser user = users.get(name);
         if (user == null) {
             user = new GUser(name);
-            List<GOrg> in = GOrg.fromURL(base.data("organizations_url")
+            List<GOrg> in = GOrg.listFromUrl(base.data("organizations_url")
                     .getAsString(), user);
             user.owned_orgs.addAll(in);
         }
@@ -78,10 +79,10 @@ public class GUser implements ShortStringProvider, UserLike {
         return owned_orgs;
     }
 
-    public void setMemberOf(GOrg org) {
-        if (!org.hasMember(this)) {
-            org.addMember(this);
-            member_orgs.add(org);
+    public void setMemberOf(GTeam team) {
+        if (!team.hasMember(this)) {
+            team.addMember(this);
+            member_orgs.add(team.org());
         }
     }
 
@@ -116,5 +117,9 @@ public class GUser implements ShortStringProvider, UserLike {
                                 .asShortStringCollection(owned_orgs),
                         ShortStringTransformer
                                 .asShortStringCollection(member_orgs));
+    }
+
+    public static List<GUser> listFromUrl(GData data) {
+        return null;
     }
 }
