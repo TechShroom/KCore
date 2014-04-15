@@ -24,7 +24,8 @@ public class Helper {
         public static String topLevel;
         static {
             // uses the pwd as the top level
-            topLevel = new File("").getAbsolutePath();
+            topLevel = new File("").getAbsolutePath().replace(
+                    File.separatorChar, '/');
         }
 
         public static File getFileRelativeToTopLevel(String file) {
