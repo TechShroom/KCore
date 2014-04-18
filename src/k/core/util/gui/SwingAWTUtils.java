@@ -7,7 +7,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -60,6 +62,22 @@ public class SwingAWTUtils {
         }
         WindowEvent close = new WindowEvent(win, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(close);
+    }
+
+    /**
+     * Attaches a {@link WindowListener} to the given Window so it is disposed
+     * when the close button is hit. Some windows do not respond to the
+     * DISPOSE_ON_CLOSE operation, so this is better than using that.
+     */
+    public static void attachDisposeOnClose(final Window w) {
+        w.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                w.setVisible(false);
+                w.dispose();
+            }
+        });
     }
 
     /**

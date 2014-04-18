@@ -3,8 +3,7 @@ package k.core.util.reflect;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 
-import k.core.util.translate.Translate;
-import k.core.util.translate.Translate.Language;
+import k.core.util.reflect.Translate.Language;
 
 public class ReflectionTest {
 
@@ -29,8 +28,8 @@ public class ReflectionTest {
                     "reflect_testm", new ReflectionTest(),
                     "i tested reflection on methods"));
             System.out.println(Reflect.invokeMethodStatic(String.class,
-                    Translate.class, "translate", "fakeKey", Language.JAVA,
-                    new Object[] {}));
+                    Translate.class, "translate", "REFLECTION TEST KEY",
+                    Language.JAVA, new Object[] {}));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (SecurityException e) {

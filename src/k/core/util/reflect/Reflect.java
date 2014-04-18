@@ -26,12 +26,12 @@ public class Reflect {
             IllegalArgumentException, IllegalAccessException {
         Field f = from.getDeclaredField(name);
         f.setAccessible(true);
-        if (!f.getType().isAssignableFrom(type)
-                && !ClassHelp.castable(f.getType(), type)) {
+        Object test = f.get(null);
+        if (!type.isInstance(test)) {
             throw new ClassCastException(f.getType() + " cannot be cast to "
                     + type + " (if you think this is wrong, please report it!)");
         }
-        return (T) f.get(null);
+        return (T) test;
     }
 
     @SuppressWarnings("unchecked")
