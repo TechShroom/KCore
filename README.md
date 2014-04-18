@@ -37,7 +37,7 @@ Parts of KCore (distributed):
     * Depends: Core, Timing
 * Reflect
     * Reflection ease of use
-    * Depends: Classes, Translate
+    * Depends: Classes
 * Strings
     * Different string functions
     * Depends: None
