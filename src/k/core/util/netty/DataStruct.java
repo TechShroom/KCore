@@ -189,6 +189,13 @@ public class DataStruct {
     public void remove(int index) {
         dataValues.remove(index);
     }
+    
+    public void set(int index, Object value) {
+        while (dataValues.size() <= index) {
+            dataValues.add(null);
+        }
+        dataValues.set(index, value);
+    }
 
     /**
      * Gets the entire object array.
