@@ -191,8 +191,11 @@ public class DataStruct {
     }
     
     public void set(int index, Object value) {
-        while (dataValues.size() <= index) {
-            dataValues.add(null);
+        if (dataValues.size() <= index) {
+            List<Object> tmp = new ArrayList<Object>(index);
+            for (int i = 0; i < dataValues.size(); i++) {
+                tmp.set(i, dataValues.get(i));
+            }
         }
         dataValues.set(index, value);
     }
