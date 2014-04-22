@@ -189,13 +189,19 @@ public class DataStruct {
     public void remove(int index) {
         dataValues.remove(index);
     }
-    
+
     public void set(int index, Object value) {
         if (dataValues.size() <= index) {
-            List<Object> tmp = new ArrayList<Object>(index);
+            List<Object> tmp = new ArrayList<Object>(index + 1);
+            // add values
             for (int i = 0; i < dataValues.size(); i++) {
-                tmp.set(i, dataValues.get(i));
+                tmp.add(dataValues.get(i));
             }
+            // expand to size
+            for (int i = dataValues.size(); i < index + 1; i++) {
+                tmp.add(null);
+            }
+            dataValues = tmp;
         }
         dataValues.set(index, value);
     }
