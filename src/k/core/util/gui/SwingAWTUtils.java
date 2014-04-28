@@ -295,13 +295,13 @@ public class SwingAWTUtils {
     }
 
     /**
-     * Clones the given Component via {@link Serializable} interfacing.
+     * Clones the given Serializable via {@link Serializable} interfacing.
      * 
      * @param c
-     *            - the component to clone
-     * @return a clone of the original component, done via serialization
+     *            - the object to clone
+     * @return a clone of the original object, done via serialization
      */
-    public static <T extends Component> T cloneLikeSerial(T c) {
+    public static <T extends Serializable> T cloneLikeSerial(T c) {
         try {
             InputPipeStream ips = new InputPipeStream();
             OutputPipeStream ops = new OutputPipeStream(ips);
